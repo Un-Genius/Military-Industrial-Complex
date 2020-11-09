@@ -1,7 +1,7 @@
 {
   "parent": {
-    "name": "Sierra Point Project",
-    "path": "Sierra Point Project.yyp",
+    "name": "Notes",
+    "path": "folders/Notes.yy",
   },
   "resourceVersion": "1.1",
   "name": "FanFiction",

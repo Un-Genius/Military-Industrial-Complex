@@ -688,8 +688,8 @@
   "androidPermissions": [],
   "copyToTargets": 9223372036854775807,
   "parent": {
-    "name": "Extensions",
-    "path": "folders/Extensions.yy",
+    "name": "Sierra Point Project",
+    "path": "Sierra Point Project.yyp",
   },
   "resourceVersion": "1.0",
   "name": "Steamworks_gml",

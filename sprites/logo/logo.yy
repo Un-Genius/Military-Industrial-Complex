@@ -75,8 +75,8 @@
     {"visible":true,"isLocked":false,"blendMode":0,"opacity":100.0,"displayName":"Flag","resourceVersion":"1.0","name":"ce166d74-3483-4880-84e2-b59b7fd072f3","tags":[],"resourceType":"GMImageLayer",},
   ],
   "parent": {
-    "name": "Sierra Point Project",
-    "path": "Sierra Point Project.yyp",
+    "name": "Sprites",
+    "path": "folders/Sprites.yy",
   },
   "resourceVersion": "1.0",
   "name": "logo",
