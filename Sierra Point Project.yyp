@@ -67,6 +67,7 @@
     {"id":{"name":"oManager","path":"objects/oManager/oManager.yy",},"order":1,},
     {"id":{"name":"oParUnit","path":"objects/oParUnit/oParUnit.yy",},"order":0,},
     {"id":{"name":"oHQ","path":"objects/oHQ/oHQ.yy",},"order":1,},
+    {"id":{"name":"Note1","path":"notes/Note1/Note1.yy",},"order":9,},
     {"id":{"name":"oTransport","path":"objects/oTransport/oTransport.yy",},"order":2,},
     {"id":{"name":"oArmor","path":"objects/oArmor/oArmor.yy",},"order":3,},
     {"id":{"name":"sTank_Turret_Ins_T62","path":"sprites/sTank_Turret_Ins_T62/sTank_Turret_Ins_T62.yy",},"order":1,},
