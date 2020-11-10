@@ -3,6 +3,6 @@ if global.debugMenu
 	draw_circle(x, y, range, true);
 }
 	
-image_blend = teamColor;
+image_blend = hashColor;
 
 draw_self();

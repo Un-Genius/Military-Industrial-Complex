@@ -7,6 +7,19 @@ image_angle = direction;
 // Update Speed
 speed = spd;
 
+// Decrease accuracy over distance
+accuracy--;
+
+// Check if accuracy reached 0
+if accuracy <= 0
+{
+	// Hit floor
+	instance_destroy(self);
+}
+
+if(collision_point(x, y, oWall, false, true))
+	instance_destroy(self);
+
 // Store collision
 var _collision = collision_point(x, y, oObject, false, true);
 
@@ -25,7 +38,7 @@ if _collision
 	
 	if(_team != team || team == 0) && _numColor != numColor
 	{
-		if _cover < accuracy
+		if accuracy > _cover
 		{
 			var dmg, pen;
 				
@@ -71,8 +84,8 @@ if _collision
 			}
 		
 			// Crirical hit
-			if accuracy - 2 > _cover
-				dmg++;
+			if accuracy / 1.5 > _cover
+				dmg *= 1.5;
 	
 			// Deal damage
 			if pen >= _armor

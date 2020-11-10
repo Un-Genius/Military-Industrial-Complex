@@ -8,16 +8,7 @@ switch (type_event[?"event_type"])
 	
 		// Find and store steam name using ID
 	    names[?type_event[?"steamid"]] = type_event[?"persona_name"];
-	
-		if lobby
-		{
-			// Get current size
-			var _lobbyCurrent	= steam_lobby_get_member_count();
 		
-			// Update lobby current size
-			steam_lobby_set_data("game_size_current", string(_lobbyCurrent));
-		}
-	
 	break;
 	
 	case "lobby_created":

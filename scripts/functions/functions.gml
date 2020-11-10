@@ -537,10 +537,16 @@ function packet_handle_auth(from) {
 	    // inform the player that they are now connected:
 	    _buffer = packet_start(packet_t.lobby_connected);
 	    packet_send_to(_buffer, from);
-	
+			
 	    // add them to the list of players:
 	    ds_list_add(net_list, from);
 	    net_map[?from] = current_time;
+		
+		// Get current size
+		var _lobbyCurrent	= steam_lobby_get_member_count();
+		
+		// Update lobby current size
+		steam_lobby_set_data("game_size_current", string(_lobbyCurrent));
 			
 	    exit;
 	}
@@ -1293,6 +1299,12 @@ function packet_handle_leaving(steamID) {
 	ds_map_delete(net_map, steamID);
 	
 	ds_map_delete(playerDataMap, string(steamID));
+	
+	// Get current size
+	var _lobbyCurrent	= steam_lobby_get_member_count();
+		
+	// Update lobby current size
+	steam_lobby_set_data("game_size_current", string(_lobbyCurrent));
 
 	if(state == menu.inGame)
 	{

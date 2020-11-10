@@ -1,6 +1,6 @@
 /// @description 
 // Sprite
-sprite = sGrassOld;
+sprite = sGrass;
 frames = sprite_get_number(sprite);
 texture = sprite_get_texture(sprite, 0);
 
