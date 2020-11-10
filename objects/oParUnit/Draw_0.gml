@@ -1,6 +1,7 @@
 if global.debugMenu
 {
 	draw_circle(x, y, range, true);
+	draw_path(path, x, y, true);
 }
 
 // Draw Shadow

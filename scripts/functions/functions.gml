@@ -223,13 +223,16 @@ function scr_pathfind(xgoal, ygoal, speed) {
 	    path_set_kind(path, false);
 	    path_set_precision(path, 8);
 		
-		var _pathAmount = path_get_number(path)
+		#region Old pathfinder
+		
+		/*
+		var _pathAmount = path_get_number(path);
 		
 	    if _pathAmount > 2
 	    {
 		    var x1, y1, x2, y2;
 	
-		    for(var i = 1; i < path_get_number(path); i += 1)
+		    for(var i = 1; i < path_get_number(path); i++)
 		    {
 			    x1 = path_get_point_x(path, i - 1)
 			    y1 = path_get_point_y(path, i - 1)
@@ -239,18 +242,18 @@ function scr_pathfind(xgoal, ygoal, speed) {
                         
 			    //raycast
 			    var temp_dir	= point_direction(x1, y1, x2, y2);
-			    var temp_x		= x1+lengthdir_x(10, temp_dir);
-			    var temp_y		= y1+lengthdir_y(10, temp_dir);
+			    var temp_x		= x1+lengthdir_x(8, temp_dir);
+			    var temp_y		= y1+lengthdir_y(8, temp_dir);
 			    var start_xr	= temp_x;
 			    var start_yr	= temp_y;
 			
-			    var path_collision = position_meeting(temp_x, temp_y, oWall);
+			    var path_collision = position_meeting(temp_x, temp_y, oParWall);
 			
-			    while(!path_collision && point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2))
+			    while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
 			    {
-			        temp_x += lengthdir_x(4, temp_dir);
-			        temp_y += lengthdir_y(4, temp_dir);
-			        path_collision = position_meeting(temp_x, temp_y, oWall);
+			        temp_x += lengthdir_x(8, temp_dir);
+			        temp_y += lengthdir_y(8, temp_dir);
+			        path_collision = position_meeting(temp_x, temp_y, oParWall);
 			    }
                         
 			    if !path_collision
@@ -260,10 +263,81 @@ function scr_pathfind(xgoal, ygoal, speed) {
 					_pathAmount--;
 					
 				    i -= 1
+					
+					dbg("New cycle")
+					dbg(_pathAmount)
 			    }
 		    }
 	    }
-                
+		
+		*/
+		
+		#endregion
+		
+		#region Pathfinder
+		
+		var _pathAmount = path_get_number(path);
+		
+	    if _pathAmount > 2
+	    {
+		    var x1, y1, x2, y2;
+	
+			// See if you can skip to the end
+			var _startPointX	= path_get_point_x(path, 0);
+			var _startPointY	= path_get_point_y(path, 0);
+			var _endpointX		= path_get_point_x(path, _pathAmount-1);
+			var _endpointY		= path_get_point_y(path, _pathAmount-1);
+			
+			if(!collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oParWall, false, true))
+			{				
+				// Cut out the middle points			
+				while(path_get_number(path) > 2)
+				{
+					path_delete_point(path, 1);
+				}
+			}
+			else
+			{
+			    for(var i = 1; i < _pathAmount - 1; i++)
+			    {
+				    x1 = path_get_point_x(path, i - 1)
+				    y1 = path_get_point_y(path, i - 1)
+			
+				    x2 = path_get_point_x(path, i + 1)
+				    y2 = path_get_point_y(path, i + 1)
+                        
+				    //raycast
+				    var temp_dir	= point_direction(x1, y1, x2, y2);
+				
+				    var temp_x		= x1+lengthdir_x(8, temp_dir);
+				    var temp_y		= y1+lengthdir_y(8, temp_dir);
+				
+				    var start_xr	= temp_x;
+				    var start_yr	= temp_y;
+					
+					var path_collision = position_meeting(temp_x, temp_y, oParWall);
+			
+					while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
+					{
+					    temp_x += lengthdir_x(8, temp_dir);
+					    temp_y += lengthdir_y(8, temp_dir);
+					    path_collision = position_meeting(temp_x, temp_y, oParWall);
+					}
+                        
+					if !path_collision
+					{
+						path_delete_point(path, i);
+					
+						_pathAmount--;
+					
+						i--;
+					}
+			    }
+			}
+	    }
+		
+		#endregion
+		
 	    path_start(path, speed, path_action_stop, false);
 	}
 	else
@@ -272,6 +346,9 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		goalY = y;
 		
 		moveState = action.idle;
+		
+		// Update sprite
+		event_user(0);
 	}
 }
 
