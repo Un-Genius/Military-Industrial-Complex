@@ -55,6 +55,9 @@ goalY = y;
 pathX = x;
 pathY = y;
 
+oldPathX = pathX;
+oldPathY = pathY;
+
 // Image direction
 dir = 0;
 

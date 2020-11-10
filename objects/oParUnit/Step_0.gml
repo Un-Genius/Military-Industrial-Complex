@@ -4,7 +4,7 @@ if state == action.attacking || moveState == action.moving
 {	
 	// Set direction
 	if state != action.attacking
-		dir = point_direction(x, y, pathX, pathY) - 180;
+		dir = point_direction(x, y, oldPathX, oldPathY) - 180;
 	
 	image_angle += sin(degtorad(dir - image_angle)) * 15;
 }

@@ -29,8 +29,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Units",
-    "path": "folders/Objects/Units.yy",
+    "name": "Infantry",
+    "path": "folders/Objects/Units/Infantry.yy",
   },
   "resourceVersion": "1.0",
   "name": "oInfantry",

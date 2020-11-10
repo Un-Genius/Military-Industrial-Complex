@@ -30,8 +30,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Client",
-    "path": "folders/Objects/Units/Client.yy",
+    "name": "Infantry",
+    "path": "folders/Objects/Units/Client/Infantry.yy",
   },
   "resourceVersion": "1.0",
   "name": "oDummyClient",

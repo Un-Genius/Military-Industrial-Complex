@@ -29,8 +29,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Units",
-    "path": "folders/Objects/Units.yy",
+    "name": "Vehicles",
+    "path": "folders/Objects/Units/Vehicles.yy",
   },
   "resourceVersion": "1.0",
   "name": "oArtillery",

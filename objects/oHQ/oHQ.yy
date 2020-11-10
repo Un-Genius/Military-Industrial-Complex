@@ -31,8 +31,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Units",
-    "path": "folders/Objects/Units.yy",
+    "name": "Buildings",
+    "path": "folders/Objects/Units/Buildings.yy",
   },
   "resourceVersion": "1.0",
   "name": "oHQ",
