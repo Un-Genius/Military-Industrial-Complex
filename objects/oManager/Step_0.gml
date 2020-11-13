@@ -535,7 +535,6 @@ switch(state)
 			alarm[3] = 3 * room_speed;
 						
 			reset_pathfind();
-			update_pathfind();
 		}
 		
 		#endregion

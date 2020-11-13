@@ -14,9 +14,6 @@ moveSpd		= 4;		// pixel per frame
 unit		= unitType.gnd; // Type of unit for health
 armor		= 1;
 
-maxHp		= 4;		// How much health points they can have
-hp			= maxHp;	// How much health points they have
-
 resources	= 100;
 
 #endregion

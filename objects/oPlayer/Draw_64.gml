@@ -39,6 +39,4 @@ if(instance_exists(_value) && _value > 1000)
 	draw_text(225,global.RES_H/2 + 375,"Movement Speed:  " + string(_value.moveSpd));
 }
 
-
-
 #endregion 

@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "sHQ",
-    "path": "sprites/sHQ/sHQ.yy",
+    "name": "sVeh_USA_basic_0",
+    "path": "sprites/sVeh_USA_basic_0/sVeh_USA_basic_0.yy",
   },
   "solid": false,
   "visible": true,
@@ -26,7 +26,9 @@
   "physicsStartAwake": true,
   "physicsKinematic": false,
   "physicsShapePoints": [],
-  "eventList": [],
+  "eventList": [
+    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oTransportClient","path":"objects/oTransportClient/oTransportClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+  ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {

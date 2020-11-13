@@ -132,7 +132,7 @@ if hp <= 0
 
 #region Attack
 
-// Stop if its an HQ
+// Stop if its not hostile or reloading
 if gun != noone && state != action.reloading 
 {
 	if currentAmmo > 0 
@@ -329,6 +329,7 @@ if gun != noone && state != action.reloading
 #endregion
 
 #region State Machine
+
 // idle, move, attack, reload
 switch state
 {
@@ -380,5 +381,3 @@ switch state
 }
 
 #endregion
-
-	
