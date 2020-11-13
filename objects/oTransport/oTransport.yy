@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "Sprite31",
-    "path": "sprites/Sprite31/Sprite31.yy",
+    "name": "sVeh_USA_basic_0",
+    "path": "sprites/sVeh_USA_basic_0/sVeh_USA_basic_0.yy",
   },
   "solid": false,
   "visible": true,
@@ -25,13 +25,12 @@
   "physicsShapePoints": [],
   "eventList": [
     {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oTransport","path":"objects/oTransport/oTransport.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
-    {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"parent":{"name":"oTransport","path":"objects/oTransport/oTransport.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Units",
-    "path": "folders/Objects/Units.yy",
+    "name": "Vehicles",
+    "path": "folders/Objects/Units/Vehicles.yy",
   },
   "resourceVersion": "1.0",
   "name": "oTransport",

@@ -1,13 +1,10 @@
-
-
-
 #region Sprites management
 
 if state == action.attacking || moveState == action.moving
 {	
 	// Set direction
 	if state != action.attacking
-		dir = point_direction(x, y, pathX, pathY) - 180;
+		dir = point_direction(x, y, oldPathX, oldPathY) - 180;
 	
 	image_angle += sin(degtorad(dir - image_angle)) * 15;
 }
@@ -135,7 +132,7 @@ if hp <= 0
 
 #region Attack
 
-// Stop if its an HQ
+// Stop if its not hostile or reloading
 if gun != noone && state != action.reloading 
 {
 	if currentAmmo > 0 
@@ -166,20 +163,17 @@ if gun != noone && state != action.reloading
 					// Check if its an enemy
 					if(_team != team || team == 0) && _numColor != numColor
 					{
-						_enemy = _inst;
-						break;
+						// Check if wall is in the way
+						if(!collision_line(x, y, _inst.x, _inst.y, oParWall, false, true))
+						{
+							_enemy = _inst;
+							break;
+						}
 					}
 				}
 				
 				if instance_exists(_enemy) && _enemy > 1000 
-				{
-					// Get position
-					with(_enemy)
-					{
-						var _enemyX = x;
-						var _enemyY = y;
-					}
-				
+				{				
 					if state == action.idle 
 					{
 						// Set state
@@ -187,16 +181,34 @@ if gun != noone && state != action.reloading
 						
 						// Update sprite
 						event_user(0);
-					
-					
 					}
 					
-					if state == action.attacking 			
-
-					{					
-						// Find angle
-						var _angle = point_direction(x, y, _enemyX, _enemyY);
+					if state == action.attacking
+					{	
+						// Hold x, y locally
+						var _x = x;
+						var _y = y;
 						
+						// Get position
+						with(_enemy)
+						{
+							var _enemyX = x;
+							var _enemyY = y;
+							
+							// Check if he is moving
+							if moveState == action.moving
+							{
+								// Figure out how far ahead to point using bullet speed and distance
+								var _interceptionFactor = point_distance(_x, _y, x, y) / 14
+								
+								_enemyX	+= lengthdir_x(moveSpd * _interceptionFactor, dir);
+								_enemyY	+= lengthdir_y(moveSpd * _interceptionFactor, dir);
+							}
+						}
+						
+						// Point at target
+						var _angle = point_direction(x, y, _enemyX, _enemyY);
+												
 						// Point direction of enemy
 						dir = _angle;
 						
@@ -204,10 +216,12 @@ if gun != noone && state != action.reloading
 						var _y = y + lengthdir_y(26, _angle-10);
 						
 						// Shoot bullet
-						var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet);
+						var _bullet		= instance_create_layer(_x, _y, "Bullets", oBullet);
 				
 						// Add randomness
-						_angle += random_range(-3, 3);
+						var _adjustment = random_range(0.75, 1.25);
+						
+						_angle += _adjustment * choose(-1, 1);
 				
 						// Give data
 						var _gun		= gun;
@@ -221,21 +235,17 @@ if gun != noone && state != action.reloading
 						// Find default accuracy
 						switch _gun
 						{
-							case gunType.lightCan:	_accuracy = 5	break;
-							case gunType.mediumCan:	_accuracy = 4	break;
-							case gunType.heavyCan:	_accuracy = 3	break;
-							case gunType.rifle:		_accuracy = 6	break;
-							case gunType.lightMG:	_accuracy = 5	break;
-							case gunType.mediumMG:	_accuracy = 4	break;
-							case gunType.heavyMG:	_accuracy = 4	break;
-							case gunType.ATGM:		_accuracy = 6	break;
+							case gunType.lightCan:	_accuracy = 160	break;
+							case gunType.mediumCan:	_accuracy = 180	break;
+							case gunType.heavyCan:	_accuracy = 60	break;
+							case gunType.rifle:		_accuracy = 120	break;
+							case gunType.lightMG:	_accuracy = 100	break;
+							case gunType.mediumMG:	_accuracy = 90	break;
+							case gunType.heavyMG:	_accuracy = 80	break;
+							case gunType.ATGM:		_accuracy = 200	break;
 						}
 				
-						// Add controlled randomness
-						_accuracy += choose(-2, -1, -1, -1, 0,0,0,0,0,0,0, +1, +1, +1, +1, +2);
-				
-						
-						
+						_accuracy *= _adjustment * 3;
 						
 						#endregion
 				
@@ -275,10 +285,7 @@ if gun != noone && state != action.reloading
 						if !clipSize 
 						{
 							state = action.reloading;
-							currentAmmo -= ammoUse;
-							dbg(currentAmmo);
-							
-							
+							currentAmmo -= ammoUse;						
 							
 							if currentAmmo <= 0
 							{
@@ -287,6 +294,17 @@ if gun != noone && state != action.reloading
 							}
 							event_user(0);
 						}
+					}
+				}
+				else
+				{
+					if state != action.reloading || state != action.aiming
+					{
+						// Set state
+						state = action.idle;
+					
+						// Update sprite
+						event_user(0);
 					}
 				}
 			}
@@ -311,6 +329,7 @@ if gun != noone && state != action.reloading
 #endregion
 
 #region State Machine
+
 // idle, move, attack, reload
 switch state
 {
@@ -362,5 +381,3 @@ switch state
 }
 
 #endregion
-
-	

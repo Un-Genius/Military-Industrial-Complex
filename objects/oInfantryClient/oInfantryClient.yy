@@ -24,13 +24,13 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":3,"collisionObjectId":null,"parent":{"name":"oInfantryClient","path":"objects/oInfantryClient/oInfantryClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oInfantryClient","path":"objects/oInfantryClient/oInfantryClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Client",
-    "path": "folders/Objects/Units/Client.yy",
+    "name": "Infantry",
+    "path": "folders/Objects/Units/Client/Infantry.yy",
   },
   "resourceVersion": "1.0",
   "name": "oInfantryClient",

@@ -372,8 +372,8 @@ inGame			= false;
 #region Pathfinding Grid
 
 // Create the Grid
-var cell_width	= 6;
-var cell_height = 6;
+var cell_width	= 8;
+var cell_height = 8;
 
 var hcells = room_width div cell_width;
 var vcells = room_height div cell_height;

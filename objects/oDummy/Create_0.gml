@@ -1,17 +1,24 @@
+/// @description Info for Unit
+
 // Inherit the parent event
 event_inherited();
 
-cost	= 0;
+#region ID of Units
 
-moveSpd	= 0;		// pixel per frame
+cost		= 0;		// Cost of unit
 
+unitName	= "sInf_USA_basic";
+
+moveSpd	= 2;		// pixel per frame
+
+unit	= unitType.inf; // Type of unit for health
 armor	= 1;
 
-maxHp	= 9999;		// How much health points they can have
+maxHp	= 1000;		// How much health points they can have
 hp		= maxHp;	// How much health points they have
 
-gun		= noone;	// Type of gun
+cover	= 20;				// Default cover
 
-team = 0;
+resources = 5;
 
-image_speed = 0;
+#endregion

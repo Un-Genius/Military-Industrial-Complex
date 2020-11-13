@@ -181,6 +181,9 @@ if _click_right_pressed
 	
 	mouseRightPress_x		= device_mouse_x(0);
 	mouseRightPress_y		= device_mouse_y(0);
+	
+	var _mouseRightPress_x = mouseRightPress_x;
+	var _mouseRightPress_y = mouseRightPress_y;
 		
 	// Create context menu
 	var _inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
@@ -188,7 +191,7 @@ if _click_right_pressed
 	with(_inst)
 	{
 		// Move instance
-		if ds_grid_get(global.instGrid, 0, 0) != 0
+		if ds_grid_get(global.instGrid, 0, 0) != 0 && ds_grid_get(global.instGrid, 0, 0).moveSpd != 0
 		{
 			add_context("Move", scr_context_move, false);
 		
@@ -199,12 +202,38 @@ if _click_right_pressed
 		// Select multiple instances
 		add_context("Select all",			scr_context_select_all, false);
 		add_context("Select all on screen", scr_context_select_onScreen, false);
+				
+		// Spawn Units through a unit
+		if instance_exists(oParUnit)
+			_instFind = find_top_Inst(_mouseRightPress_x, _mouseRightPress_y, oParUnit);
 		
-		// Add a break
-		add_context("break", on_click, false);
-		
-		// Spawn units
-		add_context("Spawn Units", scr_context_folder_spawn, true);
+		if instance_exists(_instFind)
+			switch(_instFind.object_index)
+			{
+				case oHQ:
+					add_context("break", on_click, false);
+					add_context("Spawn Units", scr_context_folder_HQspawn, true);
+					break;
+			
+				case oHAB:
+					add_context("break", on_click, false);
+					add_context("Spawn Units", scr_context_folder_HABspawn, true);
+					add_context("break", on_click, false);
+					add_context("Destroy", scr_context_destroy, false);
+					break;
+					
+				case oTransport:
+					if _instFind.resources >= 1
+					{
+						add_context("break", on_click, false);
+						add_context("Spawn Units", scr_context_folder_LOGspawn, true);
+					}
+					break;
+				
+				default:
+					add_context("break", on_click, false);
+					add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
+			}
 		
 		// Update size
 		event_user(0);

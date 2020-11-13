@@ -26,12 +26,14 @@
   "physicsStartAwake": true,
   "physicsKinematic": false,
   "physicsShapePoints": [],
-  "eventList": [],
+  "eventList": [
+    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oDummyClient","path":"objects/oDummyClient/oDummyClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+  ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Client",
-    "path": "folders/Objects/Units/Client.yy",
+    "name": "Infantry",
+    "path": "folders/Objects/Units/Client/Infantry.yy",
   },
   "resourceVersion": "1.0",
   "name": "oDummyClient",

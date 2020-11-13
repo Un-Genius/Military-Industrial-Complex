@@ -1,18 +1,25 @@
+/// @description Info for Unit
+
 // Inherit the parent event
 event_inherited();
 
 #region ID of Units
 
-cost	= 4;
+cost		= 0;		// Cost of unit
 
-moveSpd	= 3;		// pixel per frame
+unitName	= "sVeh_USA_basic";
 
-unit	= unitType.gnd; // Type of unit for health
-armor	= 1;
+moveSpd		= 4;		// pixel per frame
 
-maxHp	= 3;		// How much health points they can have
-hp		= maxHp;	// How much health points they have
+unit		= unitType.gnd; // Type of unit for health
+armor		= 1;
 
-gun		= noone;	// Type of gun
+maxHp		= 4;		// How much health points they can have
+hp			= maxHp;	// How much health points they have
+
+resources	= 100;
 
 #endregion
+
+image_xscale = 0.6;
+image_yscale = 0.6;

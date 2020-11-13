@@ -1,6 +1,7 @@
 if global.debugMenu
 {
 	draw_circle(x, y, range, true);
+	draw_path(path, x, y, true);
 }
 
 // Draw Shadow
@@ -14,7 +15,6 @@ if selected
 	draw_set_color(-1);
 }
 
+image_blend = hashColor;
+
 draw_self();
-
-
-debug_event(state);
