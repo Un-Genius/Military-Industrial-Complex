@@ -212,7 +212,9 @@ var _inst = ds_grid_get(_gridID, _x, _y);
 
 #endregion
 
-#region Pathfind
+#endregion
+
+#region Pathfinding
 
 function scr_pathfind(xgoal, ygoal, speed) {
 	
@@ -222,58 +224,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		//path smoothing
 	    path_set_kind(path, false);
 	    path_set_precision(path, 8);
-		
-		#region Old pathfinder
-		
-		/*
-		var _pathAmount = path_get_number(path);
-		
-	    if _pathAmount > 2
-	    {
-		    var x1, y1, x2, y2;
-	
-		    for(var i = 1; i < path_get_number(path); i++)
-		    {
-			    x1 = path_get_point_x(path, i - 1)
-			    y1 = path_get_point_y(path, i - 1)
-			
-			    x2 = path_get_point_x(path, i + 1)
-			    y2 = path_get_point_y(path, i + 1)
-                        
-			    //raycast
-			    var temp_dir	= point_direction(x1, y1, x2, y2);
-			    var temp_x		= x1+lengthdir_x(8, temp_dir);
-			    var temp_y		= y1+lengthdir_y(8, temp_dir);
-			    var start_xr	= temp_x;
-			    var start_yr	= temp_y;
-			
-			    var path_collision = position_meeting(temp_x, temp_y, oParWall);
-			
-			    while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
-			    {
-			        temp_x += lengthdir_x(8, temp_dir);
-			        temp_y += lengthdir_y(8, temp_dir);
-			        path_collision = position_meeting(temp_x, temp_y, oParWall);
-			    }
-                        
-			    if !path_collision
-			    {
-				    path_delete_point(path, i)
-					
-					_pathAmount--;
-					
-				    i -= 1
-					
-					dbg("New cycle")
-					dbg(_pathAmount)
-			    }
-		    }
-	    }
-		
-		*/
-		
-		#endregion
-		
+				
 		#region Pathfinder
 		
 		var _pathAmount = path_get_number(path);
@@ -288,7 +239,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 			var _endpointX		= path_get_point_x(path, _pathAmount-1);
 			var _endpointY		= path_get_point_y(path, _pathAmount-1);
 			
-			if(!collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oParWall, false, true))
+			if(!collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oObject, false, true))
 			{				
 				// Cut out the middle points			
 				while(path_get_number(path) > 2)
@@ -315,13 +266,13 @@ function scr_pathfind(xgoal, ygoal, speed) {
 				    var start_xr	= temp_x;
 				    var start_yr	= temp_y;
 					
-					var path_collision = position_meeting(temp_x, temp_y, oParWall);
+					var path_collision = position_meeting(temp_x, temp_y, oObject);
 			
 					while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
 					{
 					    temp_x += lengthdir_x(8, temp_dir);
 					    temp_y += lengthdir_y(8, temp_dir);
-					    path_collision = position_meeting(temp_x, temp_y, oParWall);
+					    path_collision = position_meeting(temp_x, temp_y, oObject);
 					}
                         
 					if !path_collision
@@ -352,28 +303,44 @@ function scr_pathfind(xgoal, ygoal, speed) {
 	}
 }
 
-#endregion
-
-#endregion
-
-#region Pathfinding
-
 function reset_pathfind() {
 	// Create the Grid
-	var cell_width = 5;
-	var cell_height = 5;
+	var cell_width = 8;
+	var cell_height = 8;
 
 	var hcells = room_width div cell_width;
 	var vcells = room_height div cell_height;
 
 	mp_grid_destroy(global.grid);
 	global.grid = mp_grid_create(0, 0, hcells, vcells, cell_width, cell_height);
+	
+	update_pathfind();
 }
 
 function update_pathfind() {
-	// Update pathfinding grid
+	// Clear grid
 	mp_grid_clear_all(global.grid);
+	
+	// Add walls
 	mp_grid_add_instances(global.grid, oParWall, false);
+	
+	// Add stationary buildings & weapons
+	for(var i = 0; i < instance_number(oParUnit); i++)
+	{
+		var _instance = instance_find(oParUnit, i);
+		
+		if _instance.moveSpd == 0
+			mp_grid_add_instances(global.grid, _instance, false);
+	}
+	
+	// Add stationary buildings & weapons for client
+	for(var i = 0; i < instance_number(oParUnitClient); i++)
+	{
+		var _instance = instance_find(oParUnitClient, i);
+		
+		if _instance.moveSpd == 0
+			mp_grid_add_instances(global.grid, _instance, false);
+	}
 }
 
 #endregion
@@ -1711,7 +1678,7 @@ function find_context(_string) {
 
 #region Scripts
 
-function scr_context_folder_spawn() {
+function scr_context_folder_HQspawn() {
 	// Set heirarchy
 	var _level = 1;
 
@@ -1724,9 +1691,7 @@ function scr_context_folder_spawn() {
 		{
 			var _contextMenu = ds_list_find_value(contextInstList, i);
 			if _contextMenu.level == _level
-			{
 				exit;
-			}
 		}
 	}
 
@@ -1743,10 +1708,79 @@ function scr_context_folder_spawn() {
 	
 		// Add buttons
 		add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
-		add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
 		add_context("Spawn Transport",	scr_context_spawn_trans, false);
-		add_context("Spawn Armor",		scr_context_spawn_arm,	 false);
-		add_context("Spawn Artillery",	scr_context_spawn_art,	 false);
+	
+		// Update size
+		event_user(0);
+	}
+}
+	
+function scr_context_folder_HABspawn() {
+	// Set heirarchy
+	var _level = 1;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(contextInstList)
+	
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(contextInstList, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mousePressGui_x, mousePressGui_y);
+
+	if _inst == -1
+		exit;
+		
+	with(_inst)
+	{	
+		// Set heirarchy
+		level = _level;
+	
+		// Add buttons
+		add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
+	
+		// Update size
+		event_user(0);
+	}
+}
+	
+function scr_context_folder_LOGspawn() {
+	// Set heirarchy
+	var _level = 1;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(contextInstList)
+	
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(contextInstList, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mousePressGui_x, mousePressGui_y);
+
+	if _inst == -1
+		exit;
+		
+	with(_inst)
+	{	
+		// Set heirarchy
+		level = _level;
+	
+		// Add buttons
+		add_context("Spawn HAB",	scr_context_spawn_HAB,	 false);
 	
 		// Update size
 		event_user(0);
@@ -1786,6 +1820,24 @@ function scr_context_move() {
 	close_context(-1);
 }
 	
+function scr_context_destroy() {
+	
+	with(oPlayer)
+	{
+		// Find goal
+		var _mouse_x = mouseRightPress_x;
+		var _mouse_y = mouseRightPress_y;
+	}
+
+	var _instFind = find_top_Inst(_mouse_x, _mouse_y, oParUnit);
+	
+	// Destroy HAB
+	instance_destroy(_instFind);
+	
+	close_context(-1);
+}
+	
+	
 function scr_context_select_all() {
 	var _size = ds_list_size(global.unitList)
 
@@ -1798,8 +1850,8 @@ function scr_context_select_all() {
 		if !instance_exists(_inst)
 			break;
 	
-		// Check if not HQ
-		if _inst.object_index != oHQ
+		// Check if not a building
+		if _inst.object_index != oPlayer && _inst.moveSpd != 0
 		{
 			// Find name of selected instance		
 			with _inst
@@ -1834,8 +1886,8 @@ function scr_context_select_onScreen() {
 		if !instance_exists(_inst)
 			break;
 	
-		// Check if not HQ
-		if _inst.object_index != oHQ
+		// Check if not a building
+		if _inst.object_index != oPlayer && _inst.moveSpd != 0
 		{
 			// Find name of selected instance		
 			with _inst
@@ -1872,38 +1924,6 @@ function scr_context_spawn_inf() {
 	close_context(-1);
 }
 	
-function scr_context_spawn_arm() {
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-	}
-	
-	// Create instance
-	spawn_unit("oArmor", _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-
-	close_context(-1);
-}
-
-function scr_context_spawn_art() {
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-	}
-	
-	// Create instance
-	spawn_unit("oArtillery", _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-
-	close_context(-1);
-}
-	
 function scr_context_spawn_trans() {
 	with(oPlayer)
 	{
@@ -1929,6 +1949,22 @@ function scr_context_spawn_dummy() {
 	
 	// Create instance
 	spawn_unit("oDummy", _mouseX, _mouseY);
+
+	// Reset hand
+	wipe_Hand(global.instGrid, 0);
+
+	close_context(-1);
+}
+	
+function scr_context_spawn_HAB() {
+	with(oPlayer)
+	{
+		var _mouseX = mouseRightPress_x;
+		var _mouseY = mouseRightPress_y;
+	}
+	
+	// Create instance
+	spawn_unit("oHAB", _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);

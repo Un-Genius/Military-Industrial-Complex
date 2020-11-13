@@ -7,7 +7,7 @@ event_inherited();
 
 cost		= 0;		// Cost of unit
 
-unitName	= "sHQ";
+unitName	= "sHAB";
 
 unit	= unitType.building; // Type of unit for health
 armor	= 2;

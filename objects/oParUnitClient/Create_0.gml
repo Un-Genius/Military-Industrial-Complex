@@ -3,25 +3,20 @@ image_speed = 0;
 
 #region ID of Units
 
-moveSpd	= 2;		// pixel per frame
+cost	= 0;		// Cost of unit
 
-unitName = "sInf_USA_basic";
+unitName = "noone";
+
+moveSpd	= 0;		// pixel per frame
 
 unit	= unitType.inf; // Type of unit for health
-armor	= 1;
+armor	= 0;
 
-hp		= 0;
+hp		= 0;	// How much health points they have
 
-gun		= gunType.rifle;	// Type of gun
-range	= 300;				// How far they can shoot in pixels
-cover	= 4;
+cover	= 0;				// Default cover
 
-bulletFrequency = 2;	// Frequency of bullets per second
-bulletTiming	= 0;	// Holds timing of last bullet
-
-reloadSpd	= 4;	// How fast they reload
-maxClipSize	= 30;	// Max bullets shot before reloading
-clipSize	= maxClipSize;
+resources = 0;
 
 #endregion
 

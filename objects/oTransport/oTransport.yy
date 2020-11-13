@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "Sprite31",
-    "path": "sprites/Sprite31/Sprite31.yy",
+    "name": "sVeh_USA_basic_0",
+    "path": "sprites/sVeh_USA_basic_0/sVeh_USA_basic_0.yy",
   },
   "solid": false,
   "visible": true,

@@ -25,6 +25,8 @@ ammoUse		= 0;			// How much ammo will be consumed after reloading
 maxClipSize	= 0;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
 
+resources	= 0;
+
 #endregion
 
 team		= oManager.team;

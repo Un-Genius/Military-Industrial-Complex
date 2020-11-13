@@ -15,7 +15,6 @@ if selected
 	draw_set_color(-1);
 }
 
+image_blend = hashColor;
+
 draw_self();
-
-
-debug_event(state);

@@ -30,4 +30,6 @@ ammoUse		= 0.25;			// How much ammo will be consumed after reloading
 maxClipSize	= 30;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
 
+resources	= 5;
+
 #endregion

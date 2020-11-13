@@ -1,7 +1,7 @@
 {
   "spriteId": {
-    "name": "sInf_USA_basic_0",
-    "path": "sprites/sInf_USA_basic_0/sInf_USA_basic_0.yy",
+    "name": "sHAB",
+    "path": "sprites/sHAB/sHAB.yy",
   },
   "solid": false,
   "visible": true,
@@ -24,16 +24,17 @@
   "physicsKinematic": false,
   "physicsShapePoints": [],
   "eventList": [
-    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oInfantryClient","path":"objects/oInfantryClient/oInfantryClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {"isDnD":false,"eventNum":0,"eventType":1,"collisionObjectId":null,"parent":{"name":"oHABClient","path":"objects/oHABClient/oHABClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oHABClient","path":"objects/oHABClient/oHABClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
   ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Infantry",
-    "path": "folders/Objects/Units/Client/Infantry.yy",
+    "name": "Buildings",
+    "path": "folders/Objects/Units/Client/Buildings.yy",
   },
   "resourceVersion": "1.0",
-  "name": "oInfantryClient",
+  "name": "oHABClient",
   "tags": [],
   "resourceType": "GMObject",
 }

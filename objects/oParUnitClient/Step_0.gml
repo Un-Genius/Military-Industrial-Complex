@@ -45,10 +45,10 @@ else
 
 #region Attack
 
-// Stop if its an HQ
-if state != action.reloading
+// Stop if its not hostile or reloading
+if gun != noone && state != action.reloading 
 {
-	if clipSize > 0
+	if currentAmmo > 0 
 	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
@@ -121,6 +121,17 @@ if state != action.reloading
 						}
 					}
 				}
+				else
+				{
+					if state != action.reloading || state != action.aiming
+					{
+						// Set state
+						state = action.idle;
+					
+						// Update sprite
+						event_user(0);
+					}
+				}	
 			}
 			else
 			{
@@ -138,6 +149,60 @@ if state != action.reloading
 			ds_list_destroy(_enemy_list);
 		}
 	}
+}
+
+#endregion
+
+#region State Machine
+
+// idle, move, attack, reload
+switch state
+{
+	case action.idle:
+		
+		// Find index
+		var _sprite = asset_get_index(unitName + "_" + string(state));
+		
+		image_speed = sprite_get_speed(_sprite);
+		
+		if distance_to_point(goalX, goalY) < 3
+			image_speed = 0;
+		
+		break;
+				
+	case action.attacking:
+		
+		break;
+		
+	case action.aiming:
+			
+		// Stop reloading if 
+		if image_index > image_number - 1
+		{
+			clipSize = maxClipSize;
+			
+			state = action.attacking;
+			
+			// Update sprite
+			event_user(0);
+		}
+
+		break;
+		
+	case action.reloading:
+		
+		// Stop reloading if 
+		if image_index > image_number - 1
+		{
+			clipSize = maxClipSize;
+			
+			state = action.attacking;
+			
+			// Update sprite
+			event_user(0);
+		}
+		
+		break;
 }
 
 #endregion
