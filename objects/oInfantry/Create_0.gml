@@ -6,6 +6,7 @@ event_inherited();
 #region ID of Units
 
 cost		= 0;		// Cost of unit
+resCost		= unitResCost.inf;		// Cost of unit in resources
 
 unitName	= "sInf_USA_basic";
 
@@ -30,6 +31,7 @@ ammoUse		= 0.25;			// How much ammo will be consumed after reloading
 maxClipSize	= 30;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
 
-resources	= 5;
+maxResCarry	= 5;			// Max resources carried
+resCarry	= maxResCarry;	// Resources carried
 
 #endregion

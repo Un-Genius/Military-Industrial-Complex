@@ -441,6 +441,17 @@ hashColor = findColor(numColor);
 
 #endregion
 
+#region Unit Resource Costs
+
+enum unitResCost
+{
+	inf = 20,
+	trans = 80,
+	HAB = 100,
+}
+
+#endregion
+
 // Debug menu
 global.debugMenu = false;
 

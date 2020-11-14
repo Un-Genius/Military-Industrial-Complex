@@ -1716,6 +1716,10 @@ function scr_context_folder_HQspawn() {
 }
 	
 function scr_context_folder_HABspawn() {
+	
+	if !instance_exists(oParUnit)
+		exit;
+		
 	// Set heirarchy
 	var _level = 1;
 
@@ -1730,6 +1734,8 @@ function scr_context_folder_HABspawn() {
 			if _contextMenu.level == _level
 				exit;
 		}
+		
+		var _instFind = instRightSelected;
 	}
 
 	// Create context menu
@@ -1742,9 +1748,15 @@ function scr_context_folder_HABspawn() {
 	{	
 		// Set heirarchy
 		level = _level;
-	
-		// Add buttons
-		add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
+		
+		if _instFind.resCarry >= unitResCost.inf
+		{
+			add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
+		}
+		else
+		{
+			add_context("Not Enough Resources",	on_click,	 false);
+		}
 	
 		// Update size
 		event_user(0);
@@ -1752,13 +1764,17 @@ function scr_context_folder_HABspawn() {
 }
 	
 function scr_context_folder_LOGspawn() {
+	
+	if !instance_exists(oParUnit)
+		exit;
+	
 	// Set heirarchy
 	var _level = 1;
 
 	with(oPlayer)
 	{
 		var _size = ds_list_size(contextInstList)
-	
+		
 		// Check if not already in list
 		for(var i = 0; i < _size; i++)
 		{
@@ -1766,22 +1782,31 @@ function scr_context_folder_LOGspawn() {
 			if _contextMenu.level == _level
 				exit;
 		}
+		
+		var _instFind = instRightSelected;
 	}
-
+	
 	// Create context menu
 	var _inst = create_context(mousePressGui_x, mousePressGui_y);
 
 	if _inst == -1
 		exit;
-		
+				
 	with(_inst)
 	{	
 		// Set heirarchy
 		level = _level;
-	
-		// Add buttons
-		add_context("Spawn HAB",	scr_context_spawn_HAB,	 false);
-	
+			
+		// Check if there is enough money for a HAB
+		if _instFind.resCarry >= unitResCost.HAB
+		{
+			add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
+		}
+		else
+		{
+			add_context("Not Enough Resources",	on_click,	 false);
+		}
+
 		// Update size
 		event_user(0);
 	}
@@ -1836,8 +1861,7 @@ function scr_context_destroy() {
 	
 	close_context(-1);
 }
-	
-	
+
 function scr_context_select_all() {
 	var _size = ds_list_size(global.unitList)
 
@@ -1908,12 +1932,86 @@ function scr_context_select_onScreen() {
 	close_context(-1);
 }
 	
+function scr_context_grab_res() {
+	// Grab resources from HAB or HQ
+	with(oPlayer)
+	{
+		var _instFind = instRightSelected;
+	}
+	
+	var _HQ = collision_circle(_instFind.x, _instFind.y, 250, oHQ, false, true);
+	
+	if _HQ
+	{
+		_instFind.resCarry = _instFind.maxResCarry;
+	}
+	else
+	{
+		if _instFind != oHAB
+		{
+			var _HAB = collision_circle(_instFind.x, _instFind.y, 250, oHAB, false, true);
+		
+			if _HAB.resCarry > 0
+			{
+				// Find needed resources
+				var _reqRes = _instFind.maxResCarry - _instFind.resCarry;
+			
+				// Find how much resources other can supply
+				_reqRes -= _HAB.resCarry;
+			
+				// Fill request
+				if _reqRes - _HAB.resCarry < 0
+				{
+					_instFind.resCarry = _instFind.maxResCarry;
+					_HAB.resCarry -= _instFind.maxResCarry;
+				}
+				else
+				{
+					_instFind.resCarry = _reqRes - _HAB.resCarry;
+					_HAB.resCarry -= _HAB.resCarry;
+				
+				}
+			}
+		}
+		else
+		{
+			// Find all transport vehicles in the area
+			var _list = ds_list_create();
+			
+			var _amount = collision_circle_list(_instFind.x, _instFind.y, 250, oHAB, false, true, _list, false);
+			
+			for(var i = 0; i < _amount; i++)
+			{
+				var _veh = ds_list_find_value(_list, i);
+				
+				// Find amount
+				var _resAmount = _veh.maxResCarry - _veh.resCarry;
+				
+				// Take away from vehicle
+				_veh.resCarry = 0;
+				
+				// Add to HAB
+				instRightSelected.resCarry += _resAmount;
+			}
+			
+			ds_list_destroy(_list);
+		}
+	}
+	
+	// Update context menu
+	close_context(-1);
+}
+	
 function scr_context_spawn_inf() {
 	with(oPlayer)
 	{
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
+		
+		var _instFind = instRightSelected;
 	}
+		
+	_instFind.resCarry -= unitResCost.inf;
 	
 	// Create instance
 	spawn_unit("oInfantry", _mouseX, _mouseY);
@@ -1929,7 +2027,11 @@ function scr_context_spawn_trans() {
 	{
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
+		
+		var _instFind = instRightSelected;
 	}
+		
+	_instFind.resCarry -= unitResCost.trans;
 	
 	// Create instance
 	spawn_unit("oTransport", _mouseX, _mouseY);
@@ -1946,7 +2048,7 @@ function scr_context_spawn_dummy() {
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
 	}
-	
+		
 	// Create instance
 	spawn_unit("oDummy", _mouseX, _mouseY);
 
@@ -1961,7 +2063,11 @@ function scr_context_spawn_HAB() {
 	{
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
+		
+		var _instFind = instRightSelected;
 	}
+		
+	_instFind.resCarry -= unitResCost.HAB;
 	
 	// Create instance
 	spawn_unit("oHAB", _mouseX, _mouseY);
@@ -1971,8 +2077,7 @@ function scr_context_spawn_HAB() {
 
 	close_context(-1);
 }
-	
-	
+		
 function spawn_unit(_object_string, posX, posY) {
 	
 	var _packet = packet_start(packet_t.add_unit);

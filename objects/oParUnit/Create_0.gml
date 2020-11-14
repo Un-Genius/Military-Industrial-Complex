@@ -1,6 +1,7 @@
 #region ID of Units
 
 cost	= 0;		// Cost of unit
+resCost	= 0;		// Cost of unit in resources
 
 unitName = "noone";
 
@@ -25,7 +26,8 @@ ammoUse		= 0;			// How much ammo will be consumed after reloading
 maxClipSize	= 0;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
 
-resources	= 0;
+maxResCarry	= 0;			// Max resources carried
+resCarry	= maxResCarry;	// Resources carried
 
 #endregion
 

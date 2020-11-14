@@ -187,6 +187,11 @@ if _click_right_pressed
 		
 	// Create context menu
 	var _inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
+	
+	// Spawn Units through a unit
+	instRightSelected = find_top_Inst(_mouseRightPress_x, _mouseRightPress_y, oParUnit);
+	
+	var _instSel = instRightSelected;
 		
 	with(_inst)
 	{
@@ -202,13 +207,17 @@ if _click_right_pressed
 		// Select multiple instances
 		add_context("Select all",			scr_context_select_all, false);
 		add_context("Select all on screen", scr_context_select_onScreen, false);
+						
+		if instance_exists(_instSel)
+		{
+			with(_instSel)
+			{
+				goalX = x;
+				goalY = y;
+				moveState = action.idle;
+			}
 				
-		// Spawn Units through a unit
-		if instance_exists(oParUnit)
-			_instFind = find_top_Inst(_mouseRightPress_x, _mouseRightPress_y, oParUnit);
-		
-		if instance_exists(_instFind)
-			switch(_instFind.object_index)
+			switch(_instSel.object_index)
 			{
 				case oHQ:
 					add_context("break", on_click, false);
@@ -216,24 +225,50 @@ if _click_right_pressed
 					break;
 			
 				case oHAB:
-					add_context("break", on_click, false);
-					add_context("Spawn Units", scr_context_folder_HABspawn, true);
-					add_context("break", on_click, false);
-					add_context("Destroy", scr_context_destroy, false);
+					if _instSel.resCarry > 0
+					{
+						add_context("break", on_click, false);
+						add_context("Spawn Units", scr_context_folder_HABspawn, true);
+						add_context("break", on_click, false);
+						add_context("Destroy", scr_context_destroy, false);
+					}
+					
+					var _LOG = collision_circle(_instSel.x, _instSel.y, 250, oTransport, false, true);
+		
+					// Transfer supplies
+					if _LOG.resCarry > 0
+					{
+						if _instSel.resCarry <= 0
+							add_context("break", on_click, false);
+						add_context("Grab Resources", scr_context_grab_res,	 false);
+					}
 					break;
 					
 				case oTransport:
-					if _instFind.resources >= 1
+					if _instSel.resCarry > 0
 					{
 						add_context("break", on_click, false);
 						add_context("Spawn Units", scr_context_folder_LOGspawn, true);
 					}
+					
+					var _HQ = collision_circle(_instSel.x, _instSel.y, 250, oHQ, false, true);
+					var _HAB = collision_circle(_instSel.x, _instSel.y, 250, oHAB, false, true);
+		
+					// Transfer supplies
+					if (_instSel.resCarry != _instSel.maxResCarry) && (_HQ || (_HAB.resCarry > 0))
+					{
+						if _instSel.resCarry <= 0
+							add_context("break", on_click, false);
+						add_context("Grab Resources", scr_context_grab_res,	 false);
+					}
 					break;
-				
-				default:
-					add_context("break", on_click, false);
-					add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
 			}
+		}
+		else
+		{
+			add_context("break", on_click, false);
+			add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
+		}
 		
 		// Update size
 		event_user(0);
@@ -321,28 +356,6 @@ if _key_rawInput
 			break;
 		}
 	}
-}
-
-#endregion
-
-#region Health
-
-if hp <= 0
-{
-	if lobby_is_owner
-	{
-		// Find player 1 spawn location
-		var _x = ds_grid_get(spawnPointGrid, 0, 0);
-		var _y = ds_grid_get(spawnPointGrid, 1, 0);
-	}
-	else
-	{
-		// Find player 1 spawn location
-		var _x = ds_grid_get(spawnPointGrid, 0, 1);
-		var _y = ds_grid_get(spawnPointGrid, 1, 1);
-	}
-	
-	hp = maxHp;
 }
 
 #endregion
