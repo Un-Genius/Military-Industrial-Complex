@@ -9,6 +9,7 @@ unitName = "noone";
 
 moveSpd	= 0;		// pixel per frame
 
+gun		= noone;
 unit	= unitType.inf; // Type of unit for health
 armor	= 0;
 

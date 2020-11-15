@@ -11,6 +11,7 @@ unitName	= "sInf_USA_basic";
 
 moveSpd	= 2;		// pixel per frame
 
+gun		= gunType.rifle;
 unit	= unitType.inf; // Type of unit for health
 armor	= 1;
 
