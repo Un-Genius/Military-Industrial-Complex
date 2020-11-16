@@ -1939,63 +1939,54 @@ function scr_context_grab_res() {
 		var _instFind = instRightSelected;
 	}
 	
-	var _HQ = collision_circle(_instFind.x, _instFind.y, 250, oHQ, false, true);
-	
-	if _HQ
+	if _instFind != oHAB
 	{
-		_instFind.resCarry = _instFind.maxResCarry;
+		var _HAB = collision_circle(_instFind.x, _instFind.y, 150, oHAB, false, true);
+		
+		if _HAB.resCarry > 0
+		{
+			// Find needed resources
+			var _reqRes = _instFind.maxResCarry - _instFind.resCarry;
+			
+			// Find how much resources other can supply
+			_reqRes -= _HAB.resCarry;
+			
+			// Fill request
+			if _reqRes - _HAB.resCarry < 0
+			{
+				_instFind.resCarry = _instFind.maxResCarry;
+				_HAB.resCarry -= _instFind.maxResCarry;
+			}
+			else
+			{
+				_instFind.resCarry = _reqRes - _HAB.resCarry;
+				_HAB.resCarry -= _HAB.resCarry;
+				
+			}
+		}
 	}
 	else
 	{
-		if _instFind != oHAB
+		// Find all transport vehicles in the area
+		var _list = ds_list_create();
+			
+		var _amount = collision_circle_list(_instFind.x, _instFind.y, 150, oHAB, false, true, _list, false);
+			
+		for(var i = 0; i < _amount; i++)
 		{
-			var _HAB = collision_circle(_instFind.x, _instFind.y, 250, oHAB, false, true);
-		
-			if _HAB.resCarry > 0
-			{
-				// Find needed resources
-				var _reqRes = _instFind.maxResCarry - _instFind.resCarry;
-			
-				// Find how much resources other can supply
-				_reqRes -= _HAB.resCarry;
-			
-				// Fill request
-				if _reqRes - _HAB.resCarry < 0
-				{
-					_instFind.resCarry = _instFind.maxResCarry;
-					_HAB.resCarry -= _instFind.maxResCarry;
-				}
-				else
-				{
-					_instFind.resCarry = _reqRes - _HAB.resCarry;
-					_HAB.resCarry -= _HAB.resCarry;
+			var _veh = ds_list_find_value(_list, i);
 				
-				}
-			}
+			// Find amount
+			var _resAmount = _veh.maxResCarry - _veh.resCarry;
+				
+			// Take away from vehicle
+			_veh.resCarry = 0;
+				
+			// Add to HAB
+			instRightSelected.resCarry += _resAmount;
 		}
-		else
-		{
-			// Find all transport vehicles in the area
-			var _list = ds_list_create();
 			
-			var _amount = collision_circle_list(_instFind.x, _instFind.y, 250, oHAB, false, true, _list, false);
-			
-			for(var i = 0; i < _amount; i++)
-			{
-				var _veh = ds_list_find_value(_list, i);
-				
-				// Find amount
-				var _resAmount = _veh.maxResCarry - _veh.resCarry;
-				
-				// Take away from vehicle
-				_veh.resCarry = 0;
-				
-				// Add to HAB
-				instRightSelected.resCarry += _resAmount;
-			}
-			
-			ds_list_destroy(_list);
-		}
+		ds_list_destroy(_list);
 	}
 	
 	// Update context menu

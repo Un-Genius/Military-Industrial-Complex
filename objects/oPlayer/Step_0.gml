@@ -233,10 +233,10 @@ if _click_right_pressed
 						add_context("Destroy", scr_context_destroy, false);
 					}
 					
-					var _LOG = collision_circle(_instSel.x, _instSel.y, 250, oTransport, false, true);
+					var _LOG = collision_circle(_instSel.x, _instSel.y, 150, oTransport, false, true);
 		
 					// Transfer supplies
-					if _LOG.resCarry > 0
+					if _LOG && _LOG.resCarry > 0
 					{
 						if _instSel.resCarry <= 0
 							add_context("break", on_click, false);
@@ -250,12 +250,11 @@ if _click_right_pressed
 						add_context("break", on_click, false);
 						add_context("Spawn Units", scr_context_folder_LOGspawn, true);
 					}
-					
-					var _HQ = collision_circle(_instSel.x, _instSel.y, 250, oHQ, false, true);
-					var _HAB = collision_circle(_instSel.x, _instSel.y, 250, oHAB, false, true);
+				
+					var _HAB = collision_circle(_instSel.x, _instSel.y, 150, oHAB, false, true);
 		
 					// Transfer supplies
-					if (_instSel.resCarry != _instSel.maxResCarry) && (_HQ || (_HAB.resCarry > 0))
+					if (_instSel.resCarry != _instSel.maxResCarry) && (_HAB && _HAB.resCarry > 0)
 					{
 						if _instSel.resCarry <= 0
 							add_context("break", on_click, false);

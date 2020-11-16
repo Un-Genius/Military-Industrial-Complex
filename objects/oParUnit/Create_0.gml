@@ -20,14 +20,12 @@ cover	= 0;				// Default cover
 bulletFrequency = 0;	// Frequency of bullets per second
 bulletTiming	= 0;	// Holds timing of last bullet
 
-maxAmmo		= 0;			// Maximum amount of ammo(bullets) they can shoot
-currentAmmo = maxAmmo;		//Current amount of ammo held
+maxResCarry	= 0;			// Max resources carried
+resCarry	= maxResCarry;	// Resources carried
+
 ammoUse		= 0;			// How much ammo will be consumed after reloading
 maxClipSize	= 0;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
-
-maxResCarry	= 0;			// Max resources carried
-resCarry	= maxResCarry;	// Resources carried
 
 #endregion
 

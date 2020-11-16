@@ -130,12 +130,83 @@ if hp <= 0
 
 #endregion
 
+#region Resources
+
+// Check if needed
+if resCarry != maxResCarry
+{
+	var _HQ = collision_circle(x, y, 150, oHQ, false, true);
+		
+	// Check if HAB or HQ nearby
+	if _HQ
+	{
+		resCarry = maxResCarry;
+	}
+	else
+	{
+		// Get resources if not transport
+		if object_index != oTransport
+		{
+			var _HAB = collision_circle(x, y, 150, oHAB, false, true);
+		
+			if _HAB && _HAB.resCarry > 0
+			{
+				// Find needed resources
+				var _reqRes = maxResCarry - resCarry;
+			
+				// Find how much resources other can supply
+				_reqRes -= _HAB.resCarry;
+			
+				// Fill request
+				if _reqRes - _HAB.resCarry < 0
+				{
+					resCarry = maxResCarry;
+					_HAB.resCarry -= maxResCarry;
+				}
+				else
+				{
+					resCarry = _reqRes - _HAB.resCarry;
+					_HAB.resCarry -= _HAB.resCarry;
+				
+				}
+			}
+			else
+			{
+				var _TRANS = collision_circle(x, y, 150, oTransport, false, true);
+				
+				if _HAB && _HAB.resCarry > 0
+				{
+					// Find needed resources
+					var _reqRes = maxResCarry - resCarry;
+			
+					// Find how much resources other can supply
+					_reqRes -= _TRANS.resCarry;
+			
+					// Fill request
+					if _reqRes - _TRANS.resCarry < 0
+					{
+						resCarry = maxResCarry;
+						_TRANS.resCarry -= maxResCarry;
+					}
+					else
+					{
+						resCarry = _reqRes - _TRANS.resCarry;
+						_TRANS.resCarry -= _TRANS.resCarry;
+					}
+				}
+			}
+		}
+	}
+}
+
+#endregion
+
 #region Attack
 
 // Stop if its not hostile or reloading
 if gun != noone && state != action.reloading 
 {
-	if currentAmmo > 0 
+	if resCarry > 0 
 	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
@@ -285,9 +356,9 @@ if gun != noone && state != action.reloading
 						if !clipSize 
 						{
 							state = action.reloading;
-							currentAmmo -= ammoUse;						
+							resCarry -= ammoUse;						
 							
-							if currentAmmo <= 0
+							if resCarry <= 0
 							{
 							  state = action.idle;			
 							  

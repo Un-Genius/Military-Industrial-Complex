@@ -11,7 +11,6 @@ image_blend = hashColor;
 if keyboard_check_pressed(vk_f1)
 {
 	global.debugMenu = !global.debugMenu;
-	show_debug_overlay(global.debugMenu)
 }
 
 if global.debugMenu
