@@ -3,8 +3,6 @@ image_speed = 0;
 
 #region ID of Units
 
-cost	= 0;		// Cost of unit
-
 unitName = "noone";
 
 moveSpd	= 0;		// pixel per frame
@@ -16,8 +14,6 @@ armor	= 0;
 hp		= 0;	// How much health points they have
 
 cover	= 0;				// Default cover
-
-resources = 0;
 
 #endregion
 
@@ -38,5 +34,4 @@ pathY = y;
 dir = 0;
 
 state = action.idle;
-
 moveState = action.idle;

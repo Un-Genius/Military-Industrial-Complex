@@ -72,11 +72,7 @@ if _click_left_released && release
 	// Drop instance
 	release = false;
 	
-	// Reset state
-	moveState = action.idle;
-	
-	// Update sprite
-	event_user(0);
+	update_state(-1, action.idle);
 	
 	// Set goal
 	goalX	= _mouse_x;
@@ -108,17 +104,12 @@ if point_distance(x, y, goalX, goalY) > 3
 
 		#endregion
 		
-		// Set moveState
-		moveState = action.moving;
-		
-		// Update direction
-		alarm[1] = 1;
+		update_state(-1, action.moving);
 	}
 }
 else
 {
-	// Set idle
-	moveState = action.idle;
+	update_state(-1, action.idle);
 }
 
 #endregion
@@ -247,11 +238,7 @@ if gun != noone && state != action.reloading
 				{				
 					if state == action.idle 
 					{
-						// Set state
-						state = action.aiming;
-						
-						// Update sprite
-						event_user(0);
+						update_state(action.aiming, -1);
 					}
 					
 					if state == action.attacking
@@ -355,15 +342,14 @@ if gun != noone && state != action.reloading
 						// Start reloading and stops shooting animation if no ammo
 						if !clipSize 
 						{
-							state = action.reloading;
+							update_state(action.reloading, -1);
 							resCarry -= ammoUse;						
 							
 							if resCarry <= 0
 							{
-							  state = action.idle;			
+							  update_state(action.idle, -1);			
 							  
 							}
-							event_user(0);
 						}
 					}
 				}
@@ -371,11 +357,7 @@ if gun != noone && state != action.reloading
 				{
 					if state != action.reloading || state != action.aiming
 					{
-						// Set state
-						state = action.idle;
-					
-						// Update sprite
-						event_user(0);
+						update_state(action.idle, -1);
 					}
 				}
 			}
@@ -383,11 +365,7 @@ if gun != noone && state != action.reloading
 			{
 			 	if state == action.attacking
 				{
-					// Set state
-					state = action.idle;
-					
-					// Update sprite
-					event_user(0);
+					update_state(action.idle, -1);
 				}
 			}
 			
@@ -427,10 +405,7 @@ switch state
 		{
 			clipSize = maxClipSize;
 			
-			state = action.attacking;
-			
-			// Update sprite
-			event_user(0);
+			update_state(action.attacking, -1);
 		}
 
 		break;
@@ -442,10 +417,7 @@ switch state
 		{
 			clipSize = maxClipSize;
 			
-			state = action.attacking;
-			
-			// Update sprite
-			event_user(0);
+			update_state(action.attacking, -1);
 		}
 		
 		break;

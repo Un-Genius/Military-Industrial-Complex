@@ -195,7 +195,7 @@ function find_top_Inst(_x, _y, _obj) {
 
 #endregion
 
-#region Modify Instance
+#region Modify/Update Instance
 
 function modify_Selected_Slot(_gridID, _x, _y, _selected) {
 
@@ -208,6 +208,39 @@ var _inst = ds_grid_get(_gridID, _x, _y);
 	{
 		selected = _selected;
 	}
+}
+	
+function update_state(_newState, _newMoveState)
+{
+	// Inserting -1 will mean no update
+	
+	// Set moveState
+	if _newState != -1
+		state = _newState;
+	
+	// Set moveState
+	if _newMoveState != -1
+		moveState = _newMoveState;
+		
+	// Update direction
+	alarm[1] = 1;
+	
+	// Update sprite
+	event_user(0);
+	
+	#region Update doppelganger
+
+	// Find self in list
+	var _pos = ds_list_find_index(global.unitList, id)
+
+	// Send position and rotation to others
+	var _packet = packet_start(packet_t.update_unit);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_s8, state);
+	buffer_write(_packet, buffer_s8, moveState);
+	packet_send_all(_packet);
+	
+	#endregion
 }
 
 #endregion
@@ -820,6 +853,8 @@ function packet_handle_client(from) {
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
+					
+					scr_pathfind(goalX, goalY, moveSpd);
 				}
 				else
 				{
@@ -827,6 +862,45 @@ function packet_handle_client(from) {
 					x = _goalX;
 					y = _goalY;
 				}
+			}
+			
+			break;
+			
+		case packet_t.update_unit:
+			
+			// Check if still in game
+			if !inGame
+				break;
+			
+			// Get data
+			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _newState		= buffer_read(_buffer, buffer_s8);
+			var _newMoveState	= buffer_read(_buffer, buffer_s8);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+
+			// Find Unit
+			var _unit		= ds_list_find_value(_list, _posList);
+			
+			if is_undefined(_unit) || !instance_exists(_unit)
+				break;
+			
+			with(_unit)
+			{
+				// Set moveState
+				if _newState != -1
+					state = _newState;
+	
+				// Set moveState
+				if _newMoveState != -1
+					moveState = _newMoveState;
+					
+				// Update sprite
+				event_user(0);
+		
+				// Update direction
+				alarm[1] = 1;
 			}
 			
 			break;
@@ -1182,6 +1256,51 @@ function packet_handle_server(from) {
 					x = _goalX;
 					y = _goalY;
 				}
+			}
+			
+			break;
+			
+		case packet_t.update_unit:
+			
+			// Check if still in game
+			if !inGame
+				break;
+			
+			// Get data
+			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _newState		= buffer_read(_buffer, buffer_s8);
+			var _newMoveState	= buffer_read(_buffer, buffer_s8);
+			
+			var _buffer = packet_start(packet_t.move_unit);
+			buffer_write(_buffer, buffer_u16, _posList);
+			buffer_write(_buffer, buffer_s8, _newState);
+			buffer_write(_buffer, buffer_s8, _newMoveState); 
+			packet_send_except(_buffer, from);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+
+			// Find Unit
+			var _unit		= ds_list_find_value(_list, _posList);
+			
+			if is_undefined(_unit) || !instance_exists(_unit)
+				break;
+			
+			with(_unit)
+			{
+				// Set moveState
+				if _newState != -1
+					state = _newState;
+	
+				// Set moveState
+				if _newMoveState != -1
+					moveState = _newMoveState;
+					
+				// Update sprite
+				event_user(0);
+		
+				// Update direction
+				alarm[1] = 1;
 			}
 			
 			break;
