@@ -24,6 +24,10 @@ hashColor	= noone;
 // Pathfinding
 path = path_add();
 
+// Move slightly over if spawned on top of unit
+while instance_place(x, y, oParUnit)
+	y += 48;
+
 // Goal
 goalX = x;
 goalY = y;
