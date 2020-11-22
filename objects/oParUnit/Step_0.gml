@@ -356,7 +356,7 @@ if gun != noone && state != action.reloading
 				}
 				else
 				{
-					if state != action.reloading || state != action.aiming
+					if (state != action.reloading || state != action.aiming) && state != action.idle
 					{
 						update_state(action.idle, -1);
 					}
