@@ -11,12 +11,14 @@ unitName	= "sInf_USA_basic";
 
 moveSpd	= 2;		// pixel per frame
 
-gun		= gunType.rifle;
 unit	= unitType.inf; // Type of unit for health
 armor	= 1;
 
+gun		= gunType.rifle;	// Type of gun
+range	= 400;				// How far they can shoot in pixels
 cover	= 10;				// Default cover
 
-resources	= 5;
+bulletFrequency = 2;	// Frequency of bullets per second
+bulletTiming	= 0;	// Holds timing of last bullet
 
 #endregion
