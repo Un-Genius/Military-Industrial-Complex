@@ -10,6 +10,9 @@ moveSpd	= 0;		// pixel per frame
 range	= 0
 
 gun		= noone;
+bulletFrequency = 2;	// Frequency of bullets per second
+bulletTiming	= 0;	// Holds timing of last bullet
+
 unit	= unitType.inf; // Type of unit for health
 armor	= 0;
 
