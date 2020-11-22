@@ -196,7 +196,7 @@ if _click_right_pressed
 	with(_inst)
 	{
 		// Move instance
-		if ds_grid_get(global.instGrid, 0, 0) != 0 && ds_grid_get(global.instGrid, 0, 0).moveSpd != 0
+		if instance_exists(ds_grid_get(global.instGrid, 0, 0)) && ds_grid_get(global.instGrid, 0, 0).moveSpd != 0
 		{
 			add_context("Move", scr_context_move, false);
 		
