@@ -109,7 +109,8 @@ if point_distance(x, y, goalX, goalY) > 3
 }
 else
 {
-	update_state(-1, action.idle);
+	if moveState != action.idle
+		update_state(-1, action.idle);
 }
 
 #endregion

@@ -37,6 +37,9 @@ goalY = y;
 pathX = x;
 pathY = y;
 
+oldPathX = pathX;
+oldPathY = pathY;
+
 dir = 0;
 
 state = action.idle;
