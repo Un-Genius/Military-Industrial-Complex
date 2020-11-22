@@ -1249,6 +1249,8 @@ function packet_handle_server(from) {
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
+					
+					scr_pathfind(goalX, goalY, moveSpd);
 				}
 				else
 				{
