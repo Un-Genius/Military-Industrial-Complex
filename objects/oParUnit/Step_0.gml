@@ -127,7 +127,7 @@ if hp <= 0
 // Check if needed
 if resCarry != maxResCarry
 {
-	var _HQ = collision_circle(x, y, 150, oHQ, false, true);
+	var _HQ = collision_circle(x, y, resRange, oHQ, false, true);
 		
 	// Check if HAB or HQ nearby
 	if _HQ
@@ -139,7 +139,7 @@ if resCarry != maxResCarry
 		// Get resources if not transport
 		if object_index != oTransport
 		{
-			var _HAB = collision_circle(x, y, 150, oHAB, false, true);
+			var _HAB = collision_circle(x, y, resRange, oHAB, false, true);
 		
 			if _HAB && _HAB.resCarry > 0
 			{
@@ -164,7 +164,7 @@ if resCarry != maxResCarry
 			}
 			else
 			{
-				var _TRANS = collision_circle(x, y, 150, oTransport, false, true);
+				var _TRANS = collision_circle(x, y, resRange, oTransport, false, true);
 				
 				if _HAB && _HAB.resCarry > 0
 				{

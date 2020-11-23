@@ -22,6 +22,7 @@ bulletTiming	= 0;	// Holds timing of last bullet
 
 maxResCarry	= 0;			// Max resources carried
 resCarry	= maxResCarry;	// Resources carried
+resRange	= 100;			// Range to transfer resources
 
 ammoUse		= 0;			// How much ammo will be consumed after reloading
 maxClipSize	= 0;			// Max bullets shot before reloading

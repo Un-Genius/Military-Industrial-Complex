@@ -215,9 +215,16 @@ if _click_right_pressed
 				goalX = x;
 				goalY = y;
 				moveState = action.idle;
+				
+				var _objectIndex = object_index;
+				var _x = x;
+				var _y = y;
+				var _resCarry = resCarry;
+				var _resRange = resRange;
+				var _maxResCarry = maxResCarry;
 			}
 				
-			switch(_instSel.object_index)
+			switch(_objectIndex)
 			{
 				case oHQ:
 					add_context("break", on_click, false);
@@ -225,7 +232,7 @@ if _click_right_pressed
 					break;
 			
 				case oHAB:
-					if _instSel.resCarry > 0
+					if _resCarry > 0
 					{
 						add_context("break", on_click, false);
 						add_context("Spawn Units", scr_context_folder_HABspawn, true);
@@ -233,30 +240,30 @@ if _click_right_pressed
 						add_context("Destroy", scr_context_destroy, false);
 					}
 					
-					var _LOG = collision_circle(_instSel.x, _instSel.y, 150, oTransport, false, true);
+					var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
 		
 					// Transfer supplies
 					if _LOG && _LOG.resCarry > 0
 					{
-						if _instSel.resCarry <= 0
+						if _resCarry <= 0
 							add_context("break", on_click, false);
 						add_context("Grab Resources", scr_context_grab_res,	 false);
 					}
 					break;
 					
 				case oTransport:
-					if _instSel.resCarry > 0
+					if _resCarry > 0
 					{
 						add_context("break", on_click, false);
 						add_context("Spawn Units", scr_context_folder_LOGspawn, true);
 					}
 				
-					var _HAB = collision_circle(_instSel.x, _instSel.y, 150, oHAB, false, true);
+					var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
 		
 					// Transfer supplies
-					if (_instSel.resCarry != _instSel.maxResCarry) && (_HAB && _HAB.resCarry > 0)
+					if (_resCarry != _maxResCarry) && (_HAB && _HAB.resCarry > 0)
 					{
-						if _instSel.resCarry <= 0
+						if _resCarry <= 0
 							add_context("break", on_click, false);
 						add_context("Grab Resources", scr_context_grab_res,	 false);
 					}

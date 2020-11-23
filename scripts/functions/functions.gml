@@ -1921,11 +1921,18 @@ function scr_context_folder_LOGspawn() {
 		// Check if there is enough money for a HAB
 		if _instFind.resCarry >= unitResCost.HAB
 		{
-			add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
+			var _oHAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
+			var _oHQ  = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHQ, false, true);
+			
+			// Check if near a building
+			if _oHAB > 0 || _oHQ > 0
+				add_context("Too close to Building", on_click,	 false);
+			else
+				add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
 		}
 		else
 		{
-			add_context("Not Enough Resources",	on_click,	 false);
+			add_context("Not Enough Resources", on_click,	 false);
 		}
 
 		// Update size
@@ -2060,9 +2067,9 @@ function scr_context_grab_res() {
 		var _instFind = instRightSelected;
 	}
 	
-	if _instFind != oHAB
+	if _instFind.object_index != oHAB
 	{
-		var _HAB = collision_circle(_instFind.x, _instFind.y, 150, oHAB, false, true);
+		var _HAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
 		
 		if _HAB.resCarry > 0
 		{
@@ -2091,20 +2098,17 @@ function scr_context_grab_res() {
 		// Find all transport vehicles in the area
 		var _list = ds_list_create();
 			
-		var _amount = collision_circle_list(_instFind.x, _instFind.y, 150, oHAB, false, true, _list, false);
+		var _amount = collision_circle_list(_instFind.x, _instFind.y, _instFind.resRange, oTransport, false, true, _list, false);
 			
 		for(var i = 0; i < _amount; i++)
 		{
 			var _veh = ds_list_find_value(_list, i);
 				
-			// Find amount
-			var _resAmount = _veh.maxResCarry - _veh.resCarry;
+			// Add to HAB
+			_instFind.resCarry += _veh.resCarry;
 				
 			// Take away from vehicle
 			_veh.resCarry = 0;
-				
-			// Add to HAB
-			instRightSelected.resCarry += _resAmount;
 		}
 			
 		ds_list_destroy(_list);
