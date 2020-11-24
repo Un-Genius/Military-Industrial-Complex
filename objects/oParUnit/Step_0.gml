@@ -115,6 +115,26 @@ else
 
 #endregion
 
+#region Move out of the way
+
+if moveState == action.idle
+{
+	var _collision = collision_circle(x, y, 5, oParUnit, false, true);
+	
+	if _collision && _collision.moveState != action.idle
+	{
+		var _dir = -point_direction(x, y, _collision.x, _collision.y);
+		
+		var _newPosX = lengthdir_x(10, _dir);
+		var _newPosY = lengthdir_y(10, _dir);
+		
+		goalX += _newPosX;
+		goalY += _newPosY;
+	}
+}
+
+#endregion
+
 #region Health
 
 if hp <= 0

@@ -35,6 +35,7 @@
     {"id":{"name":"scr_GUI_ReadyUp","path":"scripts/scr_GUI_ReadyUp/scr_GUI_ReadyUp.yy",},"order":3,},
     {"id":{"name":"sArmor","path":"sprites/sArmor/sArmor.yy",},"order":0,},
     {"id":{"name":"oArtilleryClient","path":"objects/oArtilleryClient/oArtilleryClient.yy",},"order":1,},
+    {"id":{"name":"oCollision","path":"objects/oCollision/oCollision.yy",},"order":4,},
     {"id":{"name":"oflag","path":"objects/oflag/oflag.yy",},"order":3,},
     {"id":{"name":"oInfantryClient","path":"objects/oInfantryClient/oInfantryClient.yy",},"order":1,},
     {"id":{"name":"spr_lobbybox","path":"sprites/spr_lobbybox/spr_lobbybox.yy",},"order":3,},

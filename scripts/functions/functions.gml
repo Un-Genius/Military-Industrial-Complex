@@ -251,10 +251,10 @@ function update_state(_newState, _newMoveState)
 
 function scr_pathfind(xgoal, ygoal, speed) {
 	
-	//glorious pathfinding
+	// glorious pathfinding
     if(mp_grid_path(global.grid, path, x, y, xgoal, ygoal, true))
     {
-		//path smoothing
+		// path smoothing
 	    path_set_kind(path, false);
 	    path_set_precision(path, 8);
 				
@@ -272,7 +272,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 			var _endpointX		= path_get_point_x(path, _pathAmount-1);
 			var _endpointY		= path_get_point_y(path, _pathAmount-1);
 			
-			if(!collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oObject, false, true))
+			if !collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oCollision, false, true)
 			{				
 				// Cut out the middle points			
 				while(path_get_number(path) > 2)
@@ -299,13 +299,13 @@ function scr_pathfind(xgoal, ygoal, speed) {
 				    var start_xr	= temp_x;
 				    var start_yr	= temp_y;
 					
-					var path_collision = position_meeting(temp_x, temp_y, oObject);
+					var path_collision = position_meeting(temp_x, temp_y, oCollision);
 			
 					while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
 					{
 					    temp_x += lengthdir_x(8, temp_dir);
 					    temp_y += lengthdir_y(8, temp_dir);
-					    path_collision = position_meeting(temp_x, temp_y, oObject);
+					    path_collision = position_meeting(temp_x, temp_y, oCollision);
 					}
                         
 					if !path_collision
@@ -329,10 +329,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		goalX = x;
 		goalY = y;
 		
-		moveState = action.idle;
-		
-		// Update sprite
-		event_user(0);
+		update_state(-1, action.idle);
 	}
 }
 
