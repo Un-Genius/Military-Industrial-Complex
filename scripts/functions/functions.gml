@@ -2056,7 +2056,29 @@ function scr_context_select_onScreen() {
 
 	close_context(-1);
 }
+
+function scr_context_drop_res() {
+	// drop resources from transport to HAB
+	with(oPlayer)
+	{
+		var _instFind = instRightSelected;
+	}
 	
+	var _HAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
+	
+	if _HAB
+	{
+		// Add to HAB
+		_HAB.resCarry += _instFind.resCarry;
+				
+		// Take away from vehicle
+		_instFind.resCarry = 0;
+	}
+	
+	// Update context menu
+	close_context(-1);
+}
+
 function scr_context_grab_res() {
 	// Grab resources from HAB or HQ
 	with(oPlayer)

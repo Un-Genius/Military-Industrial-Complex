@@ -261,11 +261,18 @@ if _click_right_pressed
 					var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
 		
 					// Transfer supplies
-					if (_resCarry != _maxResCarry) && (_HAB && _HAB.resCarry > 0)
+					if _HAB
 					{
 						if _resCarry <= 0
 							add_context("break", on_click, false);
-						add_context("Grab Resources", scr_context_grab_res,	 false);
+							
+						// Check if can give resources
+						if _resCarry > 0
+							add_context("Drop Resources", scr_context_drop_res,	 false);
+							
+						// Take resourcess
+						if _resCarry != _maxResCarry && _HAB.resCarry > 0
+							add_context("Grab Resources", scr_context_grab_res,	 false);
 					}
 					break;
 			}
