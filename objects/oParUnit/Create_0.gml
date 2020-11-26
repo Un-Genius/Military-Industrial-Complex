@@ -48,7 +48,7 @@ state = action.idle;
 moveState = action.idle;
 
 // Move slightly over if spawned on top of unit
-while instance_place(x, y, oParUnit)
+while instance_place(x, y, oCollision)
 	y += 48;
 	
 // Goal

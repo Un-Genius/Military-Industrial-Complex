@@ -8,7 +8,7 @@ function dbg(_value) {
 
 #region Instance	Functions
 
-#region Add Instance
+#region Add/Create Instance
 
 function add_Inst(_gridID, _y, _inst) {
 	
@@ -45,6 +45,25 @@ function add_Inst(_gridID, _y, _inst) {
 				ds_grid_set(_gridID, i+1, _y, _inst);
 			}
 		}
+	}
+}
+	
+function create_building(_object_index) {
+	// Accepts a string
+	
+	with(oPlayer)
+	{
+		// Find object
+		var _object = asset_get_index(_object_index);
+		
+		// Create empty ghost to find sprite
+		buildingPlacement = instance_create_layer(0, 0, "AboveAll", _object);
+		
+		// Remember name
+		buildingName = _object_index;
+		
+		// Deactivate it to prevent it causing issues in game
+		instance_deactivate_object(buildingPlacement);
 	}
 }
 
@@ -2194,6 +2213,7 @@ function scr_context_spawn_dummy() {
 }
 	
 function scr_context_spawn_HAB() {
+	/*
 	with(oPlayer)
 	{
 		var _mouseX = mouseRightPress_x;
@@ -2209,7 +2229,9 @@ function scr_context_spawn_HAB() {
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
-
+	*/
+	create_building("oHAB");
+	
 	close_context(-1);
 }
 		

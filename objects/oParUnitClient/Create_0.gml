@@ -30,7 +30,7 @@ hashColor	= noone;
 path = path_add();
 
 // Move slightly over if spawned on top of unit
-while instance_place(x, y, oParUnitClient)
+while instance_place(x, y, oCollision)
 	y += 48;
 
 // Goal

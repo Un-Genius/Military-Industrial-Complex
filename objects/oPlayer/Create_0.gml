@@ -14,6 +14,10 @@ contextMenu = false;
 // Double click
 doublePress = false;
 
+buildingName = "";
+buildingPlacement = noone;
+buildingIntersect = false;
+
 #region Mouse actions
 
 // 0 = nothing

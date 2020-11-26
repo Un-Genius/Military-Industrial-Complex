@@ -94,209 +94,277 @@ if x != xprevious || y != yprevious
 var _instFind	= noone;
 var _width		= ds_grid_width(global.instGrid);
 
-if _click_left_pressed && !contextMenu
+if buildingPlacement == noone
 {
-	#region Find instance
-	
-	if instance_exists(oParUnit)
-		_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
-		
-	#endregion
-
-	#region Check if already selected
-	
-	var _selectx2 = false;
-	if find_Inst(global.instGrid, 0, _instFind) > -1
-		_selectx2 = true;
-		
-	#endregion
-
-	#region Unselect with conditions
-
-	if !_key_ctrl && !_selectx2
-	{		
-		// Wipe holding hand
-		wipe_Hand(global.instGrid, 0);
-	}
-		
-	#endregion
-	
-	#region Add inst to hand
-	
-	if _instFind != noone
+	if _click_left_pressed && !contextMenu
 	{
-		// Add to hand
-		add_Inst(global.instGrid, 0, _instFind);
-			
-		// Set selected
-		_instFind.selected = true;
-	}
+		#region Find instance
 	
-	#endregion
+		if instance_exists(oParUnit)
+			_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
+		
+		#endregion
+
+		#region Check if already selected
 	
-	#region Unselect if pressed on again
-	
-	if _key_ctrl && _selectx2
-	{
-		if _instFind.selected
-		{
-			var _x = find_Inst(global.instGrid, 0, _instFind);
-			
-			if _x != -1
-				wipe_Slot(global.instGrid, _x, 0);
+		var _selectx2 = false;
+		if find_Inst(global.instGrid, 0, _instFind) > -1
+			_selectx2 = true;
+		
+		#endregion
+
+		#region Unselect with conditions
+
+		if !_key_ctrl && !_selectx2
+		{		
+			// Wipe holding hand
+			wipe_Hand(global.instGrid, 0);
 		}
-	}
-	
-	#endregion
-
-	#region Remember location of press
-
-	// Mouse box starting position
-	mouseLeftPress_x = device_mouse_x(0);
-	mouseLeftPress_y = device_mouse_y(0);
-	
-	if _instFind == noone
-		// Start mousebox
-		mousePress = 1;	
-	else
-		// Allow dragging
-		mousePress = 2;
 		
-	#endregion
-}
-
-#region Add context menu buttons
-
-if _click_right_pressed
-{
-	// Reset context
-	close_context(-1);
+		#endregion
 	
-	// Set to true
-	contextMenu = true;
+		#region Add inst to hand
 	
-	// Update position
-	mouseRightPressGui_x	= device_mouse_x_to_gui(0);
-	mouseRightPressGui_y	= device_mouse_y_to_gui(0);
-	
-	mouseRightPress_x		= device_mouse_x(0);
-	mouseRightPress_y		= device_mouse_y(0);
-	
-	var _mouseRightPress_x = mouseRightPress_x;
-	var _mouseRightPress_y = mouseRightPress_y;
-		
-	// Create context menu
-	var _inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
-	
-	// Spawn Units through a unit
-	instRightSelected = find_top_Inst(_mouseRightPress_x, _mouseRightPress_y, oParUnit);
-	
-	var _instSel = instRightSelected;
-		
-	with(_inst)
-	{
-		// Move instance
-		if instance_exists(ds_grid_get(global.instGrid, 0, 0)) && ds_grid_get(global.instGrid, 0, 0).moveSpd != 0
+		if _instFind != noone
 		{
-			add_context("Move", scr_context_move, false);
-		
-			// Add a break
-			add_context("break", on_click, false);
+			// Add to hand
+			add_Inst(global.instGrid, 0, _instFind);
+			
+			// Set selected
+			_instFind.selected = true;
 		}
 	
-		// Select multiple instances
-		add_context("Select all",			scr_context_select_all, false);
-		add_context("Select all on screen", scr_context_select_onScreen, false);
+		#endregion
+	
+		#region Unselect if pressed on again
+	
+		if _key_ctrl && _selectx2
+		{
+			if _instFind.selected
+			{
+				var _x = find_Inst(global.instGrid, 0, _instFind);
+			
+				if _x != -1
+					wipe_Slot(global.instGrid, _x, 0);
+			}
+		}
+	
+		#endregion
+
+		#region Remember location of press
+
+		// Mouse box starting position
+		mouseLeftPress_x = device_mouse_x(0);
+		mouseLeftPress_y = device_mouse_y(0);
+	
+		if _instFind == noone
+			// Start mousebox
+			mousePress = 1;	
+		else
+			// Allow dragging
+			mousePress = 2;
+		
+		#endregion
+	}
+	
+	#region Add context menu buttons
+
+	if _click_right_pressed
+	{
+		// Reset context
+		close_context(-1);
+	
+		// Set to true
+		contextMenu = true;
+	
+		// Update position
+		mouseRightPressGui_x	= device_mouse_x_to_gui(0);
+		mouseRightPressGui_y	= device_mouse_y_to_gui(0);
+	
+		mouseRightPress_x		= device_mouse_x(0);
+		mouseRightPress_y		= device_mouse_y(0);
+	
+		var _mouseRightPress_x = mouseRightPress_x;
+		var _mouseRightPress_y = mouseRightPress_y;
+		
+		// Create context menu
+		var _inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
+	
+		// Spawn Units through a unit
+		instRightSelected = find_top_Inst(_mouseRightPress_x, _mouseRightPress_y, oParUnit);
+	
+		var _instSel = instRightSelected;
+		
+		with(_inst)
+		{
+			// Move instance
+			if instance_exists(ds_grid_get(global.instGrid, 0, 0)) && ds_grid_get(global.instGrid, 0, 0).moveSpd != 0
+			{
+				add_context("Move", scr_context_move, false);
+		
+				// Add a break
+				add_context("break", on_click, false);
+			}
+	
+			// Select multiple instances
+			add_context("Select all",			scr_context_select_all, false);
+			add_context("Select all on screen", scr_context_select_onScreen, false);
 						
-		if instance_exists(_instSel)
-		{
-			with(_instSel)
+			if instance_exists(_instSel)
 			{
-				goalX = x;
-				goalY = y;
-				moveState = action.idle;
+				with(_instSel)
+				{
+					goalX = x;
+					goalY = y;
+					moveState = action.idle;
 				
-				var _objectIndex = object_index;
-				var _x = x;
-				var _y = y;
-				var _resCarry = resCarry;
-				var _resRange = resRange;
-				var _maxResCarry = maxResCarry;
-			}
+					var _objectIndex = object_index;
+					var _x = x;
+					var _y = y;
+					var _resCarry = resCarry;
+					var _resRange = resRange;
+					var _maxResCarry = maxResCarry;
+				}
 				
-			switch(_objectIndex)
-			{
-				case oHQ:
-					add_context("break", on_click, false);
-					add_context("Spawn Units", scr_context_folder_HQspawn, true);
-					break;
+				switch(_objectIndex)
+				{
+					case oHQ:
+						add_context("break", on_click, false);
+						add_context("Spawn Units", scr_context_folder_HQspawn, true);
+						break;
 			
-				case oHAB:
-					if _resCarry > 0
-					{
-						add_context("break", on_click, false);
-						add_context("Spawn Units", scr_context_folder_HABspawn, true);
-						add_context("break", on_click, false);
-						add_context("Destroy", scr_context_destroy, false);
-					}
-					
-					var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
-		
-					// Transfer supplies
-					if _LOG && _LOG.resCarry > 0
-					{
-						if _resCarry <= 0
-							add_context("break", on_click, false);
-						add_context("Grab Resources", scr_context_grab_res,	 false);
-					}
-					break;
-					
-				case oTransport:
-					if _resCarry > 0
-					{
-						add_context("break", on_click, false);
-						add_context("Spawn Units", scr_context_folder_LOGspawn, true);
-					}
-				
-					var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
-		
-					// Transfer supplies
-					if _HAB
-					{
-						if _resCarry <= 0
-							add_context("break", on_click, false);
-							
-						// Check if can give resources
+					case oHAB:
 						if _resCarry > 0
-							add_context("Drop Resources", scr_context_drop_res,	 false);
-							
-						// Take resourcess
-						if _resCarry != _maxResCarry && _HAB.resCarry > 0
+						{
+							add_context("break", on_click, false);
+							add_context("Spawn Units", scr_context_folder_HABspawn, true);
+							add_context("break", on_click, false);
+							add_context("Destroy", scr_context_destroy, false);
+						}
+					
+						var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
+		
+						// Transfer supplies
+						if _LOG && _LOG.resCarry > 0
+						{
+							if _resCarry <= 0
+								add_context("break", on_click, false);
 							add_context("Grab Resources", scr_context_grab_res,	 false);
-					}
-					break;
+						}
+						break;
+					
+					case oTransport:
+						if _resCarry > 0
+						{
+							add_context("break", on_click, false);
+							add_context("Spawn Units", scr_context_folder_LOGspawn, true);
+						}
+				
+						var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
+		
+						// Transfer supplies
+						if _HAB
+						{
+							if _resCarry <= 0
+								add_context("break", on_click, false);
+							
+							// Check if can give resources
+							if _resCarry > 0
+								add_context("Drop Resources", scr_context_drop_res,	 false);
+							
+							// Take resourcess
+							if _resCarry != _maxResCarry && _HAB.resCarry > 0
+								add_context("Grab Resources", scr_context_grab_res,	 false);
+						}
+						break;
+				}
 			}
+			else
+			{
+				add_context("break", on_click, false);
+				add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
+			}
+		
+			// Update size
+			event_user(0);
+		}
+	}
+
+	#endregion
+
+	// Stop mouseBox
+	if _click_left_released && !contextMenu
+	{
+		mousePress = false;
+	
+		mouseLeftReleased_x = device_mouse_x(0);
+		mouseLeftReleased_y = device_mouse_y(0);
+	}
+}
+else
+{
+	var _halfW = (buildingPlacement.sprite_width * buildingPlacement.image_xscale)/3.5;
+	var _halfH = (buildingPlacement.sprite_height * buildingPlacement.image_yscale)/3.5;
+		
+	var _collision	= collision_rectangle(mouse_x - _halfW, mouse_y - _halfH, mouse_x + _halfW, mouse_y + _halfH, oCollision, false, true)
+	var _distance	= point_distance(instRightSelected.x, instRightSelected.y, mouse_x, mouse_y);
+		
+	// Check if intersecting with walls or units
+	if _collision || _distance > buildingPlacement.resRange + (_halfW + _halfH)/2
+	{
+		buildingIntersect = true;
+	}
+	else
+	{
+		buildingIntersect = false;
+	}
+	
+	if _click_left_pressed
+	{
+		// Check transport for resources
+		if instRightSelected.resCarry - unitResCost.HAB < 0
+		{
+			// Delete ghost
+			instance_destroy(buildingPlacement);
+		
+			// Reset variables
+			buildingPlacement = noone;
+			buildingIntersect = false;
 		}
 		else
-		{
-			add_context("break", on_click, false);
-			add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
-		}
+		{	
+			// check for mouse click
+			if !buildingIntersect
+			{
+				// Take away resources
+				instRightSelected.resCarry -= unitResCost.HAB;
+			
+				// Create instance
+				spawn_unit(buildingName, mouse_x, mouse_y);
 		
-		// Update size
-		event_user(0);
+				// Delete ghost
+				instance_destroy(buildingPlacement);
+		
+				// Reset variables
+				buildingName = "";
+				buildingPlacement = noone;
+				buildingIntersect = false;
+			}
+		}
 	}
-}
-
-#endregion
-
-// Stop mouseBox
-if _click_left_released && !contextMenu
-{
-	mousePress = false;
-	
-	mouseLeftReleased_x = device_mouse_x(0);
-	mouseLeftReleased_y = device_mouse_y(0);
+	else
+	{
+		if _click_right_pressed
+		{
+			// Delete ghost
+			instance_destroy(buildingPlacement);
+		
+			// Reset variables
+			buildingName = "";
+			buildingPlacement = noone;
+			buildingIntersect = false;
+		}
+	}
 }
 
 #region Double select
