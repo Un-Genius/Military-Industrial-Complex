@@ -10,6 +10,7 @@
     {"id":{"name":"oObject","path":"objects/oObject/oObject.yy",},"order":0,},
     {"id":{"name":"spr_chat","path":"sprites/spr_chat/spr_chat.yy",},"order":0,},
     {"id":{"name":"spr_textbox","path":"sprites/spr_textbox/spr_textbox.yy",},"order":1,},
+    {"id":{"name":"nHi","path":"notes/nHi/nHi.yy",},"order":9,},
     {"id":{"name":"oHQClient","path":"objects/oHQClient/oHQClient.yy",},"order":0,},
     {"id":{"name":"oDummyClient","path":"objects/oDummyClient/oDummyClient.yy",},"order":0,},
     {"id":{"name":"spr_page_inf","path":"sprites/spr_page_inf/spr_page_inf.yy",},"order":0,},
