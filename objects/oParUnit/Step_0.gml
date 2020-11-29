@@ -72,11 +72,7 @@ if _click_left_released && release
 	// Drop instance
 	release = false;
 	
-	// Reset state
-	moveState = action.idle;
-	
-	// Update sprite
-	event_user(0);
+	update_state(-1, action.idle);
 	
 	// Set goal
 	goalX	= _mouse_x;
@@ -108,17 +104,33 @@ if point_distance(x, y, goalX, goalY) > 3
 
 		#endregion
 		
-		// Set moveState
-		moveState = action.moving;
-		
-		// Update direction
-		alarm[1] = 1;
+		update_state(-1, action.moving);
 	}
 }
 else
 {
-	// Set idle
-	moveState = action.idle;
+	if moveState != action.idle
+		update_state(-1, action.idle);
+}
+
+#endregion
+
+#region Move out of the way
+
+if moveState == action.idle
+{
+	var _collision = collision_circle(x, y, 5, oParUnit, false, true);
+	
+	if _collision && _collision.moveState != action.idle
+	{
+		var _dir = -point_direction(x, y, _collision.x, _collision.y);
+		
+		var _newPosX = lengthdir_x(10, _dir);
+		var _newPosY = lengthdir_y(10, _dir);
+		
+		goalX += _newPosX;
+		goalY += _newPosY;
+	}
 }
 
 #endregion
@@ -130,12 +142,83 @@ if hp <= 0
 
 #endregion
 
+#region Resources
+
+// Check if needed
+if resCarry != maxResCarry
+{
+	var _HQ = collision_circle(x, y, resRange, oHQ, false, true);
+		
+	// Check if HAB or HQ nearby
+	if _HQ
+	{
+		resCarry = maxResCarry;
+	}
+	else
+	{
+		// Get resources if not transport
+		if object_index != oTransport
+		{
+			var _HAB = collision_circle(x, y, resRange, oHAB, false, true);
+		
+			if _HAB && _HAB.resCarry > 0
+			{
+				// Find needed resources
+				var _reqRes = maxResCarry - resCarry;
+			
+				// Find how much resources other can supply
+				_reqRes -= _HAB.resCarry;
+			
+				// Fill request
+				if _reqRes - _HAB.resCarry < 0
+				{
+					resCarry = maxResCarry;
+					_HAB.resCarry -= maxResCarry;
+				}
+				else
+				{
+					resCarry = _reqRes - _HAB.resCarry;
+					_HAB.resCarry -= _HAB.resCarry;
+				
+				}
+			}
+			else
+			{
+				var _TRANS = collision_circle(x, y, resRange, oTransport, false, true);
+				
+				if _HAB && _HAB.resCarry > 0
+				{
+					// Find needed resources
+					var _reqRes = maxResCarry - resCarry;
+			
+					// Find how much resources other can supply
+					_reqRes -= _TRANS.resCarry;
+			
+					// Fill request
+					if _reqRes - _TRANS.resCarry < 0
+					{
+						resCarry = maxResCarry;
+						_TRANS.resCarry -= maxResCarry;
+					}
+					else
+					{
+						resCarry = _reqRes - _TRANS.resCarry;
+						_TRANS.resCarry -= _TRANS.resCarry;
+					}
+				}
+			}
+		}
+	}
+}
+
+#endregion
+
 #region Attack
 
 // Stop if its not hostile or reloading
 if gun != noone && state != action.reloading 
 {
-	if currentAmmo > 0 
+	if resCarry > 0 
 	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
@@ -176,11 +259,7 @@ if gun != noone && state != action.reloading
 				{				
 					if state == action.idle 
 					{
-						// Set state
-						state = action.aiming;
-						
-						// Update sprite
-						event_user(0);
+						update_state(action.aiming, -1);
 					}
 					
 					if state == action.attacking
@@ -284,27 +363,22 @@ if gun != noone && state != action.reloading
 						// Start reloading and stops shooting animation if no ammo
 						if !clipSize 
 						{
-							state = action.reloading;
-							currentAmmo -= ammoUse;						
+							update_state(action.reloading, -1);
+							resCarry -= ammoUse;						
 							
-							if currentAmmo <= 0
+							if resCarry <= 0
 							{
-							  state = action.idle;			
+							  update_state(action.idle, -1);			
 							  
 							}
-							event_user(0);
 						}
 					}
 				}
 				else
 				{
-					if state != action.reloading || state != action.aiming
+					if (state != action.reloading || state != action.aiming) && state != action.idle
 					{
-						// Set state
-						state = action.idle;
-					
-						// Update sprite
-						event_user(0);
+						update_state(action.idle, -1);
 					}
 				}
 			}
@@ -312,11 +386,7 @@ if gun != noone && state != action.reloading
 			{
 			 	if state == action.attacking
 				{
-					// Set state
-					state = action.idle;
-					
-					// Update sprite
-					event_user(0);
+					update_state(action.idle, -1);
 				}
 			}
 			
@@ -356,10 +426,7 @@ switch state
 		{
 			clipSize = maxClipSize;
 			
-			state = action.attacking;
-			
-			// Update sprite
-			event_user(0);
+			update_state(action.attacking, -1);
 		}
 
 		break;
@@ -371,10 +438,7 @@ switch state
 		{
 			clipSize = maxClipSize;
 			
-			state = action.attacking;
-			
-			// Update sprite
-			event_user(0);
+			update_state(action.attacking, -1);
 		}
 		
 		break;

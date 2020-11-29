@@ -17,6 +17,8 @@ hp		= maxHp;	// How much health points they have
 
 cover	= 40;				// Default cover
 
+resCarry	= 10000;	// Resources carried
+
 #endregion
 
 update_pathfind();

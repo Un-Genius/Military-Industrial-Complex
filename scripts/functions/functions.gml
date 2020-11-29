@@ -8,7 +8,7 @@ function dbg(_value) {
 
 #region Instance	Functions
 
-#region Add Instance
+#region Add/Create Instance
 
 function add_Inst(_gridID, _y, _inst) {
 	
@@ -45,6 +45,25 @@ function add_Inst(_gridID, _y, _inst) {
 				ds_grid_set(_gridID, i+1, _y, _inst);
 			}
 		}
+	}
+}
+	
+function create_building(_object_index) {
+	// Accepts a string
+	
+	with(oPlayer)
+	{
+		// Find object
+		var _object = asset_get_index(_object_index);
+		
+		// Create empty ghost to find sprite
+		buildingPlacement = instance_create_layer(0, 0, "AboveAll", _object);
+		
+		// Remember name
+		buildingName = _object_index;
+		
+		// Deactivate it to prevent it causing issues in game
+		instance_deactivate_object(buildingPlacement);
 	}
 }
 
@@ -195,7 +214,7 @@ function find_top_Inst(_x, _y, _obj) {
 
 #endregion
 
-#region Modify Instance
+#region Modify/Update Instance
 
 function modify_Selected_Slot(_gridID, _x, _y, _selected) {
 
@@ -209,6 +228,39 @@ var _inst = ds_grid_get(_gridID, _x, _y);
 		selected = _selected;
 	}
 }
+	
+function update_state(_newState, _newMoveState)
+{
+	// Inserting -1 will mean no update
+	
+	// Set moveState
+	if _newState != -1
+		state = _newState;
+	
+	// Set moveState
+	if _newMoveState != -1
+		moveState = _newMoveState;
+		
+	// Update direction
+	alarm[1] = 1;
+	
+	// Update sprite
+	event_user(0);
+	
+	#region Update doppelganger
+
+	// Find self in list
+	var _pos = ds_list_find_index(global.unitList, id)
+
+	// Send position and rotation to others
+	var _packet = packet_start(packet_t.update_unit);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_s8, state);
+	buffer_write(_packet, buffer_s8, moveState);
+	packet_send_all(_packet);
+	
+	#endregion
+}
 
 #endregion
 
@@ -218,10 +270,10 @@ var _inst = ds_grid_get(_gridID, _x, _y);
 
 function scr_pathfind(xgoal, ygoal, speed) {
 	
-	//glorious pathfinding
+	// glorious pathfinding
     if(mp_grid_path(global.grid, path, x, y, xgoal, ygoal, true))
     {
-		//path smoothing
+		// path smoothing
 	    path_set_kind(path, false);
 	    path_set_precision(path, 8);
 				
@@ -239,7 +291,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 			var _endpointX		= path_get_point_x(path, _pathAmount-1);
 			var _endpointY		= path_get_point_y(path, _pathAmount-1);
 			
-			if(!collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oObject, false, true))
+			if !collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oCollision, false, true)
 			{				
 				// Cut out the middle points			
 				while(path_get_number(path) > 2)
@@ -266,13 +318,13 @@ function scr_pathfind(xgoal, ygoal, speed) {
 				    var start_xr	= temp_x;
 				    var start_yr	= temp_y;
 					
-					var path_collision = position_meeting(temp_x, temp_y, oObject);
+					var path_collision = position_meeting(temp_x, temp_y, oCollision);
 			
 					while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
 					{
 					    temp_x += lengthdir_x(8, temp_dir);
 					    temp_y += lengthdir_y(8, temp_dir);
-					    path_collision = position_meeting(temp_x, temp_y, oObject);
+					    path_collision = position_meeting(temp_x, temp_y, oCollision);
 					}
                         
 					if !path_collision
@@ -296,10 +348,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		goalX = x;
 		goalY = y;
 		
-		moveState = action.idle;
-		
-		// Update sprite
-		event_user(0);
+		update_state(-1, action.idle);
 	}
 }
 
@@ -820,6 +869,8 @@ function packet_handle_client(from) {
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
+					
+					scr_pathfind(goalX, goalY, moveSpd);
 				}
 				else
 				{
@@ -827,6 +878,45 @@ function packet_handle_client(from) {
 					x = _goalX;
 					y = _goalY;
 				}
+			}
+			
+			break;
+			
+		case packet_t.update_unit:
+			
+			// Check if still in game
+			if !inGame
+				break;
+			
+			// Get data
+			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _newState		= buffer_read(_buffer, buffer_s8);
+			var _newMoveState	= buffer_read(_buffer, buffer_s8);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+
+			// Find Unit
+			var _unit		= ds_list_find_value(_list, _posList);
+			
+			if is_undefined(_unit) || !instance_exists(_unit)
+				break;
+			
+			with(_unit)
+			{
+				// Set moveState
+				if _newState != -1
+					state = _newState;
+	
+				// Set moveState
+				if _newMoveState != -1
+					moveState = _newMoveState;
+					
+				// Update sprite
+				event_user(0);
+		
+				// Update direction
+				alarm[1] = 1;
 			}
 			
 			break;
@@ -1175,6 +1265,8 @@ function packet_handle_server(from) {
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
+					
+					scr_pathfind(goalX, goalY, moveSpd);
 				}
 				else
 				{
@@ -1182,6 +1274,51 @@ function packet_handle_server(from) {
 					x = _goalX;
 					y = _goalY;
 				}
+			}
+			
+			break;
+			
+		case packet_t.update_unit:
+			
+			// Check if still in game
+			if !inGame
+				break;
+			
+			// Get data
+			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _newState		= buffer_read(_buffer, buffer_s8);
+			var _newMoveState	= buffer_read(_buffer, buffer_s8);
+			
+			var _buffer = packet_start(packet_t.move_unit);
+			buffer_write(_buffer, buffer_u16, _posList);
+			buffer_write(_buffer, buffer_s8, _newState);
+			buffer_write(_buffer, buffer_s8, _newMoveState); 
+			packet_send_except(_buffer, from);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+
+			// Find Unit
+			var _unit		= ds_list_find_value(_list, _posList);
+			
+			if is_undefined(_unit) || !instance_exists(_unit)
+				break;
+			
+			with(_unit)
+			{
+				// Set moveState
+				if _newState != -1
+					state = _newState;
+	
+				// Set moveState
+				if _newMoveState != -1
+					moveState = _newMoveState;
+					
+				// Update sprite
+				event_user(0);
+		
+				// Update direction
+				alarm[1] = 1;
 			}
 			
 			break;
@@ -1716,6 +1853,10 @@ function scr_context_folder_HQspawn() {
 }
 	
 function scr_context_folder_HABspawn() {
+	
+	if !instance_exists(oParUnit)
+		exit;
+		
 	// Set heirarchy
 	var _level = 1;
 
@@ -1730,6 +1871,8 @@ function scr_context_folder_HABspawn() {
 			if _contextMenu.level == _level
 				exit;
 		}
+		
+		var _instFind = instRightSelected;
 	}
 
 	// Create context menu
@@ -1742,9 +1885,15 @@ function scr_context_folder_HABspawn() {
 	{	
 		// Set heirarchy
 		level = _level;
-	
-		// Add buttons
-		add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
+		
+		if _instFind.resCarry >= unitResCost.inf
+		{
+			add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
+		}
+		else
+		{
+			add_context("Not Enough Resources",	on_click,	 false);
+		}
 	
 		// Update size
 		event_user(0);
@@ -1752,13 +1901,17 @@ function scr_context_folder_HABspawn() {
 }
 	
 function scr_context_folder_LOGspawn() {
+	
+	if !instance_exists(oParUnit)
+		exit;
+	
 	// Set heirarchy
 	var _level = 1;
 
 	with(oPlayer)
 	{
 		var _size = ds_list_size(contextInstList)
-	
+		
 		// Check if not already in list
 		for(var i = 0; i < _size; i++)
 		{
@@ -1766,22 +1919,38 @@ function scr_context_folder_LOGspawn() {
 			if _contextMenu.level == _level
 				exit;
 		}
+		
+		var _instFind = instRightSelected;
 	}
-
+	
 	// Create context menu
 	var _inst = create_context(mousePressGui_x, mousePressGui_y);
 
 	if _inst == -1
 		exit;
-		
+				
 	with(_inst)
 	{	
 		// Set heirarchy
 		level = _level;
-	
-		// Add buttons
-		add_context("Spawn HAB",	scr_context_spawn_HAB,	 false);
-	
+			
+		// Check if there is enough money for a HAB
+		if _instFind.resCarry >= unitResCost.HAB
+		{
+			var _oHAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
+			var _oHQ  = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHQ, false, true);
+			
+			// Check if near a building
+			if _oHAB > 0 || _oHQ > 0
+				add_context("Too close to Building", on_click,	 false);
+			else
+				add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
+		}
+		else
+		{
+			add_context("Not Enough Resources", on_click,	 false);
+		}
+
 		// Update size
 		event_user(0);
 	}
@@ -1836,8 +2005,7 @@ function scr_context_destroy() {
 	
 	close_context(-1);
 }
-	
-	
+
 function scr_context_select_all() {
 	var _size = ds_list_size(global.unitList)
 
@@ -1907,13 +2075,97 @@ function scr_context_select_onScreen() {
 
 	close_context(-1);
 }
+
+function scr_context_drop_res() {
+	// drop resources from transport to HAB
+	with(oPlayer)
+	{
+		var _instFind = instRightSelected;
+	}
+	
+	var _HAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
+	
+	if _HAB
+	{
+		// Add to HAB
+		_HAB.resCarry += _instFind.resCarry;
+				
+		// Take away from vehicle
+		_instFind.resCarry = 0;
+	}
+	
+	// Update context menu
+	close_context(-1);
+}
+
+function scr_context_grab_res() {
+	// Grab resources from HAB or HQ
+	with(oPlayer)
+	{
+		var _instFind = instRightSelected;
+	}
+	
+	if _instFind.object_index != oHAB
+	{
+		var _HAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
+		
+		if _HAB.resCarry > 0
+		{
+			// Find needed resources
+			var _reqRes = _instFind.maxResCarry - _instFind.resCarry;
+			
+			// Find how much resources other can supply
+			_reqRes -= _HAB.resCarry;
+			
+			// Fill request
+			if _reqRes - _HAB.resCarry < 0
+			{
+				_instFind.resCarry = _instFind.maxResCarry;
+				_HAB.resCarry -= _instFind.maxResCarry;
+			}
+			else
+			{
+				_instFind.resCarry = _reqRes - _HAB.resCarry;
+				_HAB.resCarry -= _HAB.resCarry;
+				
+			}
+		}
+	}
+	else
+	{
+		// Find all transport vehicles in the area
+		var _list = ds_list_create();
+			
+		var _amount = collision_circle_list(_instFind.x, _instFind.y, _instFind.resRange, oTransport, false, true, _list, false);
+			
+		for(var i = 0; i < _amount; i++)
+		{
+			var _veh = ds_list_find_value(_list, i);
+				
+			// Add to HAB
+			_instFind.resCarry += _veh.resCarry;
+				
+			// Take away from vehicle
+			_veh.resCarry = 0;
+		}
+			
+		ds_list_destroy(_list);
+	}
+	
+	// Update context menu
+	close_context(-1);
+}
 	
 function scr_context_spawn_inf() {
 	with(oPlayer)
 	{
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
+		
+		var _instFind = instRightSelected;
 	}
+		
+	_instFind.resCarry -= unitResCost.inf;
 	
 	// Create instance
 	spawn_unit("oInfantry", _mouseX, _mouseY);
@@ -1929,7 +2181,11 @@ function scr_context_spawn_trans() {
 	{
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
+		
+		var _instFind = instRightSelected;
 	}
+		
+	_instFind.resCarry -= unitResCost.trans;
 	
 	// Create instance
 	spawn_unit("oTransport", _mouseX, _mouseY);
@@ -1946,7 +2202,7 @@ function scr_context_spawn_dummy() {
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
 	}
-	
+		
 	// Create instance
 	spawn_unit("oDummy", _mouseX, _mouseY);
 
@@ -1957,22 +2213,28 @@ function scr_context_spawn_dummy() {
 }
 	
 function scr_context_spawn_HAB() {
+	/*
 	with(oPlayer)
 	{
 		var _mouseX = mouseRightPress_x;
 		var _mouseY = mouseRightPress_y;
+		
+		var _instFind = instRightSelected;
 	}
+		
+	_instFind.resCarry -= unitResCost.HAB;
 	
 	// Create instance
 	spawn_unit("oHAB", _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
-
+	*/
+	create_building("oHAB");
+	
 	close_context(-1);
 }
-	
-	
+		
 function spawn_unit(_object_string, posX, posY) {
 	
 	var _packet = packet_start(packet_t.add_unit);

@@ -14,6 +14,10 @@ contextMenu = false;
 // Double click
 doublePress = false;
 
+buildingName = "";
+buildingPlacement = noone;
+buildingIntersect = false;
+
 #region Mouse actions
 
 // 0 = nothing
@@ -25,6 +29,8 @@ mousePress = false;
 mouseRightPress_x = device_mouse_x(0);
 mouseRightPress_y = device_mouse_y(0);
 
+instRightSelected = noone;
+
 mouseLeftPress_x = device_mouse_x(0);
 mouseLeftPress_y = device_mouse_y(0);
 
@@ -34,17 +40,5 @@ mouseLeftReleased_y = device_mouse_y(0);
 // Mouse starting position to GUI
 mouseRightPressGui_x	= device_mouse_x_to_gui(0);
 mouseRightPressGui_y	= device_mouse_y_to_gui(0);
-
-#endregion
-
-#region ID of Units
-
-unit	= unitType.air; // Type of unit for health
-armor	= 1;
-
-maxHp	= 2;		// How much health points they can have
-hp		= maxHp;	// How much health points they have
-
-gun		= noone;	// Type of gun
 
 #endregion

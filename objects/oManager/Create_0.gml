@@ -34,6 +34,9 @@ enum packet_t
 	move_unit,
 	// client: (pos, goal_x, goal_y)
 	// server: (client_id:int64, pos, goal_x, goal_y)
+	update_unit,
+	// client: (pos, state)
+	// server: (client_id:int64, pos, state)
 	shoot_bullet,
 	// client: (x, y, angle, type, team)
 	// server: (x, y, angle, type, team)
@@ -44,6 +47,7 @@ enum packet_t
 	// sender: ()
 	data_update_packet,
 	// sender: (ready, numColor, team, game_mode)
+	
 }
 
 #endregion
@@ -438,6 +442,17 @@ purple	= $FF8C9B;
 pink	= $F6A8FF;
 
 hashColor = findColor(numColor);
+
+#endregion
+
+#region Unit Resource Costs
+
+enum unitResCost
+{
+	inf = 20,
+	trans = 80,
+	HAB = 100,
+}
 
 #endregion
 
