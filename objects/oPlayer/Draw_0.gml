@@ -25,10 +25,7 @@ if keyboard_check_pressed(vk_f1)
 }
 
 if global.debugMenu
-{
-	// Draw Pathfinding collision grid
-	mp_grid_draw(global.grid);
-	
+{	
 	var _gap = 20;
 	
 	var _size = ds_grid_width(global.instGrid);

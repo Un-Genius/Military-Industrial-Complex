@@ -3,7 +3,7 @@
 function dbg(_value) {
 	show_debug_message(_value)
 }
-
+	
 #endregion
 
 #region Instance	Functions
