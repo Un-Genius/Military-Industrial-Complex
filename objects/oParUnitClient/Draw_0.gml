@@ -1,9 +1,9 @@
 if global.debugMenu
 {
-	draw_circle(oldPathX, oldPathY, 10, true);
+	draw_circle(x, y, range, true);
 	
-	draw_text(x, y - 32, image_speed)
-	draw_text(x, y - 48, state)
+	draw_text(x, y - 32, team)
+	draw_text(x, y - 48, numColor)
 }
 
 // Draw Shadow

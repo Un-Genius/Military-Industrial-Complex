@@ -6,7 +6,6 @@ event_inherited();
 #region ID of Units
 
 cost		= 0;		// Cost of unit
-resCost		= unitResCost.HAB;		// Cost of unit in resources
 
 unitName	= "sHAB";
 
@@ -17,8 +16,6 @@ maxHp	= 20;		// How much health points they can have
 hp		= maxHp;	// How much health points they have
 
 cover	= 40;				// Default cover
-
-maxResCarry	= 10000;	// Resources carried
 
 #endregion
 

@@ -6,7 +6,6 @@ event_inherited();
 #region ID of Units
 
 cost		= 0;		// Cost of unit
-resCost		= unitResCost.inf;		// Cost of unit in resources
 
 unitName	= "sInf_USA_basic";
 
@@ -25,11 +24,12 @@ cover	= 10;				// Default cover
 bulletFrequency = 2;	// Frequency of bullets per second
 bulletTiming	= 0;	// Holds timing of last bullet
 
+maxAmmo		= 18;			// Maximum amount of ammo(bullets) they can shoot
+currentAmmo = maxAmmo;		//Current amount of ammo held
 ammoUse		= 0.25;			// How much ammo will be consumed after reloading
 maxClipSize	= 30;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
 
-maxResCarry	= 5;			// Max resources carried
-resCarry	= maxResCarry;	// Resources carried
+resources	= 5;
 
 #endregion

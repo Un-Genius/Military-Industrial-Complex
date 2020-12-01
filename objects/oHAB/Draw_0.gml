@@ -5,8 +5,7 @@ draw_sprite_ext(sprite_index, image_index, x + 7, y - 5, image_xscale, image_ysc
 if selected
 {
 	draw_set_color(hashColor);
-		draw_circle(x, y, 200, true);
-		draw_rectangle(x - 15 - (sprite_width/2), y - 15 - (sprite_width/2), x + (sprite_width/2) + 15, y + (sprite_width/2) + 15, true);
+		draw_circle(x, y, 56, true);
 	draw_set_color(-1);
 }
 

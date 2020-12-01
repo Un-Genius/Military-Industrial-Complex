@@ -14,6 +14,8 @@ moveSpd	= 2;		// pixel per frame
 unit	= unitType.inf; // Type of unit for health
 armor	= 1;
 
-cover	= 10;				// Default cover
+cover	= 20;				// Default cover
+
+resources = 5;
 
 #endregion

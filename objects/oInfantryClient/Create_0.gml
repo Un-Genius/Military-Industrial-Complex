@@ -14,11 +14,8 @@ moveSpd	= 2;		// pixel per frame
 unit	= unitType.inf; // Type of unit for health
 armor	= 1;
 
-gun		= gunType.rifle;	// Type of gun
-range	= 400;				// How far they can shoot in pixels
 cover	= 10;				// Default cover
 
-bulletFrequency = 2;	// Frequency of bullets per second
-bulletTiming	= 0;	// Holds timing of last bullet
+resources	= 5;
 
 #endregion

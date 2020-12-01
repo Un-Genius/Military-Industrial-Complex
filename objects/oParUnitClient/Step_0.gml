@@ -4,32 +4,52 @@ if state == action.attacking || moveState == action.moving
 {	
 	// Set direction
 	if state != action.attacking
-		dir = point_direction(x, y, oldPathX, oldPathY) - 180;
+		dir = point_direction(x, y, pathX, pathY) - 180;
 	
 	image_angle += sin(degtorad(dir - image_angle)) * 15;
 }
 
 #endregion
 
-#region State Machine
+#region Move to position
 
-// idle, move, attack, reload
-switch state
-{
-	case action.idle:
-		
-		// Find index
-		var _sprite = asset_get_index(unitName + "_" + string(state));
-		
-		image_speed = sprite_get_speed(_sprite);
-		
-		if distance_to_point(goalX, goalY) < 3
-			image_speed = 0;
-		
-		break;
+if point_distance(x, y, goalX, goalY) > 3
+{	
+	if moveState != action.moving
+	{	
+		// Start pathfind
+		scr_pathfind(goalX, goalY, moveSpd);
 				
-	case action.attacking:
+		// Set moveState
+		moveState = action.moving;
 		
+		// Update sprite
+		event_user(0);
+		
+		// Update direction
+		alarm[1] = 1;
+	}
+}
+else
+{
+	if moveState != action.idle
+	{
+		// Set idle
+		moveState = action.idle;
+
+		event_user(0);
+	}
+}
+
+#endregion
+
+#region Attack
+
+// Stop if its not hostile or reloading
+if gun != noone && state != action.reloading 
+{
+	if currentAmmo > 0 
+	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
 		
@@ -69,20 +89,117 @@ switch state
 						var _enemyX = x;
 						var _enemyY = y;
 					}
-									
-					// Find angle
-					var _angle = point_direction(x, y, _enemyX, _enemyY);
+				
+					if state == action.idle
+					{
+						// Set state
+						state = action.aiming;
+					
+						// Update sprite
+						event_user(0);
+					}
+					
+					if state == action.attacking
+					{					
+						// Find angle
+						var _angle = point_direction(x, y, _enemyX, _enemyY);
 						
-					// Point direction of enemy
-					dir = _angle;		
+						// Point direction of enemy
+						dir = _angle;		
 						
-					// Set gun settings
-					bulletTiming = 0;
+						// Set gun settings
+						bulletTiming = 0;
+						clipSize--;
+			
+						// Start reloading
+						if !clipSize
+						{
+							state = action.reloading;
+							
+							// Update sprite
+							event_user(0);
+						}
+					}
+				}
+				else
+				{
+					if state != action.reloading || state != action.aiming
+					{
+						// Set state
+						state = action.idle;
+					
+						// Update sprite
+						event_user(0);
+					}
 				}	
+			}
+			else
+			{
+			 	if state == action.attacking
+				{
+					// Set state
+					state = action.idle;
+					
+					// Update sprite
+					event_user(0);
+				}
 			}
 			
 			// Destroy list
 			ds_list_destroy(_enemy_list);
+		}
+	}
+}
+
+#endregion
+
+#region State Machine
+
+// idle, move, attack, reload
+switch state
+{
+	case action.idle:
+		
+		// Find index
+		var _sprite = asset_get_index(unitName + "_" + string(state));
+		
+		image_speed = sprite_get_speed(_sprite);
+		
+		if distance_to_point(goalX, goalY) < 3
+			image_speed = 0;
+		
+		break;
+				
+	case action.attacking:
+		
+		break;
+		
+	case action.aiming:
+			
+		// Stop reloading if 
+		if image_index > image_number - 1
+		{
+			clipSize = maxClipSize;
+			
+			state = action.attacking;
+			
+			// Update sprite
+			event_user(0);
+		}
+
+		break;
+		
+	case action.reloading:
+		
+		// Stop reloading if 
+		if image_index > image_number - 1
+		{
+			clipSize = maxClipSize;
+			
+			state = action.attacking;
+			
+			// Update sprite
+			event_user(0);
 		}
 		
 		break;
