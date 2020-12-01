@@ -85,6 +85,8 @@ if x != xprevious || y != yprevious
 	buffer_write(_packet, buffer_u16, _pos);
 	buffer_write(_packet, buffer_f32, x);
 	buffer_write(_packet, buffer_f32, y);
+	buffer_write(_packet, buffer_f32, 0);
+	buffer_write(_packet, buffer_f32, 0);
 	packet_send_all(_packet);
 }
 
@@ -165,8 +167,7 @@ if _click_left_pressed && !contextMenu
 	#endregion
 }
 
-#region Add context menu buttons
-
+// Add context menu buttons
 if _click_right_pressed
 {
 	// Reset context
@@ -223,6 +224,12 @@ if _click_right_pressed
 					break;
 					
 				case oTransport:
+					if ds_list_size(_instFind.riderList) > 0
+					{
+						add_context("break", on_click, false);
+						add_context("Exit Vehicle", exit_Vehicle_All, false);
+					}
+					
 					if _instFind.resources >= 1
 					{
 						add_context("break", on_click, false);
@@ -239,8 +246,6 @@ if _click_right_pressed
 		event_user(0);
 	}
 }
-
-#endregion
 
 // Stop mouseBox
 if _click_left_released && !contextMenu

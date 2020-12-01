@@ -42,6 +42,9 @@ release = false;
 // Modify selected units
 selected = false;
 
+// Enter vehicle if present
+enterVeh = noone;
+
 state = action.idle;
 
 moveState = action.idle;

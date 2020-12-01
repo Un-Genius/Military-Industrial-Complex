@@ -102,6 +102,8 @@ if point_distance(x, y, goalX, goalY) > 3
 		// Send position and rotation to others
 		var _packet = packet_start(packet_t.move_unit);
 		buffer_write(_packet, buffer_u16, _pos);
+		buffer_write(_packet, buffer_f32, x);
+		buffer_write(_packet, buffer_f32, y);
 		buffer_write(_packet, buffer_f32, goalX);
 		buffer_write(_packet, buffer_f32, goalY);
 		packet_send_all(_packet);
@@ -119,6 +121,32 @@ else
 {
 	// Set idle
 	moveState = action.idle;
+}
+
+#endregion
+
+#region Enter/Chase Vehicle
+
+if enterVeh != noone
+{
+	// Check for veh
+	var _veh = collision_point(goalX, goalY, oTransport, false, true);
+	
+	if !_veh
+	{
+		// Move to new position
+		goalX = enterVeh.x;
+		goalY = enterVeh.y;
+		
+		moveState = action.idle;
+	}
+	else
+	{
+		if point_distance(x, y, _veh.x, _veh.y) < 15
+		{
+			enter_Vehicle_One(_veh);
+		}
+	}
 }
 
 #endregion

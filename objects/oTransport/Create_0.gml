@@ -21,5 +21,9 @@ resources	= 100;
 
 #endregion
 
+// Make Vehicle smaller
 image_xscale = 0.6;
 image_yscale = 0.6;
+
+// Hold infantry
+riderList = ds_list_create();

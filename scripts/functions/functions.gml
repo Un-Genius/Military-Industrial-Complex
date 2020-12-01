@@ -209,6 +209,83 @@ var _inst = ds_grid_get(_gridID, _x, _y);
 		selected = _selected;
 	}
 }
+	
+function enter_Vehicle_One(_inst) {
+	// Use inf _id to enter veh _inst
+	var _id = id;
+	
+	with(_inst)
+	{
+		// Add self instance ID to veh list
+		ds_list_add(riderList, _id);
+		
+		var _buffer = packet_start(packet_t.veh_interact);
+		buffer_write(_buffer, buffer_u16, _id);
+		buffer_write(_buffer, buffer_u8, action.enter);
+		packet_send_all(_buffer);
+	}
+	
+	// De-activate instance
+	instance_deactivate_object(_id);
+}
+
+function exit_Vehicle_All() {
+	
+	// Get transport
+	var _inst = collision_point(mouseRightPress_x, mouseRightPress_y, oTransport, false, true);
+	
+	var _riderList = _inst.riderList;
+	
+	// Get size
+	var _size = ds_list_size(_riderList);
+	
+	// Remove self infantry from list and activate them
+	for(var i = 0; i <= _size; i++)
+	{
+		// Find inf
+		var _inst = ds_list_find_value(_riderList, i);
+		
+		// Activate inf
+		instance_activate_object(_inst);
+		
+		// Find new position
+		var _newX = lengthdir_x(((sprite_width/2)*image_xscale) + 8, -image_angle);
+		var _newY = lengthdir_y(((sprite_width/2)*image_xscale) + 8, -image_angle);
+		
+		// Relocate inf
+		_inst.x = x + _newX;
+		_inst.y = y + _newY;
+		
+		var _buffer = packet_start(packet_t.veh_interact);
+		buffer_write(_buffer, buffer_u16, _inst);
+		buffer_write(_buffer, buffer_u8, action.leave);
+		packet_send_all(_buffer);
+		
+		// Remove from list
+		ds_list_delete(_riderList, i);
+	}
+}
+	
+function kill_Vehicle_Riders() {
+	// Find all inf
+	var _size = ds_list_size(riderList);
+	
+	// Find all inf and destroy them
+	for(var i = 0; i <= _size; i++)
+	{
+		// Find inf
+		var _inst = ds_list_find_value(riderList, i);
+		
+		// Activate inf
+		instance_activate_object(_inst);
+		
+		// Destroy
+		instance_destroy(_inst);
+		
+		// Remove from list
+		ds_list_delete(riderList, i);
+	}
+}
 
 #endregion
 
@@ -801,6 +878,8 @@ function packet_handle_client(from) {
 			
 			// Get data
 			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _x			= buffer_read(_buffer, buffer_f32);
+			var _y			= buffer_read(_buffer, buffer_f32);
 			var _goalX		= buffer_read(_buffer, buffer_f32);
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 						
@@ -817,6 +896,10 @@ function packet_handle_client(from) {
 			{
 				if _posList != 0
 				{
+					// Update initial position
+					x = _x;
+					y = _y;
+					
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
@@ -824,9 +907,40 @@ function packet_handle_client(from) {
 				else
 				{
 					// Just move player
-					x = _goalX;
-					y = _goalY;
+					x = _x;
+					y = _y;
 				}
+			}
+			
+			break;
+			
+		case packet_t.veh_interact:
+			
+			// Check if still in game
+			if !inGame
+				break;
+			
+			// Get data
+			var _posList		= buffer_read(_buffer, buffer_u16);
+			var _interaction	= buffer_read(_buffer, buffer_u8);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+
+			// Find Unit
+			var _unit		= ds_list_find_value(_list, _posList);
+			
+			if is_undefined(_unit) || !instance_exists(_unit)
+				break;
+			
+			switch(_interaction)
+			{
+				case action.enter:
+					instance_deactivate_object(_unit);
+					break;
+				case action.leave:
+					instance_activate_object(_unit);
+					break;
 			}
 			
 			break;
@@ -1150,11 +1264,15 @@ function packet_handle_server(from) {
 			
 			// Get data
 			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _x			= buffer_read(_buffer, buffer_f32);
+			var _y			= buffer_read(_buffer, buffer_f32);
 			var _goalX		= buffer_read(_buffer, buffer_f32);
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 			
 			var _buffer = packet_start(packet_t.move_unit);
 			buffer_write(_buffer, buffer_u16, _posList);
+			buffer_write(_buffer, buffer_f32, _x);
+			buffer_write(_buffer, buffer_f32, _y);		
 			buffer_write(_buffer, buffer_f32, _goalX);
 			buffer_write(_buffer, buffer_f32, _goalY);
 			packet_send_except(_buffer, from);
@@ -1172,6 +1290,10 @@ function packet_handle_server(from) {
 			{
 				if _posList != 0
 				{
+					// Update initial position
+					x = _x;
+					y = _y;
+					
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
@@ -1179,9 +1301,45 @@ function packet_handle_server(from) {
 				else
 				{
 					// Just move player
-					x = _goalX;
-					y = _goalY;
+					x = _x;
+					y = _y;
 				}
+			}
+			
+			break;
+			
+		case packet_t.veh_interact:
+			
+			// Check if still in game
+			if !inGame
+				break;
+			
+			// Get data
+			var _posList		= buffer_read(_buffer, buffer_u16);
+			var _interaction	= buffer_read(_buffer, buffer_u8);
+			
+			var _buffer = packet_start(packet_t.veh_interact);
+			buffer_write(_buffer, buffer_u16, _posList);
+			buffer_write(_buffer, buffer_u8, _interaction);
+			packet_send_except(_buffer, from);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+
+			// Find Unit
+			var _unit		= ds_list_find_value(_list, _posList);
+			
+			if is_undefined(_unit) || !instance_exists(_unit)
+				break;
+			
+			switch(_interaction)
+			{
+				case action.enter:
+					instance_deactivate_object(_unit);
+					break;
+				case action.leave:
+					instance_activate_object(_unit);
+					break;
 			}
 			
 			break;
@@ -1763,6 +1921,7 @@ function scr_context_folder_LOGspawn() {
 		for(var i = 0; i < _size; i++)
 		{
 			var _contextMenu = ds_list_find_value(contextInstList, i);
+			
 			if _contextMenu.level == _level
 				exit;
 		}
@@ -1794,6 +1953,9 @@ function scr_context_move() {
 		var _mouse_x = mouseRightPress_x;
 		var _mouse_y = mouseRightPress_y;
 	}
+	
+	// Check for veh
+	var _veh = collision_point(_mouse_x, _mouse_y, oTransport, false, true);
 
 	// Get maximum width
 	var _width = ds_grid_width(global.instGrid);
@@ -1810,6 +1972,12 @@ function scr_context_move() {
 		{
 			// Reset state
 			moveState = action.idle;
+			
+			// Enter vehicle
+			if _veh
+				enterVeh = _veh;
+			else
+				enterVeh = noone;
 		
 			// Set goal
 			goalX = _mouse_x;
@@ -1836,8 +2004,7 @@ function scr_context_destroy() {
 	
 	close_context(-1);
 }
-	
-	
+		
 function scr_context_select_all() {
 	var _size = ds_list_size(global.unitList)
 
@@ -1971,7 +2138,6 @@ function scr_context_spawn_HAB() {
 
 	close_context(-1);
 }
-	
 	
 function spawn_unit(_object_string, posX, posY) {
 	

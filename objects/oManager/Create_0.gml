@@ -32,8 +32,11 @@ enum packet_t
 	// client: (user, pos)
 	// server: (client_id:int64, pos)
 	move_unit,
-	// client: (pos, goal_x, goal_y)
-	// server: (client_id:int64, pos, goal_x, goal_y)
+	// client: (pos, x, y, goal_x, goal_y)
+	// server: (client_id:int64, pos, x, y, goal_x, goal_y)
+	veh_interact,
+	// client: (pos, interaction)
+	// server: (client_id:int64, pos, interaction)
 	shoot_bullet,
 	// client: (x, y, angle, type, team)
 	// server: (x, y, angle, type, team)
@@ -91,7 +94,9 @@ enum action
 	moving,
 	attacking,
 	aiming,
-	reloading
+	reloading,
+	enter,
+	leave
 }
 
 #endregion
