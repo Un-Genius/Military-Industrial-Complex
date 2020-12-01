@@ -30,7 +30,7 @@ hashColor	= noone;
 path = path_add();
 
 // Move slightly over if spawned on top of unit
-while instance_place(x, y, oHQ) || instance_place(x, y, oHAB)
+while instance_place(x, y, oHQClient) || instance_place(x, y, oHABClient)
 	y += 32;
 
 // Goal
