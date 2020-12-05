@@ -1,6 +1,7 @@
 #region ID of Units
 
 cost	= 0;		// Cost of unit
+resCost	= 0;		// Cost of unit in resources
 
 unitName = "noone";
 
@@ -19,13 +20,13 @@ cover	= 0;				// Default cover
 bulletFrequency = 0;	// Frequency of bullets per second
 bulletTiming	= 0;	// Holds timing of last bullet
 
-maxAmmo		= 0;			// Maximum amount of ammo(bullets) they can shoot
-currentAmmo = maxAmmo;		//Current amount of ammo held
+maxResCarry	= 0;			// Max resources carried
+resCarry	= maxResCarry;	// Resources carried
+resRange	= 100;			// Range to transfer resources
+
 ammoUse		= 0;			// How much ammo will be consumed after reloading
 maxClipSize	= 0;			// Max bullets shot before reloading
 clipSize	= maxClipSize;
-
-resources	= 0;
 
 #endregion
 
@@ -43,15 +44,16 @@ release = false;
 selected = false;
 
 // Enter vehicle if present
-enterVeh = noone;
+enterVeh	= noone;
+riding		= false;
 
 state = action.idle;
 
 moveState = action.idle;
 
 // Move slightly over if spawned on top of unit
-while instance_place(x, y, oParUnit)
-	y += 48;
+while instance_place(x, y, oHQ) || instance_place(x, y, oHAB)
+	y += 32;
 	
 // Goal
 goalX = x;

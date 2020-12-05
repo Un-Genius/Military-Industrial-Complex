@@ -5,7 +5,8 @@ event_inherited();
 
 #region ID of Units
 
-cost		= 0;		// Cost of unit
+cost		= 0;					// Cost of unit
+resCost		= unitResCost.trans;	// Cost of unit in resources
 
 unitName	= "sVeh_USA_basic";
 
@@ -17,7 +18,8 @@ armor		= 1;
 maxHp		= 4;		// How much health points they can have
 hp			= maxHp;	// How much health points they have
 
-resources	= 100;
+maxResCarry	= 100;			// Max resources carried
+resCarry	= maxResCarry;	// Resources carried
 
 #endregion
 

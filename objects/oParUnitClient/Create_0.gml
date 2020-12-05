@@ -3,11 +3,15 @@ image_speed = 0;
 
 #region ID of Units
 
-cost	= 0;		// Cost of unit
-
 unitName = "noone";
 
 moveSpd	= 0;		// pixel per frame
+
+range	= 0
+
+gun		= noone;
+bulletFrequency = 2;	// Frequency of bullets per second
+bulletTiming	= 0;	// Holds timing of last bullet
 
 unit	= unitType.inf; // Type of unit for health
 armor	= 0;
@@ -15,8 +19,6 @@ armor	= 0;
 hp		= 0;	// How much health points they have
 
 cover	= 0;				// Default cover
-
-resources = 0;
 
 #endregion
 
@@ -38,8 +40,10 @@ goalY = y;
 pathX = x;
 pathY = y;
 
+oldPathX = pathX;
+oldPathY = pathY;
+
 dir = 0;
 
 state = action.idle;
-
 moveState = action.idle;

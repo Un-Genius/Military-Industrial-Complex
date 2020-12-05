@@ -96,7 +96,6 @@ var _width		= ds_grid_width(global.instGrid);
 
 if buildingPlacement == noone
 {
-	// Find and select instances
 	if _click_left_pressed && !contextMenu
 	{
 		#region Find instance
@@ -168,14 +167,13 @@ if buildingPlacement == noone
 		#endregion
 	}
 	
-	// Add context menu buttons
+	#region Add context menu buttons
+
 	if _click_right_pressed
 	{
 		// Reset context
 		close_context(-1);
-		
-		#region Set and get data
-		
+	
 		// Set to true
 		contextMenu = true;
 	
@@ -197,9 +195,6 @@ if buildingPlacement == noone
 	
 		var _instSel = instRightSelected;
 		
-		#endregion
-		
-		// Add buttons
 		with(_inst)
 		{
 			// Move instance
@@ -259,12 +254,6 @@ if buildingPlacement == noone
 						break;
 					
 					case oTransport:
-						if ds_list_size(_instSel.riderList) > 0
-						{
-							add_context("break", on_click, false);
-							add_context("Exit Vehicle", exit_Vehicle_All, false);
-						}
-					
 						if _resCarry > 0
 						{
 							add_context("break", on_click, false);
@@ -300,6 +289,8 @@ if buildingPlacement == noone
 			event_user(0);
 		}
 	}
+
+	#endregion
 
 	// Stop mouseBox
 	if _click_left_released && !contextMenu
@@ -449,3 +440,7 @@ if _key_rawInput
 }
 
 #endregion
+
+
+
+

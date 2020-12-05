@@ -20,7 +20,7 @@ enum packet_t
     // server: (client_id:int64)
     leaving,
 	// server: ()
-    data_map,
+    data_map,  
     // client: (string, data (s16))
 	// server: (client_id:int64, string, boolean (s16))
 	start,
@@ -32,14 +32,8 @@ enum packet_t
 	// client: (user, pos)
 	// server: (client_id:int64, pos)
 	move_unit,
-	// client: (pos, x, y, goal_x, goal_y)
-	// server: (client_id:int64, pos, x, y, goal_x, goal_y)
-	veh_interact,
-	// client: (pos, interaction)
-	// server: (client_id:int64, pos, interaction)
-	update_unit,
-	// client: (pos, state)
-	// server: (client_id:int64, pos, state)
+	// client: (pos, goal_x, goal_y)
+	// server: (client_id:int64, pos, goal_x, goal_y)
 	shoot_bullet,
 	// client: (x, y, angle, type, team)
 	// server: (x, y, angle, type, team)
@@ -97,9 +91,7 @@ enum action
 	moving,
 	attacking,
 	aiming,
-	reloading,
-	enter,
-	leave
+	reloading
 }
 
 #endregion
@@ -228,27 +220,27 @@ if(file_exists(_fileName))
 {
 	var _wrapper = loadStringFromFile(_fileName);
 	var _list = _wrapper[? "ROOTS"];
-
+	
 	for(var i = 0; i < ds_list_size(_list); i++)
 	{
 		var _map = _list[| i];
-
+		
 		// Get data
 		var _savedOptions = _map[? "savedOptions"];
-
+		
 		// Get size
 		var _size = ds_list_size(_savedOptions);
-
+		
 		// Merge lists into a grid
 		for(var i = 0; i < _size; i++)
 		{
 			var _value = ds_list_find_value(_savedOptions, i);
-
+		
 			// Store it in list
 			ds_grid_set(global.savedSettings, 1, i, _value)
 		}
 	}
-
+	
 	ds_map_destroy(_wrapper);
 }
 
@@ -268,7 +260,7 @@ var _fullscreen = ds_grid_get(global.savedSettings, 1, setting.fullscreen);
 window_set_fullscreen(_fullscreen);
 
 if !_fullscreen
-{
+{	
 	// Resolution
 	global.RES_W = 1920;
 	global.RES_H = 1080;
@@ -283,10 +275,10 @@ global.RES_W = round(global.RES_H * aspect_ratio);
 // Check for odd numbers
 if(global.RES_W & 1)
 	global.RES_W++;
-
+	
 // Resize window
 window_set_size(global.RES_W, global.RES_H);
-
+	
 // Delay recenter
 alarm[2] = 1;
 
@@ -446,17 +438,6 @@ purple	= $FF8C9B;
 pink	= $F6A8FF;
 
 hashColor = findColor(numColor);
-
-#endregion
-
-#region Unit Resource Costs
-
-enum unitResCost
-{
-	inf = 20,
-	trans = 80,
-	HAB = 100,
-}
 
 #endregion
 
