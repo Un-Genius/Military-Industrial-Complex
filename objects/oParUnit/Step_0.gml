@@ -1,3 +1,15 @@
+#region Test
+
+if keyboard_check_released(vk_space) && selected
+{
+	dbg("Pressed")
+	
+	x = mouse_x;
+	y = mouse_y;
+}
+
+#endregion
+
 #region Sprites management
 
 if state == action.attacking || moveState == action.moving
@@ -149,15 +161,13 @@ if enterVeh != noone
 	
 	if !_veh
 	{
-		// Move to new position
-		goalX = enterVeh.x;
-		goalY = enterVeh.y;
+		veh_position(enterVeh);
 		
 		update_state(-1, action.idle);
 	}
 	else
 	{
-		if point_distance(x, y, _veh.x, _veh.y) < 15
+		if point_distance(x, y, goalX, goalY) < 15
 		{
 			enter_Vehicle_One(_veh);
 		}
@@ -170,31 +180,31 @@ if enterVeh != noone
 
 if riding
 {
-	// Find new position
-	// var _newX = lengthdir_x(((sprite_width/2)*image_xscale) + 8, -image_angle);
-	// var _newY = lengthdir_y(((sprite_width/2)*image_xscale) + 8, -image_angle);
-	
-	if x != enterVeh.x && y != enterVeh.y
+	with(enterVeh)
 	{
-		// Relocate inf
-		x = enterVeh.x; // + _newX;
-		y = enterVeh.y; // + _newY;
-		
+		// Find new position
+		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
+		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
 	}
-	else
-	{
-		// set as goal
-		goalX = enterVeh.x;
-		goalY = enterVeh.y;
+
+	x = _newX;
+	y = _newY;
 		
-		// Delete from vehicles list
-		var _index = ds_list_find_index(enterVeh.riderList, id)
-		ds_list_delete(enterVeh.riderList, _index);
+	// set as goal
+	goalX = _newX;
+	goalY = _newY;
 	
-		// Reset variables
-		enterVeh	= noone;
-		riding		= false;
-	}
+	// Make sure to stop pathfind
+	path_end();
+		
+	// Delete from vehicles list
+	var _index = ds_list_find_index(enterVeh.riderList, id)
+	ds_list_delete(enterVeh.riderList, _index);
+	
+	// Reset variables
+	enterVeh	= noone;
+	riding		= false;
+
 }
 
 #endregion

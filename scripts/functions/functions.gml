@@ -468,6 +468,19 @@ function update_pathfind() {
 			mp_grid_add_instances(global.grid, _instance, false);
 	}
 }
+	
+function veh_position(_veh) {
+	with(_veh)
+	{
+		// Find new position
+		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
+		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
+	}
+		
+	// Set goal
+	goalX = _newX;
+	goalY = _newY;
+}
 
 #endregion
 
@@ -927,6 +940,8 @@ function packet_handle_client(from) {
 			
 			// Get data
 			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _x			= buffer_read(_buffer, buffer_f32);
+			var _y			= buffer_read(_buffer, buffer_f32);
 			var _goalX		= buffer_read(_buffer, buffer_f32);
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 						
@@ -943,6 +958,10 @@ function packet_handle_client(from) {
 			{
 				if _posList != 0
 				{
+					// Make sure its in the correct position
+					x = _x;
+					y = _y;
+					
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
@@ -952,8 +971,8 @@ function packet_handle_client(from) {
 				else
 				{
 					// Just move player
-					x = _goalX;
-					y = _goalY;
+					x = _x;
+					y = _y;
 				}
 			}
 			
@@ -1348,11 +1367,15 @@ function packet_handle_server(from) {
 			
 			// Get data
 			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _x			= buffer_read(_buffer, buffer_f32);
+			var _y			= buffer_read(_buffer, buffer_f32);
 			var _goalX		= buffer_read(_buffer, buffer_f32);
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 			
 			var _buffer = packet_start(packet_t.move_unit);
 			buffer_write(_buffer, buffer_u16, _posList);
+			buffer_write(_buffer, buffer_f32, _x);
+			buffer_write(_buffer, buffer_f32, _y);
 			buffer_write(_buffer, buffer_f32, _goalX);
 			buffer_write(_buffer, buffer_f32, _goalY);
 			packet_send_except(_buffer, from);
@@ -1370,6 +1393,10 @@ function packet_handle_server(from) {
 			{
 				if _posList != 0
 				{
+					// Make sure its in the correct position
+					x = _x;
+					y = _y;
+					
 					// Start pathfind for unit
 					goalX = _goalX;
 					goalY = _goalY;
@@ -1379,8 +1406,8 @@ function packet_handle_server(from) {
 				else
 				{
 					// Just move player
-					x = _goalX;
-					y = _goalY;
+					x = _x;
+					y = _y;
 				}
 			}
 			
@@ -2129,13 +2156,18 @@ function scr_context_move() {
 			
 			// Enter vehicle
 			if _veh
+			{
 				enterVeh = _veh;
+				veh_position(enterVeh);
+			}
 			else
+			{
 				enterVeh = noone;
-		
-			// Set goal
-			goalX = _mouse_x;
-			goalY = _mouse_y;
+				
+				// set as goal
+				goalX = mouse_x;
+				goalY = mouse_y;
+			}
 		}
 	}
 
