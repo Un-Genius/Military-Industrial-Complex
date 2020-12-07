@@ -154,22 +154,26 @@ if moveState == action.idle && (unit != unitType.air || unit != unitType.buildin
 
 #region Enter/Chase Vehicle
 
-if enterVeh != noone
-{
-	// Check for veh
-	var _veh = collision_point(goalX, goalY, enterVeh.object_index, false, true);
-	
-	if !_veh
+if enterVeh != noone && unit == unitType.inf
+{	
+	with enterVeh
 	{
-		veh_position(enterVeh);
-		
+		// Find new position
+		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
+		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
+	}
+	
+	if point_distance(_newX, _newY, goalX, goalY) > 4
+	{	
 		update_state(-1, action.idle);
+
+		veh_position(enterVeh);
 	}
 	else
 	{
-		if point_distance(x, y, goalX, goalY) < 15
+		if point_distance(x, y, _newX, _newY) < 8
 		{
-			enter_Vehicle_One(_veh);
+			enter_Vehicle_One(enterVeh);
 		}
 	}
 }
@@ -204,7 +208,6 @@ if riding
 	// Reset variables
 	enterVeh	= noone;
 	riding		= false;
-
 }
 
 #endregion

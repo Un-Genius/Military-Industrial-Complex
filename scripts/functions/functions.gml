@@ -236,10 +236,10 @@ function update_state(_newState, _newMoveState)
 	// Set moveState
 	if _newState != -1
 		state = _newState;
-	
-	// Set moveState
-	if _newMoveState != -1
-		moveState = _newMoveState;
+	else
+		// Set moveState
+		if _newMoveState != -1
+			moveState = _newMoveState;
 		
 	// Update direction
 	alarm[1] = 1;
@@ -476,7 +476,7 @@ function veh_position(_veh) {
 		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
 		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
 	}
-		
+	
 	// Set goal
 	goalX = _newX;
 	goalY = _newY;
@@ -2162,7 +2162,8 @@ function scr_context_move() {
 			}
 			else
 			{
-				enterVeh = noone;
+				enterVeh	= noone;
+				riding		= false;
 				
 				// set as goal
 				goalX = mouse_x;
