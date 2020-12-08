@@ -1,3 +1,3 @@
-/// @description Double Click
+/// @description Double Left Click
 
 doublePress = false;

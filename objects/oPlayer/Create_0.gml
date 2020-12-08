@@ -12,6 +12,11 @@ ds_list_clear(contextInstList);
 contextMenu = false;
 
 // Double click
+// 0 = false
+// 1 = pressed once
+// 2 = pressed twice
+// 3 = Holding down
+
 doublePress = false;
 
 buildingName = "";
