@@ -229,8 +229,7 @@ var _inst = ds_grid_get(_gridID, _x, _y);
 	}
 }
 	
-function update_state(_newState, _newMoveState)
-{
+function update_state(_newState, _newMoveState) {
 	// Inserting -1 will mean no update
 	
 	// Set moveState

@@ -195,6 +195,42 @@ if buildingPlacement == noone
 		#endregion
 	}
 	
+	#region Select with right click - Cancelled
+	
+	/*
+	// Select with right click
+	if _click_right_released
+	{
+		// Check if units selected
+		if ds_grid_get(global.instGrid, 0, 0) == 0
+		{
+			#region Find instance
+	
+			if instance_exists(oParUnit)
+				_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
+		
+			#endregion
+			
+			#region Add inst to hand
+	
+			if _instFind != noone
+			{
+				// Add to hand
+				add_Inst(global.instGrid, 0, _instFind);
+			
+				// Set selected
+				_instFind.selected = true;
+			}
+	
+			#endregion
+			
+			_click_right_double = true;
+		}
+	}
+	*/
+	
+	#endregion
+	
 	// Context Menu
 	if _click_right_double
 	{
@@ -467,5 +503,3 @@ if _key_rawInput
 }
 
 #endregion
-
-dbg(doublePress);
