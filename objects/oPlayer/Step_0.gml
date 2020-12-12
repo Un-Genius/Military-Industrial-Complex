@@ -15,6 +15,7 @@ var _click_left_released	= device_mouse_check_button_released(0, mb_left);
 
 // Right Click
 var _click_right_pressed	= device_mouse_check_button_pressed(0, mb_right);
+var _click_right_released	= device_mouse_check_button_released(0, mb_right);
 
 // Raw Input
 var _key_rawInput = keyboard_key;
@@ -24,20 +25,45 @@ var _key_rawInput = keyboard_key;
 var _click_left_double = false;
 var _click_right_double = false;
 
-if doublePress
+if doublePress == 3
 {
-	if _click_left_pressed
-		_click_left_double = true;
+	_click_right_double = true;
 	
-	if _click_right_pressed
-		_click_right_double = true;
+	// Reset
+	doublePress = 0;
 }
-
-// If pressed, 
-if _click_left_pressed || _click_right_pressed
+else
 {
-	doublePress = true;
-	alarm[0] = 0.25 * room_speed;
+	if doublePress == 1
+	{	
+		if _click_left_pressed
+		{
+			doublePress = 2;
+			_click_left_double = true;
+		}
+	
+		if _click_right_pressed
+		{
+			doublePress = 2;
+			_click_right_double = true;
+		}
+	}
+	else
+	{
+		// If pressed, 
+		if _click_left_pressed
+		{
+			doublePress = 1;
+			alarm[0] = 0.25 * room_speed;
+		}
+
+		// If pressed, 
+		if _click_right_pressed
+		{
+			doublePress = 1;
+			alarm[1] = 0.25 * room_speed;
+		}
+	}
 }
 
 #endregion
@@ -94,6 +120,7 @@ if x != xprevious || y != yprevious
 var _instFind	= noone;
 var _width		= ds_grid_width(global.instGrid);
 
+// Selecting, Context Menu, Mousebox, Riding Vehicles
 if buildingPlacement == noone
 {
 	// Find and select instances
@@ -168,8 +195,44 @@ if buildingPlacement == noone
 		#endregion
 	}
 	
-	// Add context menu buttons
-	if _click_right_pressed
+	#region Select with right click - Cancelled
+	
+	/*
+	// Select with right click
+	if _click_right_released
+	{
+		// Check if units selected
+		if ds_grid_get(global.instGrid, 0, 0) == 0
+		{
+			#region Find instance
+	
+			if instance_exists(oParUnit)
+				_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
+		
+			#endregion
+			
+			#region Add inst to hand
+	
+			if _instFind != noone
+			{
+				// Add to hand
+				add_Inst(global.instGrid, 0, _instFind);
+			
+				// Set selected
+				_instFind.selected = true;
+			}
+	
+			#endregion
+			
+			_click_right_double = true;
+		}
+	}
+	*/
+	
+	#endregion
+	
+	// Context Menu
+	if _click_right_double
 	{
 		// Reset context
 		close_context(-1);
@@ -202,15 +265,6 @@ if buildingPlacement == noone
 		// Add buttons
 		with(_inst)
 		{
-			// Move instance
-			if instance_exists(ds_grid_get(global.instGrid, 0, 0)) && ds_grid_get(global.instGrid, 0, 0).moveSpd != 0
-			{
-				add_context("Move", scr_context_move, false);
-		
-				// Add a break
-				add_context("break", on_click, false);
-			}
-	
 			// Select multiple instances
 			add_context("Select all",			scr_context_select_all, false);
 			add_context("Select all on screen", scr_context_select_onScreen, false);
