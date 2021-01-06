@@ -34,7 +34,7 @@ for(var i = 0; i < _gridHeight; i++)
 }
 	
 // Add extra width for more space
-width += 10 + padding;
+width += 30 + padding;
 
 // Reset Font
 draw_set_font(ftDefault);

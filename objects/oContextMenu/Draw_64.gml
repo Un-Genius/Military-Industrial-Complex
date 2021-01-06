@@ -61,7 +61,7 @@ for(var i = 0; i < _gridHeight; i++)
 				
 		// Draw folder icon
 		if _folder
-			draw_triangle(mousePressGui_x + ((width/15)*13.5), heightLevel + 4, mousePressGui_x + ((width/15)*13.5), heightLevel + height - 4, mousePressGui_x + width - 10, heightLevel + (height/2), true);
+			draw_triangle(mousePressGui_x + ((width/15)*13.5), heightLevel + 4, mousePressGui_x + ((width/15)*13.5), heightLevel + height - 4, mousePressGui_x + width - 7, heightLevel + (height/2), true);
 		
 		#region Hover highlight and click
 		

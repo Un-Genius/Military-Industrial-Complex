@@ -232,7 +232,7 @@ if buildingPlacement == noone
 	#endregion
 	
 	// Context Menu
-	if _click_right_double
+	if _click_right_released
 	{
 		// Reset context
 		close_context(-1);
@@ -265,11 +265,13 @@ if buildingPlacement == noone
 		// Add buttons
 		with(_inst)
 		{
-			// Select multiple instances
-			add_context("Select all",			scr_context_select_all, false);
-			add_context("Select all on screen", scr_context_select_onScreen, false);
-						
-			if instance_exists(_instSel)
+			if(!instance_exists(_instSel))
+			{
+				// Select multiple instances
+				//add_context("Select all",			scr_context_select_all, false);
+				add_context("Select all on screen", scr_context_select_onScreen, false);
+			}
+			else
 			{
 				with(_instSel)
 				{
@@ -288,19 +290,20 @@ if buildingPlacement == noone
 				switch(_objectIndex)
 				{
 					case oHQ:
-						add_context("break", on_click, false);
+						// Spawn units
 						add_context("Spawn Units", scr_context_folder_HQspawn, true);
 						break;
 			
 					case oHAB:
+						// Spawn troops, Destroy self
 						if _resCarry > 0
 						{
-							add_context("break", on_click, false);
 							add_context("Spawn Units", scr_context_folder_HABspawn, true);
 							add_context("break", on_click, false);
-							add_context("Destroy", scr_context_destroy, false);
+							add_context("Destroy Self", scr_context_destroy, false);
 						}
-					
+						
+						// Search for nearby vehicles
 						var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
 		
 						// Transfer supplies
@@ -313,18 +316,24 @@ if buildingPlacement == noone
 						break;
 					
 					case oTransport:
+						// Move unit
+						add_context("Move", scr_context_move, false);
+						
+						// Dismount troops
 						if ds_list_size(_instSel.riderList) > 0
 						{
 							add_context("break", on_click, false);
 							add_context("Exit Vehicle", exit_Vehicle_All, false);
 						}
 					
+						// Spawn Units
 						if _resCarry > 0
 						{
 							add_context("break", on_click, false);
 							add_context("Spawn Units", scr_context_folder_LOGspawn, true);
 						}
 				
+						// Search for nearby building
 						var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
 		
 						// Transfer supplies
@@ -342,9 +351,14 @@ if buildingPlacement == noone
 								add_context("Grab Resources", scr_context_grab_res,	 false);
 						}
 						break;
+						
+					default:
+						// Move Unit
+						add_context("Move", scr_context_move, false);
 				}
 			}
-			else
+			
+			if(global.debugMenu)
 			{
 				add_context("break", on_click, false);
 				add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
