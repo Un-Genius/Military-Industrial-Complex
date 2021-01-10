@@ -267,6 +267,22 @@ if buildingPlacement == noone
 		{
 			if(!instance_exists(_instSel))
 			{
+				var _size = ds_grid_width(global.instGrid);
+				
+				// Check if any units are selected
+				for(var i = 0; i < _size; i++)
+				{
+					var _value = ds_grid_get(global.instGrid, i, 0);
+					
+					if(instance_exists(_value))
+					{
+						// Move Unit
+						add_context("Move", scr_context_move, false);
+						add_context("break", on_click, false);
+						break;
+					}
+				}
+				
 				// Select multiple instances
 				//add_context("Select all",			scr_context_select_all, false);
 				add_context("Select all on screen", scr_context_select_onScreen, false);
@@ -351,10 +367,6 @@ if buildingPlacement == noone
 								add_context("Grab Resources", scr_context_grab_res,	 false);
 						}
 						break;
-						
-					default:
-						// Move Unit
-						add_context("Move", scr_context_move, false);
 				}
 			}
 			

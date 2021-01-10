@@ -346,6 +346,8 @@ function kill_Vehicle_Riders() {
 
 function scr_pathfind(xgoal, ygoal, speed) {
 	
+	#region OLD
+	/*
 	// glorious pathfinding
     if(mp_grid_path(global.grid, path, x, y, xgoal, ygoal, true))
     {
@@ -426,6 +428,143 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		
 		update_state(-1, action.idle);
 	}
+	*/
+	#endregion
+	
+	#region Rerout obstacles
+	
+	// Find nearest path
+	var object = collision_circle(xgoal, ygoal, 15, oCollision, false, true);
+	
+	var distance = 0;
+	var _x = 0;
+	var _y = 0;
+	
+	while(instance_exists(object))
+	{
+		// How big of a radius to look away
+		distance += 20;
+		
+		// Look 360 degrees around the area
+		for(var i = 0; i < 360; i += 45)
+		{
+			_x = lengthdir_x(distance, i);
+			_y = lengthdir_y(distance, i);
+			
+			// Check for collision
+			if(!collision_circle(xgoal + _x, ygoal + _y, 15, oCollision, false, true))
+			{
+				// Change goals
+				xgoal += _x;
+				ygoal += _y;
+				
+				var _width = ds_grid_width(global.instGrid);
+				
+				// Update all instances selected
+				for(var i = 0; i < _width; i++)
+				{
+					var _inst = ds_grid_get(global.instGrid, i, 0);
+		
+					if _inst == 0
+						break;
+		
+					// update goal
+					with(_inst)
+					{			
+						goalX = xgoal;
+						goalY = ygoal;
+					}
+				}
+				
+				// Stop while Loop
+				object = noone;
+				
+				// Stop loop
+				break;
+			}
+		}
+	}
+	
+	#endregion
+	
+	#region Shorten Path
+	
+	if(mp_grid_path(global.grid, path, x, y, xgoal, ygoal, true))
+	{
+		// path smoothing
+		path_set_kind(path, false);
+		path_set_precision(path, 8);
+				
+		var _pathAmount = path_get_number(path);
+		
+		// Shorten path
+		if _pathAmount > 2
+		{
+			var x1, y1, x2, y2;
+	
+			// See if you can skip to the end
+			var _startPointX	= path_get_point_x(path, 0);
+			var _startPointY	= path_get_point_y(path, 0);
+			var _endpointX		= path_get_point_x(path, _pathAmount-1);
+			var _endpointY		= path_get_point_y(path, _pathAmount-1);
+			
+			if !collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oCollision, false, true)
+			{				
+				// Cut out the middle points			
+				while(path_get_number(path) > 2)
+				{
+					path_delete_point(path, 1);
+				}
+			}
+			else
+			{
+				for(var i = 1; i < _pathAmount - 1; i++)
+				{
+					x1 = path_get_point_x(path, i - 1)
+					y1 = path_get_point_y(path, i - 1)
+			
+					x2 = path_get_point_x(path, i + 1)
+					y2 = path_get_point_y(path, i + 1)
+                        
+					//raycast
+					var temp_dir	= point_direction(x1, y1, x2, y2);
+				
+					var temp_x		= x1+lengthdir_x(8, temp_dir);
+					var temp_y		= y1+lengthdir_y(8, temp_dir);
+				
+					var start_xr	= temp_x;
+					var start_yr	= temp_y;
+					
+					var path_collision = position_meeting(temp_x, temp_y, oCollision);
+			
+					while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
+					{
+						temp_x += lengthdir_x(8, temp_dir);
+						temp_y += lengthdir_y(8, temp_dir);
+						path_collision = position_meeting(temp_x, temp_y, oCollision);
+					}
+                        
+					if !path_collision
+					{
+						path_delete_point(path, i);
+					
+						_pathAmount--;
+					
+						i--;
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		dbg("Error pathfinding. Could not avoid obstacle.");
+	}
+	
+	#endregion
+	
+	// Start path
+	path_start(path, speed, path_action_stop, false);
 }
 
 function reset_pathfind() {
