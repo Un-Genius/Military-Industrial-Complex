@@ -33,7 +33,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Vehicles",
-    "path": "folders/Objects/Units/Client/Vehicles.yy",
+    "path": "folders/Objects/Units/.Client/Vehicles.yy",
   },
   "resourceVersion": "1.0",
   "name": "oTransportClient",

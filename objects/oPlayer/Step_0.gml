@@ -128,8 +128,11 @@ if buildingPlacement == noone
 	{
 		#region Find instance
 	
-		if instance_exists(oParUnit)
-			_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
+		if instance_exists(oParSquad)
+			_instFind = find_top_Inst(mouse_x, mouse_y, oParSquad);
+		else
+			if instance_exists(oParUnit)
+				_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
 		
 		#endregion
 

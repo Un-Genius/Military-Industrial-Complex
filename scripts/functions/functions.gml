@@ -344,12 +344,12 @@ function kill_Vehicle_Riders() {
 
 #region Pathfinding
 
-function scr_pathfind(xgoal, ygoal, speed) {
+function scr_pathfind() {
 	
 	#region OLD
 	/*
 	// glorious pathfinding
-    if(mp_grid_path(global.grid, path, x, y, xgoal, ygoal, true))
+    if(mp_grid_path(global.grid, path, x, y, goalX, goalY, true))
     {
 		// path smoothing
 	    path_set_kind(path, false);
@@ -419,7 +419,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		
 		#endregion
 		
-	    path_start(path, speed, path_action_stop, false);
+	    path_start(path, moveSpd, path_action_stop, false);
 	}
 	else
 	{
@@ -434,7 +434,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 	#region Rerout obstacles
 	
 	// Find nearest path
-	var object = collision_circle(xgoal, ygoal, 15, oCollision, false, true);
+	var object = collision_circle(goalX, goalY, 15, oCollision, false, true);
 	
 	var distance = 0;
 	var _x = 0;
@@ -452,15 +452,16 @@ function scr_pathfind(xgoal, ygoal, speed) {
 			_y = lengthdir_y(distance, i);
 			
 			// Check for collision
-			if(!collision_circle(xgoal + _x, ygoal + _y, 15, oCollision, false, true))
+			if(!collision_circle(goalX + _x, goalY + _y, 15, oCollision, false, true))
 			{
 				// Change goals
-				xgoal += _x;
-				ygoal += _y;
+				goalX += _x;
+				goalY += _y;
 				
-				var _width = ds_grid_width(global.instGrid);
+				/*var _width = ds_grid_width(global.instGrid);
 				
 				// Update all instances selected
+				
 				for(var i = 0; i < _width; i++)
 				{
 					var _inst = ds_grid_get(global.instGrid, i, 0);
@@ -470,11 +471,11 @@ function scr_pathfind(xgoal, ygoal, speed) {
 		
 					// update goal
 					with(_inst)
-					{			
-						goalX = xgoal;
-						goalY = ygoal;
+					{										
+						goalX = goalX;
+						goalY = goalY;
 					}
-				}
+				}*/
 				
 				// Stop while Loop
 				object = noone;
@@ -489,7 +490,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 	
 	#region Shorten Path
 	
-	if(mp_grid_path(global.grid, path, x, y, xgoal, ygoal, true))
+	if(mp_grid_path(global.grid, path, x, y, goalX, goalY, true))
 	{
 		// path smoothing
 		path_set_kind(path, false);
@@ -564,7 +565,7 @@ function scr_pathfind(xgoal, ygoal, speed) {
 	#endregion
 	
 	// Start path
-	path_start(path, speed, path_action_stop, false);
+	path_start(path, moveSpd, path_action_stop, false);
 }
 
 function reset_pathfind() {
@@ -1104,7 +1105,7 @@ function packet_handle_client(from) {
 					goalX = _goalX;
 					goalY = _goalY;
 					
-					scr_pathfind(goalX, goalY, moveSpd);
+					scr_pathfind();
 				}
 				else
 				{
@@ -1539,7 +1540,7 @@ function packet_handle_server(from) {
 					goalX = _goalX;
 					goalY = _goalY;
 					
-					scr_pathfind(goalX, goalY, moveSpd);
+					scr_pathfind();
 				}
 				else
 				{
@@ -2306,6 +2307,11 @@ function scr_context_move() {
 				// set as goal
 				goalX = mouse_x;
 				goalY = mouse_y;
+				
+				if(_inst.object_index == oParSquad)
+				{
+					event_user(1);
+				}
 			}
 		}
 	}
@@ -2528,7 +2534,7 @@ function scr_context_spawn_dummy() {
 	}
 		
 	// Create instance
-	spawn_unit("oDummy", _mouseX, _mouseY);
+	spawn_unit("oParSquad", _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2579,6 +2585,8 @@ function spawn_unit(_object_string, posX, posY) {
 	var _width	= ds_grid_width(global.instGrid);
 	var _height = ds_grid_height(global.instGrid);
 	ds_grid_resize(global.instGrid, _width + 1, _height);
+	
+	return _inst;
 }
 
 #endregion

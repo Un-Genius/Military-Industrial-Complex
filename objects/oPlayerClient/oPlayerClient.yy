@@ -29,8 +29,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Client",
-    "path": "folders/Objects/Units/Client.yy",
+    "name": ".Client",
+    "path": "folders/Objects/Units/.Client.yy",
   },
   "resourceVersion": "1.0",
   "name": "oPlayerClient",

@@ -34,7 +34,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Buildings",
-    "path": "folders/Objects/Units/Client/Buildings.yy",
+    "path": "folders/Objects/Units/.Client/Buildings.yy",
   },
   "resourceVersion": "1.0",
   "name": "oHQClient",

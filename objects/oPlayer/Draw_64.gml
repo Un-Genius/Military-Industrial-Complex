@@ -33,10 +33,6 @@ if(instance_exists(_value) && _value > 1000)
 	draw_text(125,global.RES_H/2 + 215,string(_value.unitName));
 	draw_text(225,global.RES_H/2 + 250,"Health: " + string(_value.hp));
 	draw_text(225,global.RES_H/2 + 275,"Ammo: " + string(_value.resCarry));
-	draw_text(225,global.RES_H/2 + 300,"Ammo Usage: " + string(_value.ammoUse));
-	draw_text(225,global.RES_H/2 + 325,"Weapon: " + string(_value.gun));	
-	draw_text(225,global.RES_H/2 + 350,"Range:  " + string(_value.range));
-	draw_text(225,global.RES_H/2 + 375,"Movement Speed:  " + string(_value.moveSpd));
 }
 
 #endregion 
