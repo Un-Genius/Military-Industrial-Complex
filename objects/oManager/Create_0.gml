@@ -28,11 +28,14 @@ enum packet_t
 	add_unit,
 	// client: (unit_type, x, y)
 	// server: (client_id:int64, unit_type, x, y)
+	add_attached_unit,
+	// client: (unit_type, x, y, pos)
+	// server: (client_id:int64, unit_type, x, y, pos)
 	destroy_unit,
 	// client: (user, pos)
 	// server: (client_id:int64, pos)
 	move_unit,
-	// client: (pos, x, y, goal_x, goal_y)
+	// client: (user, pos, x, y, goal_x, goal_y)
 	// server: (client_id:int64, pos, x, y, goal_x, goal_y)
 	veh_interact,
 	// client: (pos, interaction)

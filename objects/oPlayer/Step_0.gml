@@ -102,16 +102,8 @@ y = clamp(y, ybuf, room_height - ybuf + 2);
 
 if x != xprevious || y != yprevious
 {
-	// Send position and rotation to others
-	// Find self in list
-	var _pos = ds_list_find_index(global.unitList, id)
-
-	// Send position and rotation to others
-	var _packet = packet_start(packet_t.move_unit);
-	buffer_write(_packet, buffer_u16, _pos);
-	buffer_write(_packet, buffer_f32, x);
-	buffer_write(_packet, buffer_f32, y);
-	packet_send_all(_packet);
+	// Update doppelganger
+	update_goal();
 }
 
 #endregion

@@ -20,21 +20,8 @@ if point_distance(x, y, goalX, goalY) > 3
 		// Start pathfind
 		scr_pathfind();
 		
-		#region Update position for everyone else
-
-		// Find self in list
-		var _pos = ds_list_find_index(global.unitList, id)
-
-		// Send position and rotation to others
-		var _packet = packet_start(packet_t.move_unit);
-		buffer_write(_packet, buffer_u16, _pos);
-		buffer_write(_packet, buffer_f32, x);
-		buffer_write(_packet, buffer_f32, y);
-		buffer_write(_packet, buffer_f32, goalX);
-		buffer_write(_packet, buffer_f32, goalY);
-		packet_send_all(_packet);
-
-		#endregion
+		// Update doppelganger
+		update_goal();
 		
 		update_state(-1, action.moving);
 	}

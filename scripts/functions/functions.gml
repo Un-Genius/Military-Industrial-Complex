@@ -216,6 +216,22 @@ function find_top_Inst(_x, _y, _obj) {
 
 #region Modify/Update Instance
 
+function update_goal() {
+	
+	// Find self in list
+	var _pos = ds_list_find_index(global.unitList, id)
+
+	// Send position and rotation to others
+	var _packet = packet_start(packet_t.move_unit);
+	buffer_write(_packet, buffer_u64, oManager.user);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_f32, x);
+	buffer_write(_packet, buffer_f32, y);
+	buffer_write(_packet, buffer_f32, goalX);
+	buffer_write(_packet, buffer_f32, goalY);
+	packet_send_all(_packet);
+}
+
 function modify_Selected_Slot(_gridID, _x, _y, _selected) {
 
 var _inst = ds_grid_get(_gridID, _x, _y);
@@ -1050,6 +1066,48 @@ function packet_handle_client(from) {
 						
 			break;
 			
+		case packet_t.add_attached_unit:
+	
+			var _object_string	= buffer_read(_buffer, buffer_string);
+			var posX			= buffer_read(_buffer, buffer_f32);
+			var posY			= buffer_read(_buffer, buffer_f32);
+			var _posList		= buffer_read(_buffer, buffer_u16);
+						
+			var _object		= asset_get_index(_object_string + "Client");
+			
+			// Create instance
+			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			
+			// Find Unit
+			var _parent		= ds_list_find_value(_list, _posList);
+			
+			// Add inst to list
+			ds_list_add(_list, _inst);
+			
+			// Get data map
+			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
+			
+			// Get data
+			var _team		= ds_map_find_value(_dataMap, "team");
+			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+			var _numColor	= ds_map_find_value(_dataMap, "numColor");
+						
+			with(_inst)
+			{
+				// Transfer data
+				team			= _team;
+				numColor		= _numColor;
+				hashColor		= _hashColor;
+				
+				// Add parent
+				squadID			= _parent;
+			}
+						
+			break;
+			
 		case packet_t.destroy_unit:
 		
 			// Check if still in game
@@ -1078,6 +1136,7 @@ function packet_handle_client(from) {
 				break;
 			
 			// Get data
+			var _from		= buffer_read(_buffer, buffer_u64);
 			var _posList	= buffer_read(_buffer, buffer_u16);
 			var _x			= buffer_read(_buffer, buffer_f32);
 			var _y			= buffer_read(_buffer, buffer_f32);
@@ -1085,7 +1144,7 @@ function packet_handle_client(from) {
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
 
 			// Find Unit
 			var _unit		= ds_list_find_value(_list, _posList);
@@ -1471,6 +1530,55 @@ function packet_handle_server(from) {
 						
 			break;
 			
+		case packet_t.add_attached_unit:
+	
+			var _object_string	= buffer_read(_buffer, buffer_string);
+			var posX			= buffer_read(_buffer, buffer_f32);
+			var posY			= buffer_read(_buffer, buffer_f32);
+			var _posList		= buffer_read(_buffer, buffer_u16);
+			
+			var _buffer = packet_start(packet_t.add_unit);
+			buffer_write(_buffer, buffer_string, _object_string);
+			buffer_write(_buffer, buffer_f32, posX);
+			buffer_write(_buffer, buffer_f32, posY);
+			buffer_write(_buffer, buffer_u16, _posList);
+			packet_send_except(_buffer, from);
+						
+			var _object		= asset_get_index(_object_string + "Client");
+			
+			// Create instance
+			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
+						
+			// Find list
+			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			
+			// Find Unit
+			var _parent		= ds_list_find_value(_list, _posList);
+			
+			// Add inst to list
+			ds_list_add(_list, _inst);
+			
+			// Get data map
+			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
+			
+			// Get data
+			var _team		= ds_map_find_value(_dataMap, "team");
+			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+			var _numColor	= ds_map_find_value(_dataMap, "numColor");
+						
+			with(_inst)
+			{
+				// Transfer data
+				team			= _team;
+				numColor		= _numColor;
+				hashColor		= _hashColor;
+				
+				// Add parent
+				squadID			= _parent;
+			}
+						
+			break;
+			
 		case packet_t.destroy_unit:
 		
 			// Check if still in game
@@ -1505,6 +1613,7 @@ function packet_handle_server(from) {
 				break;
 			
 			// Get data
+			var _from		= buffer_read(_buffer, buffer_u64);
 			var _posList	= buffer_read(_buffer, buffer_u16);
 			var _x			= buffer_read(_buffer, buffer_f32);
 			var _y			= buffer_read(_buffer, buffer_f32);
@@ -1512,6 +1621,7 @@ function packet_handle_server(from) {
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 			
 			var _buffer = packet_start(packet_t.move_unit);
+			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _posList);
 			buffer_write(_buffer, buffer_f32, _x);
 			buffer_write(_buffer, buffer_f32, _y);
