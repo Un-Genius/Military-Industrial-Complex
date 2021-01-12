@@ -11,6 +11,10 @@ ds_list_clear(contextInstList);
 
 contextMenu = false;
 
+// Duds
+goalX = 0;
+goalY = 0;
+
 // Double click
 // 0 = false
 // 1 = pressed once
