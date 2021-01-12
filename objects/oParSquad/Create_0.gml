@@ -23,7 +23,7 @@ team		= oManager.team;		// Which team its on
 numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
 hashColor	= oManager.hashColor;	// "red" or "blue"
 
-selected = false;	// Display highlight
+selected = false;		// Display highlight
 
 riding		= false;	// Display unit whether in veh or not
 
