@@ -1105,6 +1105,12 @@ function packet_handle_client(from) {
 				// Add parent
 				squadID			= _parent;
 			}
+			
+			// Add to parentlist
+			with(_parent)
+			{
+				ds_list_add(childList, _inst);
+			}
 						
 			break;
 			
@@ -1575,6 +1581,12 @@ function packet_handle_server(from) {
 				
 				// Add parent
 				squadID			= _parent;
+			}
+			
+			// Add to parentlist
+			with(_parent)
+			{
+				ds_list_add(childList, _inst);
 			}
 						
 			break;
