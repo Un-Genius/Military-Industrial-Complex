@@ -53,9 +53,7 @@ for(var j = 0; j < hp; j++)
 		var _goalY = goalY - (_dist * (j - (floor(hp/6))));
 		
 		// Create unit
-		var _inst = instance_create_layer(_goalX, _goalY, "Instances", unit);
-		
-		spawn_unit("oSquadInf", _goalX, _goalY);
+		var _inst = spawn_unit("oSquadInf", _goalX, _goalY);
 	
 		// Add unit to list
 		ds_list_add(childList, _inst);
