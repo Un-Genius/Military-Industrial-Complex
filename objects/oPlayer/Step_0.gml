@@ -104,6 +104,9 @@ if x != xprevious || y != yprevious
 {
 	// Update doppelganger
 	update_goal();
+	
+	xprevious = x;
+	yprevious = y;
 }
 
 #endregion

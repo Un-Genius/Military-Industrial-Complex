@@ -36,6 +36,8 @@ path = path_add();
 
 squadID = noone;
 
+pushTimer = 0;
+
 // Enter vehicle if present
 enterVeh	= noone;
 riding		= false;

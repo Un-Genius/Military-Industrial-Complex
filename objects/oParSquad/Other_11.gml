@@ -30,25 +30,3 @@ for(var j = 0; j < hp; j++)
 		i++;
 	}
 }
-
-// Find average
-/*
-for(var i = 0; i < _size; i++)
-{
-	var _inst = ds_list_find_value(childList, i);
-		
-	var _x = irandom_range(-range, range);
-	var _y = irandom_range(-range, range);
-	
-	var _goalX = goalX;
-	var _goalY = goalY;
-		
-	with(_inst)
-	{
-		update_state(-1, action.idle);
-		
-		// Set goal
-		goalX	= _goalX + _x;
-		goalY	= _goalY + _y;
-	}
-}

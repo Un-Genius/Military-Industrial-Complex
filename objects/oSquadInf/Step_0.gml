@@ -25,6 +25,47 @@ if point_distance(x, y, goalX, goalY) > 3
 		
 		update_state(-1, action.moving);
 	}
+	else
+	{
+		#region Walk the path
+		
+		var _point = false;
+		
+		// Loop until next point is found
+		while(!_point)
+		{
+			// Get amount left
+			var _amount = path_get_number(path);
+			
+			// Get next waypoint
+			var xx = path_get_x(path, 0);
+			var yy = path_get_y(path, 0);
+		
+			// Delete waypoint if arrived
+			if point_distance(x, y, xx, yy) < 3
+			{
+				// Stop path
+				if _amount == 1
+				{
+					update_state(-1, action.idle);
+					_point = true;
+				}
+				else
+					path_delete_point(path, 0);
+			}
+			else
+				_point = true;
+		}
+		
+		// Find direction
+		var _pathDir = point_direction(x, y, xx, yy);
+		
+		// Vector a step
+		x += lengthdir_x(moveSpd, _pathDir);
+		y += lengthdir_y(moveSpd, _pathDir);
+		
+		#endregion
+	}
 }
 else
 {
@@ -36,21 +77,26 @@ else
 
 #region Move out of the way
 
-if moveState == action.idle && (unit != unitType.air || unit != unitType.building)
+// Increas timer
+pushTimer++;
+
+if pushTimer > 0.2 * room_speed
 {
-	var _collision = collision_circle(x, y, 5, oParUnit, false, true);
-	
-	if _collision
+	if unit != unitType.air || unit != unitType.building
 	{
-		if _collision.moveState != action.idle && (_collision.unit == unit || _collision.unit = unitType.gnd)
-		{
+		var _collision = collision_circle(x, y, 10, oSquadInf, false, true);
+	
+		if _collision && (_collision.unit == unit || _collision.unit = unitType.gnd)
+		{		
 			var _dir = -point_direction(x, y, _collision.x, _collision.y);
 		
-			var _newPosX = lengthdir_x(10, _dir);
-			var _newPosY = lengthdir_y(10, _dir);
+			var _newPosX = lengthdir_x(moveSpd*1.5, _dir);
+			var _newPosY = lengthdir_y(moveSpd*1.5, _dir);
 		
 			goalX += _newPosX;
 			goalY += _newPosY;
+			
+			pushTimer = 0;
 		}
 	}
 }

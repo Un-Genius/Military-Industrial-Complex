@@ -217,7 +217,6 @@ function find_top_Inst(_x, _y, _obj) {
 #region Modify/Update Instance
 
 function update_goal() {
-	
 	// Find self in list
 	var _pos = ds_list_find_index(global.unitList, id)
 
@@ -266,9 +265,10 @@ function update_state(_newState, _newMoveState) {
 
 	// Find self in list
 	var _pos = ds_list_find_index(global.unitList, id)
-
+	
 	// Send position and rotation to others
 	var _packet = packet_start(packet_t.update_unit);
+	buffer_write(_packet, buffer_u64, oManager.user);
 	buffer_write(_packet, buffer_u16, _pos);
 	buffer_write(_packet, buffer_s8, state);
 	buffer_write(_packet, buffer_s8, moveState);
@@ -361,92 +361,7 @@ function kill_Vehicle_Riders() {
 #region Pathfinding
 
 function scr_pathfind() {
-	
-	#region OLD
-	/*
-	// glorious pathfinding
-    if(mp_grid_path(global.grid, path, x, y, goalX, goalY, true))
-    {
-		// path smoothing
-	    path_set_kind(path, false);
-	    path_set_precision(path, 8);
-				
-		#region Pathfinder
 		
-		var _pathAmount = path_get_number(path);
-		
-	    if _pathAmount > 2
-	    {
-		    var x1, y1, x2, y2;
-	
-			// See if you can skip to the end
-			var _startPointX	= path_get_point_x(path, 0);
-			var _startPointY	= path_get_point_y(path, 0);
-			var _endpointX		= path_get_point_x(path, _pathAmount-1);
-			var _endpointY		= path_get_point_y(path, _pathAmount-1);
-			
-			if !collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oCollision, false, true)
-			{				
-				// Cut out the middle points			
-				while(path_get_number(path) > 2)
-				{
-					path_delete_point(path, 1);
-				}
-			}
-			else
-			{
-			    for(var i = 1; i < _pathAmount - 1; i++)
-			    {
-				    x1 = path_get_point_x(path, i - 1)
-				    y1 = path_get_point_y(path, i - 1)
-			
-				    x2 = path_get_point_x(path, i + 1)
-				    y2 = path_get_point_y(path, i + 1)
-                        
-				    //raycast
-				    var temp_dir	= point_direction(x1, y1, x2, y2);
-				
-				    var temp_x		= x1+lengthdir_x(8, temp_dir);
-				    var temp_y		= y1+lengthdir_y(8, temp_dir);
-				
-				    var start_xr	= temp_x;
-				    var start_yr	= temp_y;
-					
-					var path_collision = position_meeting(temp_x, temp_y, oCollision);
-			
-					while(!path_collision && (point_distance(start_xr, start_yr, temp_x, temp_y) < point_distance(start_xr, start_yr, x2, y2)))
-					{
-					    temp_x += lengthdir_x(8, temp_dir);
-					    temp_y += lengthdir_y(8, temp_dir);
-					    path_collision = position_meeting(temp_x, temp_y, oCollision);
-					}
-                        
-					if !path_collision
-					{
-						path_delete_point(path, i);
-					
-						_pathAmount--;
-					
-						i--;
-					}
-			    }
-			}
-	    }
-		
-		#endregion
-		
-	    path_start(path, moveSpd, path_action_stop, false);
-	}
-	else
-	{
-		goalX = x;
-		goalY = y;
-		
-		update_state(-1, action.idle);
-	}
-	*/
-	#endregion
-	
 	#region Rerout obstacles
 	
 	// Find nearest path
@@ -581,7 +496,7 @@ function scr_pathfind() {
 	#endregion
 	
 	// Start path
-	path_start(path, moveSpd, path_action_stop, false);
+	//path_start(path, moveSpd, path_action_stop, false);
 }
 
 function reset_pathfind() {
@@ -1051,7 +966,10 @@ function packet_handle_client(from) {
 			var _team		= ds_map_find_value(_dataMap, "team");
 			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
-						
+			
+			//Debug
+			dbg(string(delta_time) + ": " + object_get_name(_object) + " - " + string(ds_list_find_index(_list, _inst)) + " is being created.");	
+	
 			with(_inst)
 			{
 				// Transfer data
@@ -1151,9 +1069,12 @@ function packet_handle_client(from) {
 						
 			// Find list
 			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
-
+			
 			// Find Unit
 			var _unit		= ds_list_find_value(_list, _posList);
+			
+			//Debug
+			dbg(string(delta_time) + ": " + object_get_name(_unit.object_index) + " - " + string(_posList) + " is pathfinding.");	
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1220,12 +1141,13 @@ function packet_handle_client(from) {
 				break;
 			
 			// Get data
-			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _from			= buffer_read(_buffer, buffer_u64);
+			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _newState		= buffer_read(_buffer, buffer_s8);
 			var _newMoveState	= buffer_read(_buffer, buffer_s8);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
 
 			// Find Unit
 			var _unit		= ds_list_find_value(_list, _posList);
@@ -1717,18 +1639,20 @@ function packet_handle_server(from) {
 				break;
 			
 			// Get data
-			var _posList	= buffer_read(_buffer, buffer_u16);
+			var _from			= buffer_read(_buffer, buffer_u64);
+			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _newState		= buffer_read(_buffer, buffer_s8);
 			var _newMoveState	= buffer_read(_buffer, buffer_s8);
 			
 			var _buffer = packet_start(packet_t.move_unit);
+			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _posList);
 			buffer_write(_buffer, buffer_s8, _newState);
 			buffer_write(_buffer, buffer_s8, _newMoveState); 
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
 
 			// Find Unit
 			var _unit		= ds_list_find_value(_list, _posList);
