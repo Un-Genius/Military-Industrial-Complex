@@ -54,7 +54,9 @@ for(var j = 0; j < hp; j++)
 		var _goalY = goalY - (_dist * (j - (floor(hp/6))));
 		
 		// Find self in list
-		var _pos = ds_list_find_index(global.unitList, id)
+		var _pos = ds_list_find_index(global.unitList, id);
+		
+		dbg("Position: " + string(_pos))
 		
 		// Object to spawn		
 		var _objectString = "oSquadInf";

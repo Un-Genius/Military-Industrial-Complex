@@ -18,13 +18,16 @@ switch state
 {
 	case action.idle:
 		
-		// Find index
-		var _sprite = asset_get_index(unitName + "_" + string(state));
+		if unit != unitType.building
+		{
+			// Find index
+			var _sprite = asset_get_index(unitName + "_" + string(state));
 		
-		image_speed = sprite_get_speed(_sprite);
+			image_speed = sprite_get_speed(_sprite);
 		
-		if distance_to_point(goalX, goalY) < 3
-			image_speed = 0;
+			if distance_to_point(goalX, goalY) < 3
+				image_speed = 0;
+		}
 		
 		break;
 				

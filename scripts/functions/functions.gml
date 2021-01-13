@@ -944,6 +944,7 @@ function packet_handle_client(from) {
 			
 		case packet_t.add_unit:
 	
+			var _from			= buffer_read(_buffer, buffer_u64);
 			var _object_string	= buffer_read(_buffer, buffer_string);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
@@ -954,13 +955,13 @@ function packet_handle_client(from) {
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _list	= ds_map_find_value(global.multiInstMap, string(from))
+			var _list	= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Add inst to list
 			ds_list_add(_list, _inst);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(from));
+			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
@@ -1416,11 +1417,13 @@ function packet_handle_server(from) {
 			
 		case packet_t.add_unit:
 			
+			var _from			= buffer_read(_buffer, buffer_u64);
 			var _object_string	= buffer_read(_buffer, buffer_string);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
 			
 			var _buffer = packet_start(packet_t.add_unit);
+			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_string, _object_string);
 			buffer_write(_buffer, buffer_f32, posX);
 			buffer_write(_buffer, buffer_f32, posY);
@@ -1432,16 +1435,16 @@ function packet_handle_server(from) {
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _list	= ds_map_find_value(global.multiInstMap, string(from))
+			var _list	= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Add inst to list
 			ds_list_add(_list, _inst);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(from));
+			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
 			
 			// Get data
-			var _team		=ds_map_find_value(_dataMap, "team");
+			var _team		= ds_map_find_value(_dataMap, "team");
 			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 						
@@ -2617,6 +2620,7 @@ function scr_context_spawn_HAB() {
 function spawn_unit(_object_string, posX, posY) {
 	
 	var _packet = packet_start(packet_t.add_unit);
+	buffer_write(_packet, buffer_u64, oManager.user);
 	buffer_write(_packet, buffer_string, _object_string);
 	buffer_write(_packet, buffer_f32, posX);
 	buffer_write(_packet, buffer_f32, posY);
