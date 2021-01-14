@@ -75,7 +75,7 @@ for(var j = 0; j < hp; j++)
 		_inst.squadID = id;
 		
 		// Find self in list
-		var _pos = ds_list_find_index(global.unitList, id);
+		var _pos = ds_list_find_index(global.unitList, _inst);
 		
 		var _packet = packet_start(packet_t.add_attached_unit);
 		buffer_write(_packet, buffer_u64, oManager.user);
@@ -84,6 +84,8 @@ for(var j = 0; j < hp; j++)
 		buffer_write(_packet, buffer_f32, _goalY);
 		buffer_write(_packet, buffer_u16, _pos);
 		packet_send_all(_packet);
+		
+		dbg(string(i) + ": " + string(_pos))
 		
 		i++;
 	}
