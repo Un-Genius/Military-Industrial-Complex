@@ -4,6 +4,24 @@ function dbg(_value) {
 	show_debug_message(_value)
 }
 	
+function syntaxErrorRemover()
+{
+	// Calls all scripts not being used so that they wont show up
+	
+	syntaxErrorRemover();
+	
+	scr_GUI_list0();
+	scr_GUI_list13();
+	scr_GUI_list14();
+	scr_GUI_list3();
+	scr_GUI_list4();
+	scr_GUI_list8();
+	
+	scr_context_select_all();
+	
+	wipe_Deck(-1);
+}
+	
 #endregion
 
 #region Instance	Functions
@@ -615,7 +633,10 @@ function steam_reset_state() {
 			var _key = ds_list_find_value(net_list, i);
 			
 			// Find list of objects under map
-			var _list = ds_map_find_value(global.multiInstMap, string(_key));
+			var _map = ds_map_find_value(global.multiInstMap, string(_key));
+			
+			// Add all instances to a list
+			var _list = ds_map_values_to_array(_map);
 			
 			// Cycle through list and destroy objects
 			if(!is_undefined(_list))
@@ -635,6 +656,7 @@ function steam_reset_state() {
 				}
 		
 				ds_list_destroy(_list);
+				ds_map_destroy(_map);
 		
 				#endregion
 			}
@@ -934,10 +956,10 @@ function packet_handle_client(from) {
 				var _id = ds_list_find_value(net_list, i);
 								
 				// Create list for players
-				var _list = ds_list_create();
+				var _map = ds_map_create();
 												
 				// Create slot for players
-				ds_map_set(global.multiInstMap, string(_id), _list);
+				ds_map_set(global.multiInstMap, string(_id), _map);
 			}
 									
 	        break;
@@ -945,6 +967,7 @@ function packet_handle_client(from) {
 		case packet_t.add_unit:
 	
 			var _from			= buffer_read(_buffer, buffer_u64);
+			var _pos			= buffer_read(_buffer, buffer_u16);
 			var _object_string	= buffer_read(_buffer, buffer_string);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
@@ -955,10 +978,10 @@ function packet_handle_client(from) {
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _list	= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map	= ds_map_find_value(global.multiInstMap, string(_from))
 			
-			// Add inst to list
-			ds_list_add(_list, _inst);
+			// Add inst to map
+			ds_map_add(_map, _pos, _inst);
 			
 			// Get data map
 			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
@@ -999,16 +1022,16 @@ function packet_handle_client(from) {
 			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from));
 			
 			// Find Unit
-			var _parent		= ds_list_find_value(_list, _posList);
+			var _parent		= ds_map_find_value(_map, _posList);
 			
 			// Add inst to list
-			ds_list_add(_list, _inst);
+			ds_map_add(_map, _posList, _inst);
 			
 			// Get data map
-			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
+			var _dataMap	= ds_map_find_value(playerDataMap, string(_from));
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
@@ -1044,10 +1067,10 @@ function packet_handle_client(from) {
 			var _posList	= buffer_read(_buffer, buffer_u16);
 			
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from));
 			
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			// Destroy unit
 			if(!is_undefined(_unit))
@@ -1070,10 +1093,10 @@ function packet_handle_client(from) {
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_list_find_value(_map, _posList);
 			
 			//Debug
 			dbg(string(delta_time) + ": " + object_get_name(_unit.object_index) + " - " + string(_posList) + " is pathfinding.");	
@@ -1149,10 +1172,10 @@ function packet_handle_client(from) {
 			var _newMoveState	= buffer_read(_buffer, buffer_s8);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_list_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1418,12 +1441,14 @@ function packet_handle_server(from) {
 		case packet_t.add_unit:
 			
 			var _from			= buffer_read(_buffer, buffer_u64);
+			var _pos			= buffer_read(_buffer, buffer_u16);
 			var _object_string	= buffer_read(_buffer, buffer_string);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
 			
 			var _buffer = packet_start(packet_t.add_unit);
 			buffer_write(_buffer, buffer_u64, _from);
+			buffer_write(_packet, buffer_u16, _pos);
 			buffer_write(_buffer, buffer_string, _object_string);
 			buffer_write(_buffer, buffer_f32, posX);
 			buffer_write(_buffer, buffer_f32, posY);
@@ -1435,10 +1460,10 @@ function packet_handle_server(from) {
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _list	= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map	= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Add inst to list
-			ds_list_add(_list, _inst);
+			ds_map_add(_map, _pos, _inst);
 			
 			// Get data map
 			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
@@ -1484,13 +1509,13 @@ function packet_handle_server(from) {
 			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Find Unit
-			var _parent		= ds_list_find_value(_list, _posList);
+			var _parent		= ds_map_find_value(_map, _posList);
 			
 			// Add inst to list
-			ds_list_add(_list, _inst);
+			ds_map_add(_map, _posList, _inst);
 			
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
@@ -1529,10 +1554,10 @@ function packet_handle_server(from) {
 			var _posList	= buffer_read(_buffer, buffer_u16);
 			
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			// Destroy unit
 			if(!is_undefined(_unit))
@@ -1570,10 +1595,10 @@ function packet_handle_server(from) {
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(from))
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1618,10 +1643,10 @@ function packet_handle_server(from) {
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(from))
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1658,10 +1683,10 @@ function packet_handle_server(from) {
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1852,19 +1877,22 @@ function packet_handle_leaving(steamID) {
 	if(state == menu.inGame)
 	{
 		// Find list of objects under map
-		var _list = ds_map_find_value(global.multiInstMap, string(steamID));
+		var _map = ds_map_find_value(global.multiInstMap, string(steamID));
+		
+		// Add all instances to a list
+		var _list = ds_map_values_to_array(_map);
 			
 		// Cycle through list and destroy objects
 		if(!is_undefined(_list))
 		{
 			#region List
 		
-			_length = ds_list_size(_list);
+			var _length = ds_map_size(_list);
 		
 			for(var i = 0; i < _length; i++)
 			{
 				// Find object
-				_inst = ds_list_find_index(_list, i);
+				var _inst = ds_list_find_index(_list, i);
 			
 				// Destroy it
 				if(instance_exists(_inst) && _inst > 1000)
@@ -1872,6 +1900,7 @@ function packet_handle_leaving(steamID) {
 			}
 		
 			ds_list_destroy(_list);
+			ds_map_destroy(_map);
 		
 			ds_map_delete(global.multiInstMap, string(steamID));
 		
@@ -2618,14 +2647,7 @@ function scr_context_spawn_HAB() {
 }
 		
 function spawn_unit(_object_string, posX, posY) {
-	
-	var _packet = packet_start(packet_t.add_unit);
-	buffer_write(_packet, buffer_u64, oManager.user);
-	buffer_write(_packet, buffer_string, _object_string);
-	buffer_write(_packet, buffer_f32, posX);
-	buffer_write(_packet, buffer_f32, posY);
-	packet_send_all(_packet);
-	
+		
 	var _object = asset_get_index(_object_string);
 		
 	// Create instance
@@ -2638,6 +2660,18 @@ function spawn_unit(_object_string, posX, posY) {
 	var _width	= ds_grid_width(global.instGrid);
 	var _height = ds_grid_height(global.instGrid);
 	ds_grid_resize(global.instGrid, _width + 1, _height);
+	
+	// Find position
+	var _pos = ds_list_find_index(global.unitList, _inst);
+	
+	// Create unit client side
+	var _packet = packet_start(packet_t.add_unit);
+	buffer_write(_packet, buffer_u64, oManager.user);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_string, _object_string);
+	buffer_write(_packet, buffer_f32, posX);
+	buffer_write(_packet, buffer_f32, posY);
+	packet_send_all(_packet);
 	
 	return _inst;
 }
