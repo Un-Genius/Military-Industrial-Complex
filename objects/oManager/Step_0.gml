@@ -389,7 +389,7 @@ switch(state)
 		add_list(inst, setting.color);
 		
 		// Get data map
-		var _dataMap = ds_map_find_value(playerDataMap, string(lobby_owner));
+		var _dataMap = ds_map_find_value(playerDataMap, lobby_owner);
 		
 		// Find value
 		var _gameMode = ds_map_find_value(_dataMap, "game_mode");
