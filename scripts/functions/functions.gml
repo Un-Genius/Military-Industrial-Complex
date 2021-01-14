@@ -643,19 +643,18 @@ function steam_reset_state() {
 			{
 				#region List
 		
-				_length = ds_list_size(_list);
+				_length = array_length(_list);
 		
 				for(var i = 0; i < _length; i++)
 				{
 					// Find object
-					_inst = ds_list_find_index(_list, i);
+					_inst = _list[i];
 			
 					// Destroy it
 					if(instance_exists(_inst) && _inst > 1000)
 						instance_destroy(_inst);
 				}
 		
-				ds_list_destroy(_list);
 				ds_map_destroy(_map);
 		
 				#endregion
