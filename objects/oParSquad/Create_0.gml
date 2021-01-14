@@ -53,22 +53,9 @@ for(var j = 0; j < hp; j++)
 		var _goalX = goalX - (_dist * (k - (floor(hp/3)/4)));
 		var _goalY = goalY - (_dist * (j - (floor(hp/6))));
 		
-		// Find self in list
-		var _pos = ds_list_find_index(global.unitList, id);
-		
-		dbg("Position: " + string(_pos))
-		
 		// Object to spawn		
 		var _objectString = "oSquadInf";
-		
-		var _packet = packet_start(packet_t.add_attached_unit);
-		buffer_write(_packet, buffer_u64, oManager.user);
-		buffer_write(_packet, buffer_string, _objectString);
-		buffer_write(_packet, buffer_f32, _goalX);
-		buffer_write(_packet, buffer_f32, _goalY);
-		buffer_write(_packet, buffer_u16, _pos);
-		packet_send_all(_packet);
-	
+			
 		var _object = asset_get_index(_objectString);
 		
 		// Create instance
@@ -86,6 +73,17 @@ for(var j = 0; j < hp; j++)
 		ds_list_add(childList, _inst);
 	
 		_inst.squadID = id;
+		
+		// Find self in list
+		var _pos = ds_list_find_index(global.unitList, id);
+		
+		var _packet = packet_start(packet_t.add_attached_unit);
+		buffer_write(_packet, buffer_u64, oManager.user);
+		buffer_write(_packet, buffer_string, _objectString);
+		buffer_write(_packet, buffer_f32, _goalX);
+		buffer_write(_packet, buffer_f32, _goalY);
+		buffer_write(_packet, buffer_u16, _pos);
+		packet_send_all(_packet);
 		
 		i++;
 	}
