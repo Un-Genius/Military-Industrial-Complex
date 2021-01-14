@@ -304,10 +304,10 @@ switch(state)
 					var _id = ds_list_find_value(net_list, i);
 								
 					// Create list for players
-					var _list = ds_list_create();
+					var _map = ds_map_create();
 												
 					// Create slot for players
-					ds_map_set(global.multiInstMap, string(_id), _list);
+					ds_map_set(global.multiInstMap, string(_id), _map);
 				}
 							
 				break;
