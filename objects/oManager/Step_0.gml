@@ -99,7 +99,7 @@ while(steam_net_packet_receive())
 			var _dataMap = ds_map_create();
 						
 			// Add it to the main map
-			ds_map_set(playerDataMap, string(from), _dataMap);
+			ds_map_set(playerDataMap, from, _dataMap);
 				
 			// Ask for data
 			var _buffer = packet_start(packet_t.data_update_request);

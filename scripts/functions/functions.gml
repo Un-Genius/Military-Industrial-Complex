@@ -802,7 +802,7 @@ function packet_handle_auth(from) {
 		var _dataMap = ds_map_create();
 						
 		// Add it to the main map
-		ds_map_set(playerDataMap, string(from), _dataMap);
+		ds_map_set(playerDataMap, from, _dataMap);
 				
 		// Ask for data
 		_buffer = packet_start(packet_t.data_update_request);
@@ -850,7 +850,7 @@ function packet_handle_client(from) {
 			var _dataMap = ds_map_create();
 						
 			// Add it to the main map
-			ds_map_set(playerDataMap, string(from), _dataMap);
+			ds_map_set(playerDataMap, from, _dataMap);
 				
 			// Ask for data
 			var _buffer = packet_start(packet_t.data_update_request);
@@ -1512,7 +1512,7 @@ function packet_handle_server(from) {
 			ds_map_add(_map, _posList, _inst);
 			
 			// Get data map
-			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
+			var _dataMap	= ds_map_find_value(playerDataMap, from);
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
@@ -1860,7 +1860,7 @@ function packet_handle_leaving(steamID) {
 	ds_list_delete(net_list, ds_list_find_index(net_list, steamID));
 	ds_map_delete(net_map, steamID);
 	
-	ds_map_delete(playerDataMap, string(steamID));
+	ds_map_delete(playerDataMap, steamID);
 	
 	// Get current size
 	var _lobbyCurrent	= steam_lobby_get_member_count();
@@ -2837,7 +2837,7 @@ function scr_GUI_list4() {
 			var _id = ds_list_find_value(net_list, i);
 			
 			// Get data map
-			var _dataMap	= ds_map_find_value(playerDataMap, string(_id));
+			var _dataMap	= ds_map_find_value(playerDataMap, _id);
 			
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 			

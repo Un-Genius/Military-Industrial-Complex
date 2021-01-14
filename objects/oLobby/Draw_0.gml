@@ -21,7 +21,7 @@ for (var i = 0; i < size; i++)
 	var _id = ds_list_find_value(nameList, i);
 		
 	// Get data map
-	var _dataMap = ds_map_find_value(playerDataMap, string(_id));
+	var _dataMap = ds_map_find_value(playerDataMap, _id);
 	
 	if !is_undefined(_dataMap)
 	{

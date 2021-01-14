@@ -77,7 +77,7 @@ switch (type_event[?"event_type"])
 			var _dataMap = ds_map_create();
 						
 			// Add it to the main map
-			ds_map_set(playerDataMap, string(lobby_owner), _dataMap);
+			ds_map_set(playerDataMap, lobby_owner, _dataMap);
 				
 			// Ask for data
 			var _buffer = packet_start(packet_t.data_update_request);
