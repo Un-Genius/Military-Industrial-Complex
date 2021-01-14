@@ -633,7 +633,7 @@ function steam_reset_state() {
 			var _key = ds_list_find_value(net_list, i);
 			
 			// Find list of objects under map
-			var _map = ds_map_find_value(global.multiInstMap, string(_key));
+			var _map = ds_map_find_value(global.multiInstMap, _key);
 			
 			// Add all instances to a list
 			var _list = ds_map_values_to_array(_map);
@@ -959,7 +959,7 @@ function packet_handle_client(from) {
 				var _map = ds_map_create();
 												
 				// Create slot for players
-				ds_map_set(global.multiInstMap, string(_id), _map);
+				ds_map_set(global.multiInstMap, _id, _map);
 			}
 									
 	        break;
@@ -978,13 +978,13 @@ function packet_handle_client(from) {
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _map	= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map	= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Add inst to map
-			ds_map_add(_map, string(_pos), _inst);
+			ds_map_add(_map, _pos, _inst);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
@@ -1019,16 +1019,16 @@ function packet_handle_client(from) {
 			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from));
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Find Unit
 			var _parent		= ds_map_find_value(_map, _posList);
 			
 			// Add inst to list
-			ds_map_add(_map, string(_posList), _inst);
+			ds_map_add(_map, _posList, _inst);
 			
 			// Get data map
-			var _dataMap	= ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap	= ds_map_find_value(playerDataMap, _from);
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
@@ -1064,7 +1064,7 @@ function packet_handle_client(from) {
 			var _posList	= buffer_read(_buffer, buffer_u16);
 			
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from));
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
@@ -1090,10 +1090,10 @@ function packet_handle_client(from) {
 			var _goalY		= buffer_read(_buffer, buffer_f32);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Find Unit
-			var _unit		= ds_list_find_value(_map, string(_posList));
+			var _unit		= ds_list_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1166,10 +1166,10 @@ function packet_handle_client(from) {
 			var _newMoveState	= buffer_read(_buffer, buffer_s8);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_map, string(_posList));
+			var _unit		= ds_list_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1231,7 +1231,7 @@ function packet_handle_client(from) {
 			var _data	= buffer_read(_buffer, buffer_s16);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 			switch _key
 			{
@@ -1316,7 +1316,7 @@ function packet_handle_client(from) {
 			var _from	= buffer_read(_buffer, buffer_u64);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 			// Get data from buffer
 			var _ready		= buffer_read(_buffer, buffer_s16);
@@ -1454,13 +1454,13 @@ function packet_handle_server(from) {
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _map	= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map	= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Add inst to list
-			ds_map_add(_map, string(_pos), _inst);
+			ds_map_add(_map, _pos, _inst);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
@@ -1503,13 +1503,13 @@ function packet_handle_server(from) {
 			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Find Unit
 			var _parent		= ds_map_find_value(_map, _posList);
 			
 			// Add inst to list
-			ds_map_add(_map, string(_posList), _inst);
+			ds_map_add(_map, _posList, _inst);
 			
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
@@ -1548,7 +1548,7 @@ function packet_handle_server(from) {
 			var _posList	= buffer_read(_buffer, buffer_u16);
 			
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
@@ -1589,7 +1589,7 @@ function packet_handle_server(from) {
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(from))
+			var _map		= ds_map_find_value(global.multiInstMap, from);
 
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
@@ -1637,7 +1637,7 @@ function packet_handle_server(from) {
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(from))
+			var _map		= ds_map_find_value(global.multiInstMap, from);
 
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
@@ -1677,7 +1677,7 @@ function packet_handle_server(from) {
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
+			var _map		= ds_map_find_value(global.multiInstMap, _from);
 
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
@@ -1765,7 +1765,7 @@ function packet_handle_server(from) {
 					_color = findColor(_data);
 					
 					// Get data map
-					var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+					var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 					// Set data
 					ds_map_set(_dataMap, "hashColor", _color);
@@ -1792,7 +1792,7 @@ function packet_handle_server(from) {
 			}
 						
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 			// Set data
 			ds_map_set(_dataMap, _key, _data);
@@ -1833,7 +1833,7 @@ function packet_handle_server(from) {
 			var _from	= buffer_read(_buffer, buffer_u64);
 			
 			// Get data map
-			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
+			var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 			// Get data from buffer
 			var _ready		= buffer_read(_buffer, buffer_s16);
@@ -1871,7 +1871,7 @@ function packet_handle_leaving(steamID) {
 	if(state == menu.inGame)
 	{
 		// Find list of objects under map
-		var _map = ds_map_find_value(global.multiInstMap, string(steamID));
+		var _map = ds_map_find_value(global.multiInstMap, steamID);
 		
 		// Add all instances to a list
 		var _list = ds_map_values_to_array(_map);
@@ -1896,7 +1896,7 @@ function packet_handle_leaving(steamID) {
 			ds_list_destroy(_list);
 			ds_map_destroy(_map);
 		
-			ds_map_delete(global.multiInstMap, string(steamID));
+			ds_map_delete(global.multiInstMap, steamID);
 		
 			#endregion
 		}

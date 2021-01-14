@@ -307,7 +307,7 @@ switch(state)
 					var _map = ds_map_create();
 												
 					// Create slot for players
-					ds_map_set(global.multiInstMap, string(_id), _map);
+					ds_map_set(global.multiInstMap, _id, _map);
 				}
 							
 				break;
