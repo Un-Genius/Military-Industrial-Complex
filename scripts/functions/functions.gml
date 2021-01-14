@@ -1020,12 +1020,12 @@ function packet_handle_client(from) {
 			// Find list
 			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
-			// Find Unit
-			var _parent		= ds_map_find_value(_map, _posList);
-			
 			// Add inst to list
 			ds_map_add(_map, _posList, _inst);
 			
+			// Find Unit
+			var _parent		= ds_map_find_value(_map, _posList);
+						
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, _from);
 			
@@ -1503,12 +1503,12 @@ function packet_handle_server(from) {
 						
 			// Find list
 			var _map		= ds_map_find_value(global.multiInstMap, _from);
+						
+			// Add inst to list
+			ds_map_add(_map, _posList, _inst);
 			
 			// Find Unit
 			var _parent		= ds_map_find_value(_map, _posList);
-			
-			// Add inst to list
-			ds_map_add(_map, _posList, _inst);
 			
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, from);
