@@ -981,7 +981,7 @@ function packet_handle_client(from) {
 			var _map	= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Add inst to map
-			ds_map_add(_map, _pos, _inst);
+			ds_map_add(_map, string(_pos), _inst);
 			
 			// Get data map
 			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
@@ -1025,7 +1025,7 @@ function packet_handle_client(from) {
 			var _parent		= ds_map_find_value(_map, _posList);
 			
 			// Add inst to list
-			ds_map_add(_map, _posList, _inst);
+			ds_map_add(_map, string(_posList), _inst);
 			
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, string(_from));
@@ -1093,7 +1093,7 @@ function packet_handle_client(from) {
 			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Find Unit
-			var _unit		= ds_list_find_value(_map, _posList);
+			var _unit		= ds_list_find_value(_map, string(_posList));
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1169,7 +1169,7 @@ function packet_handle_client(from) {
 			var _map		= ds_map_find_value(global.multiInstMap, string(_from))
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_map, _posList);
+			var _unit		= ds_list_find_value(_map, string(_posList));
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1457,7 +1457,7 @@ function packet_handle_server(from) {
 			var _map	= ds_map_find_value(global.multiInstMap, string(_from))
 			
 			// Add inst to list
-			ds_map_add(_map, _pos, _inst);
+			ds_map_add(_map, string(_pos), _inst);
 			
 			// Get data map
 			var _dataMap = ds_map_find_value(playerDataMap, string(_from));
@@ -1509,7 +1509,7 @@ function packet_handle_server(from) {
 			var _parent		= ds_map_find_value(_map, _posList);
 			
 			// Add inst to list
-			ds_map_add(_map, _posList, _inst);
+			ds_map_add(_map, string(_posList), _inst);
 			
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, string(from));
