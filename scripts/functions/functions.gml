@@ -1448,7 +1448,7 @@ function packet_handle_server(from) {
 			
 			var _buffer = packet_start(packet_t.add_unit);
 			buffer_write(_buffer, buffer_u64, _from);
-			buffer_write(_packet, buffer_u16, _pos);
+			buffer_write(_buffer, buffer_u16, _pos);
 			buffer_write(_buffer, buffer_string, _object_string);
 			buffer_write(_buffer, buffer_f32, posX);
 			buffer_write(_buffer, buffer_f32, posY);
