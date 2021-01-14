@@ -26,22 +26,23 @@ for(var j = 0; j < hp; j++)
 		// Create instance
 		var _inst = instance_create_layer(_goalX, _goalY, "Instances", _object);
 		
-		// Add inst to list
-		ds_list_add(global.unitList, _inst);
-	
-		// Resize holding grid
-		var _width	= ds_grid_width(global.instGrid);
-		var _height = ds_grid_height(global.instGrid);
-		ds_grid_resize(global.instGrid, _width + 1, _height);	
-	
-		// Add unit to list
-		ds_list_add(childList, _inst);
-	
+		// Declare parent
 		_inst.squadID = id;
 		
-		// Find self in list
-		var _pos = ds_list_find_index(global.unitList, _inst);
+		// Add child to list
+		ds_list_add(childList, _inst);
 		
+		// Add inst to list
+		ds_list_add(global.unitList, _inst);
+		
+		// Find parent in list
+		var _pos = ds_list_find_index(global.unitList, id);
+	
+		// Resize holding grid
+		//var _width	= ds_grid_width(global.instGrid);
+		//var _height = ds_grid_height(global.instGrid);
+		//ds_grid_resize(global.instGrid, _width + 1, _height);	
+					
 		var _packet = packet_start(packet_t.add_attached_unit);
 		buffer_write(_packet, buffer_u64, oManager.user);
 		buffer_write(_packet, buffer_string, _objectString);
@@ -49,8 +50,6 @@ for(var j = 0; j < hp; j++)
 		buffer_write(_packet, buffer_f32, _goalY);
 		buffer_write(_packet, buffer_u16, _pos);
 		packet_send_all(_packet);
-		
-		dbg(string(i) + ": " + string(_pos))
 		
 		i++;
 	}
