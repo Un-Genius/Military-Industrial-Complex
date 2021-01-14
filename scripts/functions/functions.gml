@@ -991,9 +991,6 @@ function packet_handle_client(from) {
 			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 			
-			//Debug
-			dbg(string(delta_time) + ": " + object_get_name(_object) + " - " + string(ds_list_find_index(_list, _inst)) + " is being created.");	
-	
 			with(_inst)
 			{
 				// Transfer data
@@ -1097,9 +1094,6 @@ function packet_handle_client(from) {
 			
 			// Find Unit
 			var _unit		= ds_list_find_value(_map, _posList);
-			
-			//Debug
-			dbg(string(delta_time) + ": " + object_get_name(_unit.object_index) + " - " + string(_posList) + " is pathfinding.");	
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
