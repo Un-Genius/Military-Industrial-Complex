@@ -36,7 +36,10 @@ for(var j = 0; j < hp; j++)
 		ds_list_add(global.unitList, _inst);
 		
 		// Find parent in list
-		var _pos = ds_list_find_index(global.unitList, id);
+		var _pos = ds_list_find_index(global.unitList, _inst);
+		
+		// Find parent in list
+		var _parentPos = ds_list_find_index(global.unitList, id);
 	
 		// Resize holding grid
 		//var _width	= ds_grid_width(global.instGrid);
@@ -45,10 +48,11 @@ for(var j = 0; j < hp; j++)
 					
 		var _packet = packet_start(packet_t.add_attached_unit);
 		buffer_write(_packet, buffer_u64, oManager.user);
+		buffer_write(_packet, buffer_u16, _pos);
 		buffer_write(_packet, buffer_string, _objectString);
 		buffer_write(_packet, buffer_f32, _goalX);
 		buffer_write(_packet, buffer_f32, _goalY);
-		buffer_write(_packet, buffer_u16, _pos);
+		buffer_write(_packet, buffer_u16, _parentPos);
 		packet_send_all(_packet);
 		
 		i++;
