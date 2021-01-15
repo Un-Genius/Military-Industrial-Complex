@@ -1003,6 +1003,8 @@ function packet_handle_client(from) {
 				if _object_string == "oPlayer"
 					playerName = steam_get_user_persona_name_w(from);
 			}
+			
+			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added");
 						
 			break;
 			
@@ -1052,6 +1054,8 @@ function packet_handle_client(from) {
 			{
 				ds_list_add(childList, _inst);
 			}
+			
+			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added with a parent");
 						
 			break;
 			
@@ -1073,6 +1077,8 @@ function packet_handle_client(from) {
 			// Destroy unit
 			if(!is_undefined(_unit))
 				instance_destroy(_unit);
+			
+			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is destroyed");
 		
 			break;
 			
@@ -1120,6 +1126,8 @@ function packet_handle_client(from) {
 					y = _y;
 				}
 			}
+			
+			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is moving");
 			
 			break;
 			
@@ -1474,6 +1482,8 @@ function packet_handle_server(from) {
 				if _object_string == "oPlayer"
 					playerName = steam_get_user_persona_name_w(from);
 			}
+			
+			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added");
 						
 			break;
 			
@@ -1531,6 +1541,8 @@ function packet_handle_server(from) {
 			{
 				ds_list_add(childList, _inst);
 			}
+			
+			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added and recieving a parent");
 						
 			break;
 			
@@ -1558,6 +1570,8 @@ function packet_handle_server(from) {
 			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _posList);
 			packet_send_except(_buffer, from);
+			
+			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is destroyed");
 		
 			break;
 			
@@ -1589,6 +1603,8 @@ function packet_handle_server(from) {
 
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
+			
+			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is moving");
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1664,7 +1680,7 @@ function packet_handle_server(from) {
 			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _newState		= buffer_read(_buffer, buffer_s8);
 			
-			var _buffer = packet_start(packet_t.move_unit);
+			var _buffer = packet_start(packet_t.update_unit);
 			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _posList);
 			buffer_write(_buffer, buffer_s8, _newState);
