@@ -17,14 +17,11 @@ if point_distance(x, y, goalX, goalY) > 3
 {	
 	if moveState != action.moving
 	{	
+		// Update state
+		update_state(-1, action.moving);
+		
 		// Start pathfind
 		scr_pathfind();
-		
-		// Update direction
-		alarm[1] = 1;
-	
-		// Update sprite
-		event_user(0);
 	}
 	else
 	{
@@ -103,8 +100,6 @@ switch state
 		if image_index > image_number - 1
 		{
 			clipSize = maxClipSize;
-			
-			update_state(action.attacking, -1);
 		}
 
 		break;
@@ -115,8 +110,6 @@ switch state
 		if image_index > image_number - 1
 		{
 			clipSize = maxClipSize;
-			
-			update_state(action.attacking, -1);
 		}
 		
 		break;

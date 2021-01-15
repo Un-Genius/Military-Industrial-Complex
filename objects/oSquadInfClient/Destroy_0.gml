@@ -8,4 +8,5 @@ buffer_write(_packet, buffer_u16, _pos);
 packet_send_all(_packet);
 
 // Subtract from squad health
-squadID.hp--;
+if(instance_exists(squadID))
+	squadID.hp--;
