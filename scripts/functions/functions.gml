@@ -281,16 +281,18 @@ function update_state(_newState, _newMoveState) {
 	
 	#region Update doppelganger
 
-	// Find self in list
-	var _pos = ds_list_find_index(global.unitList, id)
+	if(state != -1)
+	{
+		// Find self in list
+		var _pos = ds_list_find_index(global.unitList, id)
 	
-	// Send position and rotation to others
-	var _packet = packet_start(packet_t.update_unit);
-	buffer_write(_packet, buffer_u64, oManager.user);
-	buffer_write(_packet, buffer_u16, _pos);
-	buffer_write(_packet, buffer_s8, state);
-	buffer_write(_packet, buffer_s8, moveState);
-	packet_send_all(_packet);
+		// Send position and rotation to others
+		var _packet = packet_start(packet_t.update_unit);
+		buffer_write(_packet, buffer_u64, oManager.user);
+		buffer_write(_packet, buffer_u16, _pos);
+		buffer_write(_packet, buffer_s8, state);
+		packet_send_all(_packet);
+	}
 	
 	#endregion
 }
@@ -1109,7 +1111,7 @@ function packet_handle_client(from) {
 					goalX = _goalX;
 					goalY = _goalY;
 					
-					scr_pathfind();
+					//scr_pathfind();
 				}
 				else
 				{
@@ -1162,7 +1164,6 @@ function packet_handle_client(from) {
 			var _from			= buffer_read(_buffer, buffer_u64);
 			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _newState		= buffer_read(_buffer, buffer_s8);
-			var _newMoveState	= buffer_read(_buffer, buffer_s8);
 						
 			// Find list
 			var _map		= ds_map_find_value(global.multiInstMap, _from);
@@ -1178,10 +1179,6 @@ function packet_handle_client(from) {
 				// Set moveState
 				if _newState != -1
 					state = _newState;
-	
-				// Set moveState
-				if _newMoveState != -1
-					moveState = _newMoveState;
 					
 				// Update sprite
 				event_user(0);
@@ -1608,7 +1605,7 @@ function packet_handle_server(from) {
 					goalX = _goalX;
 					goalY = _goalY;
 					
-					scr_pathfind();
+					//scr_pathfind();
 				}
 				else
 				{
@@ -1666,13 +1663,11 @@ function packet_handle_server(from) {
 			var _from			= buffer_read(_buffer, buffer_u64);
 			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _newState		= buffer_read(_buffer, buffer_s8);
-			var _newMoveState	= buffer_read(_buffer, buffer_s8);
 			
 			var _buffer = packet_start(packet_t.move_unit);
 			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _posList);
 			buffer_write(_buffer, buffer_s8, _newState);
-			buffer_write(_buffer, buffer_s8, _newMoveState); 
 			packet_send_except(_buffer, from);
 						
 			// Find list
@@ -1686,13 +1681,9 @@ function packet_handle_server(from) {
 			
 			with(_unit)
 			{
-				// Set moveState
+				// Set State
 				if _newState != -1
 					state = _newState;
-	
-				// Set moveState
-				if _newMoveState != -1
-					moveState = _newMoveState;
 					
 				// Update sprite
 				event_user(0);

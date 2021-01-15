@@ -11,6 +11,71 @@ if state == action.attacking || moveState == action.moving
 
 #endregion
 
+#region Move to position
+
+if point_distance(x, y, goalX, goalY) > 3
+{	
+	if moveState != action.moving
+	{	
+		// Start pathfind
+		scr_pathfind();
+		
+		// Update direction
+		alarm[1] = 1;
+	
+		// Update sprite
+		event_user(0);
+	}
+	else
+	{
+		#region Walk the path
+		
+		var _point = false;
+		
+		// Loop until next point is found
+		while(!_point)
+		{
+			// Get amount left
+			var _amount = path_get_number(path);
+			
+			// Get next waypoint
+			var xx = path_get_x(path, 0);
+			var yy = path_get_y(path, 0);
+		
+			// Delete waypoint if arrived
+			if point_distance(x, y, xx, yy) < 3
+			{
+				// Stop path
+				if _amount == 1
+				{
+					update_state(-1, action.idle);
+					_point = true;
+				}
+				else
+					path_delete_point(path, 0);
+			}
+			else
+				_point = true;
+		}
+		
+		// Find direction
+		var _pathDir = point_direction(x, y, xx, yy);
+		
+		// Vector a step
+		x += lengthdir_x(moveSpd, _pathDir);
+		y += lengthdir_y(moveSpd, _pathDir);
+		
+		#endregion
+	}
+}
+else
+{
+	if moveState != action.idle
+		update_state(-1, action.idle);
+}
+
+#endregion
+
 #region State Machine
 
 // idle, move, attack, reload

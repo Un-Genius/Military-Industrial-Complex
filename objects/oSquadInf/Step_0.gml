@@ -16,14 +16,13 @@ if state == action.attacking || moveState == action.moving
 if point_distance(x, y, goalX, goalY) > 3
 {	
 	if moveState != action.moving
-	{	
-		// Start pathfind
-		scr_pathfind();
-		
+	{			
 		// Update doppelganger
 		update_goal();
-		
 		update_state(-1, action.moving);
+		
+		// Start pathfind
+		scr_pathfind();
 	}
 	else
 	{
