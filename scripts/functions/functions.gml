@@ -1015,7 +1015,7 @@ function packet_handle_client(from) {
 			var _object_string	= buffer_read(_buffer, buffer_string);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
-			var _posList		= buffer_read(_buffer, buffer_u16);
+			var _parentPos		= buffer_read(_buffer, buffer_u16);
 						
 			var _object		= asset_get_index(_object_string + "Client");
 			
@@ -1026,10 +1026,10 @@ function packet_handle_client(from) {
 			var _map		= ds_map_find_value(global.multiInstMap, _from);
 			
 			// Add inst to list
-			ds_map_add(_map, _posList, _inst);
+			ds_map_add(_map, _pos, _inst);
 			
 			// Find Unit
-			var _parent		= ds_map_find_value(_map, _posList);
+			var _parent		= ds_map_find_value(_map, _parentPos);
 						
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, _from);
@@ -1495,7 +1495,7 @@ function packet_handle_server(from) {
 			var _object_string	= buffer_read(_buffer, buffer_string);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
-			var _posList		= buffer_read(_buffer, buffer_u16);
+			var _parentPos		= buffer_read(_buffer, buffer_u16);
 			
 			var _buffer = packet_start(packet_t.add_unit);
 			buffer_write(_buffer, buffer_u64, _from);
@@ -1503,7 +1503,7 @@ function packet_handle_server(from) {
 			buffer_write(_buffer, buffer_string, _object_string);
 			buffer_write(_buffer, buffer_f32, posX);
 			buffer_write(_buffer, buffer_f32, posY);
-			buffer_write(_buffer, buffer_u16, _posList);
+			buffer_write(_buffer, buffer_u16, _parentPos);
 			packet_send_except(_buffer, from);
 						
 			var _object		= asset_get_index(_object_string + "Client");
@@ -1515,10 +1515,10 @@ function packet_handle_server(from) {
 			var _map		= ds_map_find_value(global.multiInstMap, _from);
 						
 			// Add inst to list
-			ds_map_add(_map, _posList, _inst);
+			ds_map_add(_map, _pos, _inst);
 			
 			// Find Unit
-			var _parent		= ds_map_find_value(_map, _posList);
+			var _parent		= ds_map_find_value(_map, _parentPos);
 			
 			// Get data map
 			var _dataMap	= ds_map_find_value(playerDataMap, from);
