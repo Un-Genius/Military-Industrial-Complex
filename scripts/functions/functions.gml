@@ -1004,7 +1004,7 @@ function packet_handle_client(from) {
 					playerName = steam_get_user_persona_name_w(from);
 			}
 			
-			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added");
+			//dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added");
 						
 			break;
 			
@@ -1056,7 +1056,7 @@ function packet_handle_client(from) {
 				ds_list_add(childList, _inst);
 			}
 			
-			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added with a parent");
+			//dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added with a parent");
 						
 			break;
 			
@@ -1079,7 +1079,7 @@ function packet_handle_client(from) {
 			if(!is_undefined(_unit))
 				instance_destroy(_unit);
 			
-			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is destroyed");
+			//dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is destroyed");
 		
 			break;
 			
@@ -1128,7 +1128,7 @@ function packet_handle_client(from) {
 				}
 			}
 			
-			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is moving");
+			//dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is moving");
 			
 			break;
 			
@@ -1484,7 +1484,7 @@ function packet_handle_server(from) {
 					playerName = steam_get_user_persona_name_w(from);
 			}
 			
-			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added");
+			//dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added");
 						
 			break;
 			
@@ -1545,7 +1545,7 @@ function packet_handle_server(from) {
 				ds_list_add(childList, _inst);
 			}
 			
-			dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added and recieving a parent");
+			//dbg(string(_inst) + " - " + object_get_name(_inst.object_index) + " is being added and recieving a parent");
 						
 			break;
 			
@@ -1574,7 +1574,7 @@ function packet_handle_server(from) {
 			buffer_write(_buffer, buffer_u16, _posList);
 			packet_send_except(_buffer, from);
 			
-			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is destroyed");
+			//dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is destroyed");
 		
 			break;
 			
@@ -1607,7 +1607,7 @@ function packet_handle_server(from) {
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
 			
-			dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is moving");
+			//dbg(string(_unit) + " - " + object_get_name(_unit.object_index) + " is moving");
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1890,19 +1890,18 @@ function packet_handle_leaving(steamID) {
 		{
 			#region List
 		
-			var _length = ds_map_size(_list);
+			var _length = array_length(_list);
 		
 			for(var i = 0; i < _length; i++)
 			{
 				// Find object
-				var _inst = ds_list_find_index(_list, i);
+				var _inst = _list[i];
 			
 				// Destroy it
 				if(instance_exists(_inst) && _inst > 1000)
 					instance_destroy(_inst);
 			}
 		
-			ds_list_destroy(_list);
 			ds_map_destroy(_map);
 		
 			ds_map_delete(global.multiInstMap, steamID);

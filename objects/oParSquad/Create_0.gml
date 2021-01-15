@@ -2,7 +2,7 @@
 
 unitName	= "sInf_USA_basic";
 
-amount	= 9;			// Amount of units per squad
+amount	= 1;			// Amount of units per squad
 range	= 50;			// How far apart each unit can be
 unit	= "oSquadInf";	// What type of unit to control
 
