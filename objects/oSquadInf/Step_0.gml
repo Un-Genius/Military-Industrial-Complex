@@ -183,7 +183,7 @@ if gun != noone && state != action.reloading
 		{
 			var _enemy_list = ds_list_create();
 			
-			var _enemy = collision_circle_list(x, y, range, oObject, false, true, _enemy_list, true);
+			var _enemy = collision_circle_list(x, y, range, oSquadInf, false, true, _enemy_list, true);
 			
 			if _enemy > 0
 			{

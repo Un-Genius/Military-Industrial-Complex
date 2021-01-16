@@ -80,36 +80,74 @@ switch state
 {
 	case action.idle:
 		
-		// Find index
-		var _sprite = asset_get_index(unitName + "_" + string(state));
+		if unit != unitType.building
+		{
+			// Find index
+			var _sprite = asset_get_index(unitName + "_" + string(state));
 		
-		image_speed = sprite_get_speed(_sprite);
+			image_speed = sprite_get_speed(_sprite);
 		
-		if distance_to_point(goalX, goalY) < 3
-			image_speed = 0;
+			if distance_to_point(goalX, goalY) < 3
+				image_speed = 0;
+		}
 		
 		break;
 				
 	case action.attacking:
 		
-		break;
+		// Update frequency
+		bulletTiming += 0.01 * room_speed;
 		
-	case action.aiming:
+		if bulletTiming > bulletFrequency
+		{
+			var _enemy_list = ds_list_create();
 			
-		// Stop reloading if 
-		if image_index > image_number - 1
-		{
-			clipSize = maxClipSize;
-		}
-
-		break;
-		
-	case action.reloading:
-		
-		// Stop reloading if 
-		if image_index > image_number - 1
-		{
-			clipSize = maxClipSize;
+			var _enemy = collision_circle_list(x, y, range, oSquadInf, false, true, _enemy_list, true);
+			
+			if _enemy > 0
+			{
+				// Find variables
+				for(var i = 0; i < _enemy; i++)
+				{
+					// Get instance
+					var _inst = ds_list_find_value(_enemy_list, i);
+					
+					with(_inst)
+					{
+						var _team		= team;
+						var _numColor	= numColor;
+					}
+					
+					// Check if its an enemy
+					if(_team != team || team == 0) && _numColor != numColor
+					{
+						_enemy = _inst;
+						break;
+					}
+				}
+				
+				if instance_exists(_enemy) && _enemy > 1000
+				{
+					// Get position
+					with(_enemy)
+					{
+						var _enemyX = x;
+						var _enemyY = y;
+					}
+									
+					// Find angle
+					var _angle = point_direction(x, y, _enemyX, _enemyY);
+						
+					// Point direction of enemy
+					dir = _angle;		
+						
+					// Set gun settings
+					bulletTiming = 0;
+				}	
+			}
+			
+			// Destroy list
+			ds_list_destroy(_enemy_list);
 		}
 		
 		break;
