@@ -1178,7 +1178,7 @@ function packet_handle_client(from) {
 			var _map		= ds_map_find_value(global.multiInstMap, _from);
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_map, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
