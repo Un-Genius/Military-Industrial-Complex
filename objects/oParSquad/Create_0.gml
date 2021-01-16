@@ -11,7 +11,7 @@ hp = amount;
 cost	= 0;		// Cost of unit
 resCost	= 0;		// Cost of unit in resources
 
-maxResCarry	= 0;			// Max resources carried
+maxResCarry	= 500;			// Max resources carried
 resCarry	= maxResCarry;	// Resources carried
 resRange	= 100;			// Range to transfer resources
 

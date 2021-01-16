@@ -2,9 +2,6 @@ if global.debugMenu
 {
 	//draw_circle(x, y, range, true);
 	draw_path(path, x, y, true);
-	
-	draw_text(x, y+32, state);
-	draw_text(x, y+48, moveState);
 }
 
 // Draw Shadow

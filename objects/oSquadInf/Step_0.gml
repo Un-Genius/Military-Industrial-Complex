@@ -174,7 +174,7 @@ if hp <= 0
 // Stop if its not hostile or reloading
 if gun != noone && state != action.reloading 
 {
-	if resCarry > 0 
+	if squadID.resCarry > 0 
 	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
@@ -183,7 +183,7 @@ if gun != noone && state != action.reloading
 		{
 			var _enemy_list = ds_list_create();
 			
-			var _enemy = collision_circle_list(x, y, range, oSquadInf, false, true, _enemy_list, true);
+			var _enemy = collision_circle_list(x, y, range, oSquadInfClient, false, true, _enemy_list, true);
 			
 			if _enemy > 0
 			{
@@ -320,9 +320,9 @@ if gun != noone && state != action.reloading
 						if !clipSize 
 						{
 							update_state(action.reloading, -1);
-							resCarry -= ammoUse;						
+							squadID.resCarry -= ammoUse;						
 							
-							if resCarry <= 0
+							if squadID.resCarry <= 0
 							{
 							  update_state(action.idle, -1);			
 							  
