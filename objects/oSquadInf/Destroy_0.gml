@@ -7,5 +7,8 @@ buffer_write(_packet, buffer_u64, oManager.user);
 buffer_write(_packet, buffer_u16, _pos);
 packet_send_all(_packet);
 
-// Subtract from squad health
+// Subtract from Squad
+_pos = ds_list_find_index(squadID.childList, id);
+
+ds_list_delete(squadID.childList, _pos);
 squadID.hp--;
