@@ -1,17 +1,12 @@
 #region ID of Units
 
-unitName	= "sInf_USA_basic";
+unitName	= "noone";
 
-amount	= 9;			// Amount of units per squad
-range	= 50;			// How far apart each unit can be
-unit	= "oSquadInf";	// What type of unit to control
+amount		= 0;			// Amount of units per squad
+range		= 0;			// How far apart each unit can be
+unit		= "noone";	// What type of unit to control
 
-cost	= 0;		// Cost of unit
-resCost	= 0;		// Cost of unit in resources
-
-maxResCarry	= 0;			// Max resources carried
-resCarry	= maxResCarry;	// Resources carried
-resRange	= 100;			// Range to transfer resources
+hp = amount;
 
 #endregion
 

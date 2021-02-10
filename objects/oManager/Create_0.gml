@@ -345,7 +345,7 @@ else
 }
 
 // Game details
-game_name		= "Steamworks.gml example";
+game_name		= "Sierra Point";
 game_version	= GM_version;
 
 // Get name

@@ -8,8 +8,8 @@
   "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": {
-    "name": "oParUnitClient",
-    "path": "objects/oParUnitClient/oParUnitClient.yy",
+    "name": "oParUnitClientOLD",
+    "path": "objects/oParUnitClientOLD/oParUnitClientOLD.yy",
   },
   "physicsObject": false,
   "physicsSensor": false,

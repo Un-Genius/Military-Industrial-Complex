@@ -1,8 +1,5 @@
 {
-  "spriteId": {
-    "name": "sSquadInf",
-    "path": "sprites/sSquadInf/sSquadInf.yy",
-  },
+  "spriteId": null,
   "solid": false,
   "visible": true,
   "spriteMaskId": null,
@@ -30,8 +27,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Infantry Squad",
-    "path": "folders/Objects/Units/.Client/Infantry/Infantry Squad.yy",
+    "name": ".Client",
+    "path": "folders/Objects/Units/.Client.yy",
   },
   "resourceVersion": "1.0",
   "name": "oParSquadClient",

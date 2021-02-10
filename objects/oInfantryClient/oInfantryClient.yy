@@ -29,8 +29,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Infantry",
-    "path": "folders/Objects/Units/.Client/Infantry.yy",
+    "name": "Infantry Squad",
+    "path": "folders/Objects/Units/.Client/Infantry Squad.yy",
   },
   "resourceVersion": "1.0",
   "name": "oInfantryClient",

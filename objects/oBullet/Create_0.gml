@@ -36,6 +36,10 @@ bulletType = gunType.rifle;
 team = 0;
 numColor = 0;
 
+// Remember old position
+preX = x;
+preY = y;
+
 // Make the bullet smaller
 image_xscale = 0.50;
 image_yscale = 0.50;

@@ -1,3 +1,11 @@
+#region Effects
+
+var _suppressed = squadID.suppressed;
+
+var _spd = moveSpd / 1 + _suppressed;
+
+#endregion
+
 #region Sprites management
 
 if state == action.attacking || moveState == action.moving
@@ -11,89 +19,59 @@ if state == action.attacking || moveState == action.moving
 
 #endregion
 
-#region Get data
-
-var _key_ctrl				= keyboard_check(vk_control);
-var _click_left_released	= mouse_check_button_released(mb_left);
-
-var _mouse_x = device_mouse_x(0);
-var _mouse_y = device_mouse_y(0);
-
-with(oPlayer)
-{
-	// MouseBox data
-	var _mousePress	= mousePress;
-	
-	var _mousePress_x = mouseLeftPress_x;
-	var _mousePress_y = mouseLeftPress_y;
-}
-
-var _mouseDragAmount = point_distance(_mousePress_x, _mousePress_y, _mouse_x, _mouse_y);
-
-#endregion
-
-#region MouseBox
-
-// Check for mouseBox
-if _mousePress == 1
-{
-	// Check for collision
-	if collision_rectangle(_mousePress_x, _mousePress_y, mouse_x, mouse_y, self, false, false)
-	{
-		add_Inst(global.instGrid, 0, id);
-		selected = true;
-	}
-	else
-	{
-		#region Unselect from mouseBox
-		
-		if !_key_ctrl
-		{
-			var _x = find_Inst(global.instGrid, 0, id);
-			if _x != -1
-				wipe_Slot(global.instGrid, _x, 0);
-		}
-
-		#endregion
-	}
-}
-
-#endregion
-
-#region Dragging unit around
-
-if selected && _mousePress == 2 && _mouseDragAmount >= 3
-{
-	release = true;
-}
-
-if _click_left_released && release
-{
-	// Drop instance
-	release = false;
-	
-	update_state(-1, action.idle);
-	
-	// Set goal
-	goalX	= _mouse_x;
-	goalY	= _mouse_y;
-}
-
-#endregion
-
 #region Move to position
 
 if point_distance(x, y, goalX, goalY) > 3
 {	
 	if moveState != action.moving
-	{	
-		// Start pathfind
-		scr_pathfind();
-		
+	{			
 		// Update doppelganger
 		update_goal();
-		
 		update_state(-1, action.moving);
+		
+		// Start pathfind
+		scr_pathfind();
+	}
+	else
+	{
+		#region Walk the path
+		
+		var _point = false;
+		
+		// Loop until next point is found
+		while(!_point)
+		{
+			// Get amount left
+			var _amount = path_get_number(path);
+			
+			// Get next waypoint
+			var xx = path_get_x(path, 0);
+			var yy = path_get_y(path, 0);
+		
+			// Delete waypoint if arrived
+			if point_distance(x, y, xx, yy) < 3
+			{
+				// Stop path
+				if _amount == 1
+				{
+					update_state(-1, action.idle);
+					_point = true;
+				}
+				else
+					path_delete_point(path, 0);
+			}
+			else
+				_point = true;
+		}
+		
+		// Find direction
+		var _pathDir = point_direction(x, y, xx, yy);
+		
+		// Vector a step
+		x += lengthdir_x(_spd, _pathDir);
+		y += lengthdir_y(_spd, _pathDir);
+		
+		#endregion
 	}
 }
 else
@@ -106,49 +84,26 @@ else
 
 #region Move out of the way
 
-if moveState == action.idle && (unit != unitType.air || unit != unitType.building)
+// Increas timer
+pushTimer++;
+
+if pushTimer > 0.2 * room_speed
 {
-	var _collision = collision_circle(x, y, 5, oParUnit, false, true);
-	
-	if _collision
+	if unit != unitType.air || unit != unitType.building
 	{
-		if _collision.moveState != action.idle && (_collision.unit == unit || _collision.unit = unitType.gnd)
-		{
+		var _collision = collision_circle(x, y, 10, oOVLInf, false, true);
+	
+		if _collision && (_collision.unit == unit || _collision.unit = unitType.gnd)
+		{		
 			var _dir = -point_direction(x, y, _collision.x, _collision.y);
 		
-			var _newPosX = lengthdir_x(10, _dir);
-			var _newPosY = lengthdir_y(10, _dir);
+			var _newPosX = lengthdir_x(_spd*1.5, _dir);
+			var _newPosY = lengthdir_y(_spd*1.5, _dir);
 		
 			goalX += _newPosX;
 			goalY += _newPosY;
-		}
-	}
-}
-
-#endregion
-
-#region Enter/Chase Vehicle
-
-if enterVeh != noone && unit == unitType.inf
-{	
-	with enterVeh
-	{
-		// Find new position
-		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
-		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
-	}
-	
-	if point_distance(_newX, _newY, goalX, goalY) > 4
-	{	
-		update_state(-1, action.idle);
-
-		veh_position(enterVeh);
-	}
-	else
-	{
-		if point_distance(x, y, _newX, _newY) < 8
-		{
-			enter_Vehicle_One(enterVeh);
+			
+			pushTimer = 0;
 		}
 	}
 }
@@ -172,9 +127,6 @@ if riding
 	// set as goal
 	goalX = _newX;
 	goalY = _newY;
-	
-	// Make sure to stop pathfind
-	path_end();
 		
 	// Delete from vehicles list
 	var _index = ds_list_find_index(enterVeh.riderList, id)
@@ -194,83 +146,14 @@ if hp <= 0
 
 #endregion
 
-#region Resources
-
-// Check if needed
-if resCarry != maxResCarry
-{
-	var _HQ = collision_circle(x, y, resRange, oHQ, false, true);
-		
-	// Check if HAB or HQ nearby
-	if _HQ
-	{
-		resCarry = maxResCarry;
-	}
-	else
-	{
-		// Get resources if not transport
-		if object_index != oTransport
-		{
-			var _HAB = collision_circle(x, y, resRange, oHAB, false, true);
-		
-			if _HAB && _HAB.resCarry > 0
-			{
-				// Find needed resources
-				var _reqRes = maxResCarry - resCarry;
-			
-				// Find how much resources other can supply
-				_reqRes -= _HAB.resCarry;
-			
-				// Fill request
-				if _reqRes - _HAB.resCarry < 0
-				{
-					resCarry = maxResCarry;
-					_HAB.resCarry -= maxResCarry;
-				}
-				else
-				{
-					resCarry = _reqRes - _HAB.resCarry;
-					_HAB.resCarry -= _HAB.resCarry;
-				
-				}
-			}
-			else
-			{
-				var _TRANS = collision_circle(x, y, resRange, oTransport, false, true);
-				
-				if _HAB && _HAB.resCarry > 0
-				{
-					// Find needed resources
-					var _reqRes = maxResCarry - resCarry;
-			
-					// Find how much resources other can supply
-					_reqRes -= _TRANS.resCarry;
-			
-					// Fill request
-					if _reqRes - _TRANS.resCarry < 0
-					{
-						resCarry = maxResCarry;
-						_TRANS.resCarry -= maxResCarry;
-					}
-					else
-					{
-						resCarry = _reqRes - _TRANS.resCarry;
-						_TRANS.resCarry -= _TRANS.resCarry;
-					}
-				}
-			}
-		}
-	}
-}
-
-#endregion
-
 #region Attack
 
-// Stop if its not hostile or reloading
-if gun != noone && state != action.reloading 
+burstTimer++;
+
+// Stop if its not hostile or reloading or waiting for next burst
+if gun != noone && state != action.reloading && (burstMax > burstAmount && burstTimer > burstTiming)
 {
-	if resCarry > 0 
+	if squadID.resCarry > 0 
 	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
@@ -309,13 +192,18 @@ if gun != noone && state != action.reloading
 				
 				if instance_exists(_enemy) && _enemy > 1000 
 				{				
+					// Aim
 					if state == action.idle 
 					{
 						update_state(action.aiming, -1);
 					}
 					
+					// Shoot
 					if state == action.attacking
 					{	
+						// Set animation
+						image_speed = 1;
+						
 						// Hold x, y locally
 						var _x = x;
 						var _y = y;
@@ -332,8 +220,8 @@ if gun != noone && state != action.reloading
 								// Figure out how far ahead to point using bullet speed and distance
 								var _interceptionFactor = point_distance(_x, _y, x, y) / 14
 								
-								_enemyX	+= lengthdir_x(moveSpd * _interceptionFactor, dir);
-								_enemyY	+= lengthdir_y(moveSpd * _interceptionFactor, dir);
+								_enemyX	+= lengthdir_x(_spd * _interceptionFactor, dir);
+								_enemyY	+= lengthdir_y(_spd * _interceptionFactor, dir);
 							}
 						}
 						
@@ -350,7 +238,7 @@ if gun != noone && state != action.reloading
 						var _bullet		= instance_create_layer(_x, _y, "Bullets", oBullet);
 				
 						// Add randomness
-						var _adjustment = random_range(0.75, 1.25);
+						var _adjustment = random_range(0.65 - (_suppressed*0.25), 1.35 + (_suppressed*0.25));
 						
 						_angle += _adjustment * choose(-1, 1);
 				
@@ -411,14 +299,17 @@ if gun != noone && state != action.reloading
 						// Set gun settings
 						bulletTiming = 0;
 						clipSize--;
+						
+						// Burst settings
+						burstAmount++;
 			
 						// Start reloading and stops shooting animation if no ammo
 						if !clipSize 
 						{
 							update_state(action.reloading, -1);
-							resCarry -= ammoUse;						
+							squadID.resCarry -= ammoUse;						
 							
-							if resCarry <= 0
+							if squadID.resCarry <= 0
 							{
 							  update_state(action.idle, -1);			
 							  
@@ -445,6 +336,27 @@ if gun != noone && state != action.reloading
 			// Destroy list
 			ds_list_destroy(_enemy_list);
 		}
+	}
+}
+else
+{
+	// Wait until next burst
+	if(burstAmount >= burstMax)
+	{
+		burstTimer = 0;
+		burstAmount = 0;
+	}
+	
+	// If waiting too long then reset burst
+	if(burstTimer > burstTiming * 1.5)
+	{
+		//burstAmount = 0;
+	}
+	
+	// Set animation
+	if(state == action.attacking)
+	{
+		image_speed = 0;
 	}
 }
 

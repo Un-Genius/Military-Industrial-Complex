@@ -1,5 +1,3 @@
-/// @description Info for Unit
-
 // Inherit the parent event
 event_inherited();
 

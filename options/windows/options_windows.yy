@@ -1,7 +1,7 @@
 {
   "option_windows_display_name": "Made in GameMaker Studio 2",
   "option_windows_executable_name": "${RTS}",
-  "option_windows_version": "0.2.1.15",
+  "option_windows_version": "0.3.1.0",
   "option_windows_company_info": "CompanyName",
   "option_windows_product_info": "Made in GameMaker Studio 2",
   "option_windows_copyright_info": "(c) 2020 CompanyName",

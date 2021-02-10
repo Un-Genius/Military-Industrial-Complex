@@ -115,7 +115,7 @@ if x != xprevious || y != yprevious
 var _instFind	= noone;
 var _width		= ds_grid_width(global.instGrid);
 
-// Selecting, Context Menu, Mousebox, Riding Vehicles
+// Selecting, Context Menu, Mousebox
 if buildingPlacement == noone
 {
 	// Find and select instances
@@ -123,11 +123,8 @@ if buildingPlacement == noone
 	{
 		#region Find instance
 	
-		if instance_exists(oParSquad)
-			_instFind = find_top_Inst(mouse_x, mouse_y, oParSquad);
-		else
-			if instance_exists(oParUnit)
-				_instFind = find_top_Inst(mouse_x, mouse_y, oParUnit);
+		if instance_exists(oParOVL)
+			_instFind = find_top_Inst(mouse_x, mouse_y, oParOVL);
 		
 		#endregion
 
@@ -149,19 +146,6 @@ if buildingPlacement == noone
 		
 		#endregion
 	
-		#region Add inst to hand
-	
-		if _instFind != noone
-		{
-			// Add to hand
-			add_Inst(global.instGrid, 0, _instFind);
-			
-			// Set selected
-			_instFind.selected = true;
-		}
-	
-		#endregion
-	
 		#region Unselect if pressed on again
 	
 		if _key_ctrl && _selectx2
@@ -176,7 +160,20 @@ if buildingPlacement == noone
 		}
 	
 		#endregion
-
+	
+		#region Add inst to hand
+	
+		if _instFind != noone
+		{
+			// Add to hand
+			add_Inst(global.instGrid, 0, _instFind);
+			
+			// Set selected
+			_instFind.selected = true;
+		}
+	
+		#endregion
+	
 		#region Remember location of press
 
 		// Mouse box starting position

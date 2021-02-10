@@ -307,6 +307,7 @@ function enter_Vehicle_One(_inst) {
 		ds_list_add(riderList, _id);
 		
 		var _buffer = packet_start(packet_t.veh_interact);
+		buffer_write(_buffer, buffer_u64, oManager.user);
 		buffer_write(_buffer, buffer_u16, _id);
 		buffer_write(_buffer, buffer_u8, action.enter);
 		packet_send_all(_buffer);
@@ -345,6 +346,7 @@ function exit_Vehicle_All() {
 	
 		// Update doppelganger
 		var _buffer = packet_start(packet_t.veh_interact);
+		buffer_write(_buffer, buffer_u64, oManager.user);
 		buffer_write(_buffer, buffer_u16, _inst);
 		buffer_write(_buffer, buffer_u8, action.leave);
 		packet_send_all(_buffer);
@@ -1139,14 +1141,15 @@ function packet_handle_client(from) {
 				break;
 			
 			// Get data
+			var _from			= buffer_read(_buffer, buffer_u64);
 			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _interaction	= buffer_read(_buffer, buffer_u8);
 						
 			// Find list
-			var _list		= ds_map_find_value(global.multiInstMap, string(from))
+			var _map		= ds_map_find_value(global.multiInstMap, from)
 
 			// Find Unit
-			var _unit		= ds_list_find_value(_list, _posList);
+			var _unit		= ds_map_find_value(_map, _posList);
 			
 			if is_undefined(_unit) || !instance_exists(_unit)
 				break;
@@ -1643,16 +1646,18 @@ function packet_handle_server(from) {
 				break;
 			
 			// Get data
+			var _from			= buffer_read(_buffer, buffer_u64);
 			var _posList		= buffer_read(_buffer, buffer_u16);
 			var _interaction	= buffer_read(_buffer, buffer_u8);
 			
 			var _buffer = packet_start(packet_t.veh_interact);
+			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _posList);
 			buffer_write(_buffer, buffer_u8, _interaction);
 			packet_send_except(_buffer, from);
 						
 			// Find list
-			var _map		= ds_map_find_value(global.multiInstMap, from);
+			var _map		= ds_map_find_value(global.multiInstMap, from)
 
 			// Find Unit
 			var _unit		= ds_map_find_value(_map, _posList);
@@ -2238,7 +2243,7 @@ function scr_context_folder_HQspawn() {
 	
 		// Add buttons
 		add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
-		add_context("Spawn Transport",	scr_context_spawn_trans, false);
+		//add_context("Spawn Transport",	scr_context_spawn_trans, false);
 	
 		// Update size
 		event_user(0);
@@ -2336,8 +2341,8 @@ function scr_context_folder_LOGspawn() {
 			// Check if near a building
 			if _oHAB > 0 || _oHQ > 0
 				add_context("Too close to Building", on_click,	 false);
-			else
-				add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
+			//else
+				//add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
 		}
 		else
 		{
@@ -2391,7 +2396,7 @@ function scr_context_move() {
 				goalX = mouse_x;
 				goalY = mouse_y;
 				
-				if(_inst.object_index == oParSquad)
+				if(_inst.object_index == oParOVL)
 				{
 					event_user(1);
 				}
@@ -2468,7 +2473,7 @@ function scr_context_select_onScreen() {
 			break;
 	
 		// Check if not a building
-		if _inst.object_index != oPlayer && _inst.moveSpd != 0
+		if _inst.object_index == oOVLInf || _inst.object_index == oOVLTV
 		{
 			// Find name of selected instance		
 			with _inst
@@ -2581,7 +2586,7 @@ function scr_context_spawn_inf() {
 	_instFind.resCarry -= unitResCost.inf;
 	
 	// Create instance
-	spawn_unit("oInfantry", _mouseX, _mouseY);
+	spawn_unit("oOVLInf", _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2601,7 +2606,7 @@ function scr_context_spawn_trans() {
 	_instFind.resCarry -= unitResCost.trans;
 	
 	// Create instance
-	spawn_unit("oTransport", _mouseX, _mouseY);
+	spawn_unit("oOVLTV", _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2617,7 +2622,7 @@ function scr_context_spawn_dummy() {
 	}
 		
 	// Create instance
-	spawn_unit("oParSquad", _mouseX, _mouseY);
+	spawn_unit("oOVLDummy", _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2643,7 +2648,7 @@ function scr_context_spawn_HAB() {
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
 	*/
-	create_building("oHAB");
+	create_building("oOVLHAB");
 	
 	close_context(-1);
 }
@@ -2653,7 +2658,7 @@ function spawn_unit(_object_string, posX, posY) {
 	var _object = asset_get_index(_object_string);
 		
 	// Create instance
-	var _inst = instance_create_layer(posX, posY, "Instances", _object);
+	var _inst = instance_create_layer(posX, posY, "UI", _object);
 		
 	// Add inst to list
 	ds_list_add(global.unitList, _inst);

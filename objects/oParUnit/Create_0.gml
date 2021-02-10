@@ -1,11 +1,8 @@
 #region ID of Units
 
-cost	= 0;		// Cost of unit
-resCost	= 0;		// Cost of unit in resources
+unitName	= "noone";
 
-unitName = "noone";
-
-moveSpd	= 0;		// pixel per frame
+moveSpd	= 1;		// pixel per frame
 
 unit	= unitType.inf; // Type of unit for health
 armor	= 0;
@@ -20,9 +17,14 @@ cover	= 0;				// Default cover
 bulletFrequency = 0;	// Frequency of bullets per second
 bulletTiming	= 0;	// Holds timing of last bullet
 
+burstMax	= 0;				// Amount of bullets per burst
+burstTiming = 0;	// Timing between bursts
+burstTimer	= 0;				// Holds the time till last burst
+burstAmount	= 0					// Current amount
+
 maxResCarry	= 0;			// Max resources carried
 resCarry	= maxResCarry;	// Resources carried
-resRange	= 100;			// Range to transfer resources
+resRange	= 0;			// Range to transfer resources
 
 ammoUse		= 0;			// How much ammo will be consumed after reloading
 maxClipSize	= 0;			// Max bullets shot before reloading
@@ -37,11 +39,9 @@ hashColor	= oManager.hashColor;	// "red" or "blue"
 // Pathfinding
 path = path_add();
 
-// Drag
-release = false;
+squadID = noone;
 
-// Modify selected units
-selected = false;
+pushTimer = 0;
 
 // Enter vehicle if present
 enterVeh	= noone;

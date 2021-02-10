@@ -24,8 +24,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Environment",
-    "path": "folders/Objects/Environment.yy",
+    "name": "Parents",
+    "path": "folders/Objects/Environment/Parents.yy",
   },
   "resourceVersion": "1.0",
   "name": "oObject",

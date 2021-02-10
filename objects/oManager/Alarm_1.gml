@@ -23,4 +23,4 @@ var _height = ds_grid_height(global.instGrid);
 ds_grid_resize(global.instGrid, _width - 1, _height);
 			
 // Create HQ
-spawn_unit("oHQ", _x, _y);
+spawn_unit("oOVLHQ", _x, _y);

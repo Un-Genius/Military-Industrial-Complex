@@ -1,14 +1,11 @@
 {
   "spriteId": {
-    "name": "sHQ",
-    "path": "sprites/sHQ/sHQ.yy",
+    "name": "sInf_USA_basic_0",
+    "path": "sprites/sInf_USA_basic_0/sInf_USA_basic_0.yy",
   },
   "solid": false,
   "visible": true,
-  "spriteMaskId": {
-    "name": "sHQ",
-    "path": "sprites/sHQ/sHQ.yy",
-  },
+  "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": {
     "name": "oParUnitClient",
@@ -26,12 +23,14 @@
   "physicsStartAwake": true,
   "physicsKinematic": false,
   "physicsShapePoints": [],
-  "eventList": [],
+  "eventList": [
+    {"isDnD":false,"eventNum":0,"eventType":0,"collisionObjectId":null,"parent":{"name":"oInfantryClient","path":"objects/oInfantryClient/oInfantryClient.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMEvent",},
+  ],
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Client",
-    "path": "folders/Objects/Units/Client.yy",
+    "name": "Infantry Squad",
+    "path": "folders/Objects/Units/.Client/Infantry Squad.yy",
   },
   "resourceVersion": "1.0",
   "name": "oInfantryClient",

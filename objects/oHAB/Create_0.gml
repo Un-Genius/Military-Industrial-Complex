@@ -22,4 +22,6 @@ maxResCarry	= 10000;	// Resources carried
 
 #endregion
 
+depth = -bbox_bottom - 5;
+
 update_pathfind();

@@ -27,9 +27,6 @@
     {"compositeImage":{"FrameId":{"name":"335f3ac7-2eaf-4614-82cd-d0ea988b95bc","path":"sprites/sTransport/sTransport.yy",},"LayerId":null,"resourceVersion":"1.0","name":"composite","tags":[],"resourceType":"GMSpriteBitmap",},"images":[
         {"FrameId":{"name":"335f3ac7-2eaf-4614-82cd-d0ea988b95bc","path":"sprites/sTransport/sTransport.yy",},"LayerId":{"name":"f08f0228-cbcc-4eb5-b523-10e25529c191","path":"sprites/sTransport/sTransport.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMSpriteBitmap",},
       ],"parent":{"name":"sTransport","path":"sprites/sTransport/sTransport.yy",},"resourceVersion":"1.0","name":"335f3ac7-2eaf-4614-82cd-d0ea988b95bc","tags":[],"resourceType":"GMSpriteFrame",},
-    {"compositeImage":{"FrameId":{"name":"85bb6863-42cd-46bb-ac3d-ad1044775757","path":"sprites/sTransport/sTransport.yy",},"LayerId":null,"resourceVersion":"1.0","name":"composite","tags":[],"resourceType":"GMSpriteBitmap",},"images":[
-        {"FrameId":{"name":"85bb6863-42cd-46bb-ac3d-ad1044775757","path":"sprites/sTransport/sTransport.yy",},"LayerId":{"name":"f08f0228-cbcc-4eb5-b523-10e25529c191","path":"sprites/sTransport/sTransport.yy",},"resourceVersion":"1.0","name":"","tags":[],"resourceType":"GMSpriteBitmap",},
-      ],"parent":{"name":"sTransport","path":"sprites/sTransport/sTransport.yy",},"resourceVersion":"1.0","name":"85bb6863-42cd-46bb-ac3d-ad1044775757","tags":[],"resourceType":"GMSpriteFrame",},
   ],
   "sequence": {
     "spriteId": {"name":"sTransport","path":"sprites/sTransport/sTransport.yy",},
@@ -39,16 +36,15 @@
     "playbackSpeedType": 0,
     "autoRecord": true,
     "volume": 1.0,
-    "length": 2.0,
+    "length": 1.0,
     "events": {"Keyframes":[],"resourceVersion":"1.0","resourceType":"KeyframeStore<MessageEventKeyframe>",},
     "moments": {"Keyframes":[],"resourceVersion":"1.0","resourceType":"KeyframeStore<MomentsEventKeyframe>",},
     "tracks": [
       {"name":"frames","spriteId":null,"keyframes":{"Keyframes":[
             {"id":"3a514a75-5781-4809-951a-18c866b7484d","Key":0.0,"Length":1.0,"Stretch":false,"Disabled":false,"IsCreationKey":false,"Channels":{"0":{"Id":{"name":"335f3ac7-2eaf-4614-82cd-d0ea988b95bc","path":"sprites/sTransport/sTransport.yy",},"resourceVersion":"1.0","resourceType":"SpriteFrameKeyframe",},},"resourceVersion":"1.0","resourceType":"Keyframe<SpriteFrameKeyframe>",},
-            {"id":"ead08187-100c-4057-aabe-5e506dfe1253","Key":1.0,"Length":1.0,"Stretch":false,"Disabled":false,"IsCreationKey":false,"Channels":{"0":{"Id":{"name":"85bb6863-42cd-46bb-ac3d-ad1044775757","path":"sprites/sTransport/sTransport.yy",},"resourceVersion":"1.0","resourceType":"SpriteFrameKeyframe",},},"resourceVersion":"1.0","resourceType":"Keyframe<SpriteFrameKeyframe>",},
           ],"resourceVersion":"1.0","resourceType":"KeyframeStore<SpriteFrameKeyframe>",},"trackColour":0,"inheritsTrackColour":true,"builtinName":0,"traits":0,"interpolation":1,"tracks":[],"events":[],"modifiers":[],"isCreationTrack":false,"resourceVersion":"1.0","tags":[],"resourceType":"GMSpriteFramesTrack",},
     ],
-    "visibleRange": {"x":0.0,"y":0.0,},
+    "visibleRange": null,
     "lockOrigin": false,
     "showBackdrop": true,
     "showBackdropImage": false,
@@ -72,8 +68,8 @@
     {"visible":true,"isLocked":false,"blendMode":0,"opacity":100.0,"displayName":"default","resourceVersion":"1.0","name":"f08f0228-cbcc-4eb5-b523-10e25529c191","tags":[],"resourceType":"GMImageLayer",},
   ],
   "parent": {
-    "name": "Old Units",
-    "path": "folders/Sprites/Units/Old Units.yy",
+    "name": "USA",
+    "path": "folders/Sprites/Units/Units/Vehicles/Transport/USA.yy",
   },
   "resourceVersion": "1.0",
   "name": "sTransport",

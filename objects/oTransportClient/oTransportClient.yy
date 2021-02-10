@@ -5,10 +5,7 @@
   },
   "solid": false,
   "visible": true,
-  "spriteMaskId": {
-    "name": "sHQ",
-    "path": "sprites/sHQ/sHQ.yy",
-  },
+  "spriteMaskId": null,
   "persistent": false,
   "parentObjectId": {
     "name": "oParUnitClient",
@@ -32,8 +29,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Vehicles",
-    "path": "folders/Objects/Units/.Client/Vehicles.yy",
+    "name": "Transport Squad",
+    "path": "folders/Objects/Units/.Client/Transport Squad.yy",
   },
   "resourceVersion": "1.0",
   "name": "oTransportClient",
