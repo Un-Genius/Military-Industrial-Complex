@@ -84,7 +84,7 @@ else
 
 #region Move out of the way
 
-// Increas timer
+// Increase timer
 pushTimer++;
 
 if pushTimer > 0.2 * room_speed
@@ -196,6 +196,12 @@ if gun != noone && state != action.reloading && (burstMax > burstAmount && burst
 					if state == action.idle 
 					{
 						update_state(action.aiming, -1);
+						
+						var _callout = random(1);
+			
+						// Play sound
+						if(_callout < 0.1)
+							randAudio("snd_smallArmsSpotted", 3, 0.15, 0.05, 0.8, 1.2, x, y);
 					}
 					
 					// Shoot
@@ -307,12 +313,14 @@ if gun != noone && state != action.reloading && (burstMax > burstAmount && burst
 						if !clipSize 
 						{
 							update_state(action.reloading, -1);
-							squadID.resCarry -= ammoUse;						
+							squadID.resCarry -= ammoUse;			
+							
+							// Play sound
+							randAudio("snd_smallArmsReload_start", 0, 1, 0.4, 0.8, 1.2, x, y);
 							
 							if squadID.resCarry <= 0
 							{
 							  update_state(action.idle, -1);			
-							  
 							}
 						}
 					}
@@ -402,10 +410,33 @@ switch state
 		{
 			clipSize = maxClipSize;
 			
+			randAudio("snd_smallArmsReload_finish", 0, 1, 0.4, 0.8, 1.2, x, y);
+			
 			update_state(action.attacking, -1);
 		}
 		
 		break;
+}
+
+#endregion
+
+#region Walking Sound
+
+if(moveState == action.moving)
+{
+	// Resume
+	audio_resume_sound(movingSound);
+	
+	// Set volume
+	audio_sound_gain(movingSound, 0.05, 20);
+}
+else
+{
+	// Set volume
+	audio_sound_gain(movingSound, 0, 20);
+	
+	// Pause
+	audio_pause_sound(movingSound);
 }
 
 #endregion

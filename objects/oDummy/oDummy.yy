@@ -30,8 +30,8 @@
   "properties": [],
   "overriddenProperties": [],
   "parent": {
-    "name": "Infantry Squad",
-    "path": "folders/Objects/Units/Infantry Squad.yy",
+    "name": "Dummy Squad",
+    "path": "folders/Objects/Units/Dummy Squad.yy",
   },
   "resourceVersion": "1.0",
   "name": "oDummy",

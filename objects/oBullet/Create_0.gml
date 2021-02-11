@@ -45,4 +45,7 @@ image_xscale = 0.50;
 image_yscale = 0.50;
 
 // Set timer
-//alarm[0] = 10;
+alarm[0] = 10;
+
+// Play sound
+randAudio("snd_smallArmsFire", 9, 0.1, 0.01, 0.8, 1.2, x, y);

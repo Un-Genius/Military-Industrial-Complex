@@ -39,8 +39,10 @@ hashColor	= oManager.hashColor;	// "red" or "blue"
 // Pathfinding
 path = path_add();
 
+// Parent ID
 squadID = noone;
 
+// Push so many units out of the way per second
 pushTimer = 0;
 
 // Enter vehicle if present
@@ -50,6 +52,21 @@ riding		= false;
 state = action.idle;
 
 moveState = action.idle;
+
+// Play walking sound
+movingSound = audio_play_sound(snd_smallArmsWalk0, 110, true);
+
+// Randomize position
+audio_sound_set_track_position(movingSound, random_range(0, 5));
+
+// Set volume
+audio_sound_gain(movingSound, 0.05, 0);
+		
+// Randomize pitch
+audio_sound_pitch(movingSound, random_range(0.8, 1.2));
+
+// Pause
+audio_pause_sound(movingSound);
 
 // Move slightly over if spawned on top of unit
 while instance_place(x, y, oHQ) || instance_place(x, y, oHAB)

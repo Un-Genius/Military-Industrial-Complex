@@ -5,7 +5,7 @@ event_inherited();
 
 unitName	= "sInf_USA_basic";
 
-amount	= 1;			// Amount of units per squad
+amount	= 4;			// Amount of units per squad
 range	= 50;			// How far apart each unit can be
 unit	= "oInfantry";	// What type of unit to control
 

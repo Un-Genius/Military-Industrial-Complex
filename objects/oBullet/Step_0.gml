@@ -10,10 +10,19 @@ speed = spd;
 // Decrease accuracy over distance
 accuracy--;
 
-// Check if accuracy reached 0
+// Accuracy reached 0
 if accuracy <= 0
-{
+{		
+	// Play sound
+	randAudio("snd_impact_ground", 2, 0.1, 0.02, 0.8, 1.5, x, y);
+	
 	// Hit floor
+	instance_destroy(self);
+}
+
+// Out of bounds
+if x < 0 || x > room_width || y < 0 || y > room_height
+{
 	instance_destroy(self);
 }
 
@@ -93,9 +102,16 @@ if _collision
 			// Deal damage
 			if pen >= _armor
 				_collision.hp -= dmg;
+			
+			randAudio("snd_impact_person0", 0, 0.2, 0.05, 2, 3, x, y);
 	
 			// Delete self
 			instance_destroy(self);
+		}
+		else
+		{
+			// Suppressing noise
+			randAudio("snd_bulletFlyingBy", 0, 0.2, 0.05, 0.8, 1.2, x, y);
 		}
 	}
 }

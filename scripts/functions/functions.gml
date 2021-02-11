@@ -3044,3 +3044,49 @@ function reset_menu() {
 
 
 #endregion
+
+#region Audio
+
+function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch, _x, _y) {
+	/*
+	_asset		= What audio to play
+	_maxAssets	= How many of those assets do you have?
+		Number the assets as such: audio0, audio1, ...
+	_volume		= default volume
+	_outVolume	= out of bounds volume
+	*/
+	
+	var _audio, _rand;
+	
+	if(_maxAssets != 0)
+	{
+		// Get random asset
+		_rand = irandom_range(0, _maxAssets);
+		_audio = asset_get_index(_asset + string(_rand));
+	}
+	else
+		_audio = asset_get_index(_asset);
+	
+	// Play sound
+	var _sound = audio_play_sound(_audio, 100, false);
+	audio_sound_gain(_sound, _volume, 0);
+		
+	// Randomize pitch
+	audio_sound_pitch(_sound, random_range(_minPitch, _maxPitch));
+
+	// Get current camera position
+	var _camX = camera_get_view_x(view_camera[0]);
+	var _camY = camera_get_view_y(view_camera[0]);
+	var _camW = camera_get_view_width(view_camera[0]);
+	var _camH = camera_get_view_height(view_camera[0]);
+
+	// Check if out of the camera
+	if (_x < _camX || _x > _camX + _camW)
+	|| (_y < _camY || _y > _camY + _camH)
+	{
+		// Lower sound
+		audio_sound_gain(_sound, _outVolume, 0);
+	}
+}
+
+#endregion

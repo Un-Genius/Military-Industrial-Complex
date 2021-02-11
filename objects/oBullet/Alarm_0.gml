@@ -8,3 +8,5 @@ if accuracy <= 0
 	// Hit floor
 	instance_destroy(self);
 }
+else
+	alarm[0] = 1;
