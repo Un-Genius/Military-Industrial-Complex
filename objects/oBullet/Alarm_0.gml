@@ -1,12 +1,8 @@
-/// @description lower accuracy over distance
+/// @description Shooting smoke particles
 
-accuracy--;
+// Have it off center
+var _x = x - lengthdir_x(20, direction);
+var _y = y - lengthdir_y(20, direction);
 
-// Check if accuracy reached 0
-if accuracy <= 0
-{
-	// Hit floor
-	instance_destroy(self);
-}
-else
-	alarm[0] = 1;
+part_type_direction(global.shootSmoke, direction - 25, direction + 25, 0, 10);
+part_particles_create(global.P_System, _x, _y, global.shootSmoke, 20);

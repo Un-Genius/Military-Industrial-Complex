@@ -2630,6 +2630,22 @@ function scr_context_spawn_dummy() {
 	close_context(-1);
 }
 	
+function scr_context_spawn_dummyStronk() {
+	with(oPlayer)
+	{
+		var _mouseX = mouseRightPress_x;
+		var _mouseY = mouseRightPress_y;
+	}
+		
+	// Create instance
+	spawn_unit("oOVLDummyStronk", _mouseX, _mouseY);
+
+	// Reset hand
+	wipe_Hand(global.instGrid, 0);
+
+	close_context(-1);
+}
+	
 function scr_context_spawn_HAB() {
 	/*
 	with(oPlayer)

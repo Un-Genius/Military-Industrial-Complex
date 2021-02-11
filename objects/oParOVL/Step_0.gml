@@ -69,13 +69,6 @@ if _click_left_released && release
 
 #endregion
 
-#region Health
-
-if hp <= 0
-	instance_destroy(self);
-
-#endregion
-
 #region Update position
 
 var _size = ds_list_size(childList);
@@ -277,6 +270,13 @@ if riding
 	}
 }
 */
+#endregion
+
+#region Health
+
+if hp <= 0
+	instance_destroy(self);
+
 #endregion
 
 // sorting

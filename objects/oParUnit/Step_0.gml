@@ -2,7 +2,7 @@
 
 var _suppressed = squadID.suppressed;
 
-var _spd = moveSpd / 1 + _suppressed;
+var _spd = moveSpd / (1 + _suppressed);
 
 #endregion
 

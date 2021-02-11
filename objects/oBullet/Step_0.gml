@@ -16,6 +16,13 @@ if accuracy <= 0
 	// Play sound
 	randAudio("snd_impact_ground", 2, 0.1, 0.02, 0.8, 1.5, x, y);
 	
+	#region Create dirt particles
+
+	part_type_direction(global.dirt, direction - 55, direction + 55, 0, 0);
+	part_particles_create(global.P_System, x, y, global.dirt, 20);
+
+	#endregion
+	
 	// Hit floor
 	instance_destroy(self);
 }
@@ -104,6 +111,17 @@ if _collision
 				_collision.hp -= dmg;
 			
 			randAudio("snd_impact_person0", 0, 0.2, 0.05, 2, 3, x, y);
+			
+			#region Create blood particles
+			
+			// Have it off center
+			var _x = x + lengthdir_x(8, direction);
+			var _y = y + lengthdir_y(8, direction);
+
+			part_type_direction(global.blood, direction - 55, direction + 55, 0, 0);
+			part_particles_create(global.P_System, _x, _y, global.blood, 20);
+
+			#endregion
 	
 			// Delete self
 			instance_destroy(self);
@@ -156,5 +174,13 @@ if(distance_to_point(preX, preY) > 32)
 	
 	ds_list_destroy(_collisionList);
 }
+
+#endregion
+
+#region Create smoke particles
+
+part_type_orientation(global.bulletTrail, direction, direction, 0, 0, 0);
+part_type_direction(global.bulletTrail, direction, direction, 0, 0);
+part_particles_create(global.P_System, x, y, global.bulletTrail, 2);
 
 #endregion

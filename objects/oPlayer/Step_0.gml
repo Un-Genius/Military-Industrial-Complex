@@ -368,7 +368,8 @@ if buildingPlacement == noone
 			if(global.debugMenu)
 			{
 				add_context("break", on_click, false);
-				add_context("Spawn Dummy",		scr_context_spawn_dummy, false);
+				add_context("Spawn Dummy",			scr_context_spawn_dummy, false);
+				add_context("Spawn DummyStronk",	scr_context_spawn_dummyStronk, false);
 			}
 		
 			// Update size
