@@ -1,8 +1,6 @@
 #region Effects
 
-var _suppressed = squadID.suppressed;
-
-var _spd = moveSpd / (1 + _suppressed);
+var _spd = moveSpd;
 
 #endregion
 
@@ -244,7 +242,7 @@ if gun != noone && state != action.reloading && (burstMax > burstAmount && burst
 						var _bullet		= instance_create_layer(_x, _y, "Bullets", oBullet);
 				
 						// Add randomness
-						var _adjustment = random_range(0.65 - (_suppressed*0.25), 1.35 + (_suppressed*0.25));
+						var _adjustment = random_range(0.65, 1.35);
 						
 						_angle += _adjustment * choose(-1, 1);
 				

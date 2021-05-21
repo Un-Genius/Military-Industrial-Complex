@@ -21,7 +21,7 @@ Goals for bullet mechanic
 */
 
 // Set Speed
-spd = 14;
+spd = 20;
 
 // Set direction
 dir = 0;

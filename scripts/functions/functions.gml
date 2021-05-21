@@ -2362,45 +2362,24 @@ function scr_context_move() {
 		var _mouse_y = mouseRightPress_y;
 	}
 	
-	// Check for veh
-	var _veh = collision_point(_mouse_x, _mouse_y, oTransport, false, true);
-
 	// Get maximum width
 	var _width = ds_grid_width(global.instGrid);
-
+	
 	// Move all instances selected
 	for(var i = 0; i < _width; i++)
 	{
 		var _inst = ds_grid_get(global.instGrid, i, 0);
 		
-		if _inst == 0
-			break;
-		
 		with(_inst)
 		{
-			// Reset state
-			moveState = action.idle;
+			// Drop instance
+			release = false;
+	
+			// Set goal
+			goalX	= _mouse_x;
+			goalY	= _mouse_y;
 			
-			// Enter vehicle
-			if _veh
-			{
-				enterVeh = _veh;
-				veh_position(enterVeh);
-			}
-			else
-			{
-				enterVeh	= noone;
-				riding		= false;
-				
-				// set as goal
-				goalX = mouse_x;
-				goalY = mouse_y;
-				
-				if(_inst.object_index == oParOVL)
-				{
-					event_user(1);
-				}
-			}
+			event_user(1);
 		}
 	}
 

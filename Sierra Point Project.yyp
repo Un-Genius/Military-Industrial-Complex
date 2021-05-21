@@ -121,6 +121,7 @@
     {"id":{"name":"spr_page_tank","path":"sprites/spr_page_tank/spr_page_tank.yy",},"order":1,},
     {"id":{"name":"spr_page_tank2","path":"sprites/spr_page_tank2/spr_page_tank2.yy",},"order":2,},
     {"id":{"name":"snd_smallArmsFire7","path":"sounds/snd_smallArmsFire7/snd_smallArmsFire7.yy",},"order":7,},
+    {"id":{"name":"sDrone","path":"sprites/sDrone/sDrone.yy",},"order":11,},
     {"id":{"name":"sInf_USA_basic_2","path":"sprites/sInf_USA_basic_2/sInf_USA_basic_2.yy",},"order":4,},
     {"id":{"name":"snd_smallArmsFire6","path":"sounds/snd_smallArmsFire6/snd_smallArmsFire6.yy",},"order":6,},
     {"id":{"name":"oList","path":"objects/oList/oList.yy",},"order":3,},
@@ -229,7 +230,7 @@
   ],
   "IncludedFiles": [],
   "MetaData": {
-    "IDEVersion": "2.3.1.542",
+    "IDEVersion": "2.3.2.560",
   },
   "resourceVersion": "1.4",
   "name": "Sierra Point Project",

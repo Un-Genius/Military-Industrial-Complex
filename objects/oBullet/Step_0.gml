@@ -136,47 +136,6 @@ if _collision
 
 #endregion
 
-#region Suppress collision
-
-if(distance_to_point(preX, preY) > 32)
-{
-	// Update vars
-	preX = x;
-	preY = y;
-	
-	// Check collision
-	var _collisionList = ds_list_create();
-	var _collisionAmount = collision_circle_list(x, y, 30, oObject, false, true, _collisionList, false);
-	
-	if(_collisionAmount > 0)
-	{
-		for(var i = 0; i < _collisionAmount; i++)
-		{
-			// Find variables
-			with(ds_list_find_value(_collisionList, i))
-			{
-				var _team		= team;
-				var _numColor	= numColor;
-				var _parent		= squadID;
-			}
-			
-			// Check teams
-			if(_team != team || team == 0) && _numColor != numColor
-			{
-				// Create effect
-				_parent.suppressAmount++;
-				
-				// Start undoing effect
-				_parent.alarm[1] = 3 * room_speed;
-			}
-		}
-	}
-	
-	ds_list_destroy(_collisionList);
-}
-
-#endregion
-
 #region Create smoke particles
 
 part_type_orientation(global.bulletTrail, direction, direction, 0, 0, 0);

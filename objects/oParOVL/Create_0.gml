@@ -13,7 +13,10 @@ hp = amount;
 
 suppressMax		= 0;		// Max amount of bullets flying overhead to create supressed effect. 0 for no effect.
 suppressAmount	= 0;		// Current amount of bullets flying overhead
-suppressed		= false;	// If the unit is suppressed or not
+
+// One minute history of suppressive fire
+// every 4 seconds its updated
+suppressHistory = array_create(10, 0);
 
 cost	= 0;		// Cost of unit
 resCost	= 0;		// Cost of unit in resources
@@ -44,3 +47,4 @@ release = false;
 
 // Update budget & spawn units
 alarm[0] = 1;
+alarm[1] = 1;

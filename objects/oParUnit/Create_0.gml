@@ -86,4 +86,4 @@ oldPathY = pathY;
 dir = 0;
 
 // Update budget
-alarm[0] = 1;
+//alarm[0] = 1;

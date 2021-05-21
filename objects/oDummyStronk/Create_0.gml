@@ -15,7 +15,7 @@ hp		= maxHp;	// How much health points they have
 
 gun		= gunType.rifle;	// Type of gun
 range	= 800;				// How far they can shoot in pixels
-cover	= 10;				// Default cover
+cover	= 30;				// Default cover
 
 bulletFrequency = random_range(2, 4);	// Frequency of bullets per second
 bulletTiming	= 0;					// Holds timing of last bullet

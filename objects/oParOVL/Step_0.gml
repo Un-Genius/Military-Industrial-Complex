@@ -166,26 +166,6 @@ if resCarry != maxResCarry
 
 #endregion
 
-#region Suppressed effect
-
-// Suppress effect comes from the proximmity of a bullet
-// Check bullet code for more
-
-// Check if suppressed
-if(suppressMax != 0 && suppressMax <= suppressAmount)
-{
-	// Cause a suppressed effect
-	suppressed = true;
-		
-	// Max out
-	if(suppressAmount > suppressMax*2)
-	{
-		suppressAmount = suppressMax*2;
-	}
-}
-
-#endregion
-
 #region Enter/Chase Vehicle - DISABLED
 /*
 if enterVeh != noone && type == unitType.inf
