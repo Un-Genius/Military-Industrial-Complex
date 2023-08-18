@@ -66,19 +66,16 @@ function add_Inst(_gridID, _y, _inst) {
 	}
 }
 	
-function create_building(_object_index) {
+function create_building(_object) {
 	// Accepts a string
 	
 	with(oPlayer)
-	{
-		// Find object
-		var _object = asset_get_index(_object_index);
-		
+	{		
 		// Create empty ghost to find sprite
 		buildingPlacement = instance_create_layer(0, 0, "AboveAll", _object);
 		
 		// Remember name
-		buildingName = _object_index;
+		buildingName = buildingPlacement.unit;
 		
 		// Deactivate it to prevent it causing issues in game
 		instance_deactivate_object(buildingPlacement);
@@ -1996,6 +1993,34 @@ function buffer_write_int64(_buffer, _client) {
 
 #region Shortcuts
 
+function spawn_unit(_object, posX, posY) {
+		
+	// Create instance
+	var _inst = instance_create_layer(posX, posY, "Instances", _object);
+		
+	// Add inst to list
+	ds_list_add(global.unitList, _inst);
+	
+	// Resize holding grid
+	var _width	= ds_grid_width(global.instGrid);
+	var _height = ds_grid_height(global.instGrid);
+	ds_grid_resize(global.instGrid, _width + 1, _height);
+	
+	// Find position
+	var _pos = ds_list_find_index(global.unitList, _inst);
+	
+	// Create unit client side
+	var _packet = packet_start(packet_t.add_unit);
+	buffer_write(_packet, buffer_u64, oManager.user);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_string, _object_string);
+	buffer_write(_packet, buffer_f32, posX);
+	buffer_write(_packet, buffer_f32, posY);
+	packet_send_all(_packet);
+	
+	return _inst;
+}
+
 function packet_start(_type) {	
 	
 	var _buffer = oManager.outbuf;
@@ -2006,6 +2031,7 @@ function packet_start(_type) {
 	return _buffer;
 }
 	
+// Unoptimized way of saying you are ready in a lobby to play
 function readyChange() {
 	// Access parent
 	with(parent)
@@ -2015,7 +2041,7 @@ function readyChange() {
 		playersReady += (ready * 2) - 1;
 		
 		var _buffer = packet_start(packet_t.data_map);
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "ready");
 		buffer_write(_buffer, buffer_s16, ready);
 		packet_send_all(_buffer);
@@ -2025,6 +2051,8 @@ function readyChange() {
 	}
 }
 	
+// Links a number color to a hashtag color
+// Used to save bytes on networking packages
 function findColor(_numColor) {
 	
 	var _hashColor;
@@ -2044,6 +2072,58 @@ function findColor(_numColor) {
 	}
 	
 	return _hashColor;
+}
+	
+/// @function instance_create_layer_multiplayer(x, y, layer_id_or_name, object);
+function instance_create_layer_multiplayer(_x, _y, _layer, _obj) {
+	// Create local instance
+	var _inst = instance_create_layer(_x, _y, _layer, _obj);
+	
+	// Modify ID for optimized network packages
+	var _inst_encrypted = _inst % 100000;
+	
+	_obj = localObj_to_netObj(_obj);
+	
+	// Send data to others
+	var _packet = packet_start(packet_t.inst_create);
+	buffer_write(_packet, buffer_f32, _x);
+	buffer_write(_packet, buffer_f32, _y);
+	buffer_write(_packet, buffer_string, _layer);
+	buffer_write(_packet, buffer_u8, _obj);
+	buffer_write(_packet, buffer_u8, _inst_encrypted);
+	packet_send_all(_packet);
+	
+	return _inst;
+}
+	
+/// @function instance_destroy_multiplayer(id);
+function instance_destroy_multiplayer(_id) {
+	
+	var _inst_encrypted = _id % 100000;
+	
+	// Send data to others
+	var _packet = packet_start(packet_t.inst_destroy);
+	buffer_write(_packet, buffer_u8, _inst_encrypted);
+	packet_send_all(_packet);
+	
+	// Destroy Local instance
+	instance_destroy(_id);
+}
+
+/// @function client_position(client);
+function client_position(_client) {
+	
+	var _list = oManager.steamNetList;
+	
+	// Find client position
+	var i;
+	for(i = 0; i < ds_list_size(_list); i++)
+	{
+		if(_client == ds_list_find_value(_list, i))
+			break;
+	}
+	
+	return i;
 }
 
 #endregion
@@ -2565,7 +2645,7 @@ function scr_context_spawn_inf() {
 	_instFind.resCarry -= unitResCost.inf;
 	
 	// Create instance
-	spawn_unit("oOVLInf", _mouseX, _mouseY);
+	spawn_unit(oOVLInf, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2585,7 +2665,7 @@ function scr_context_spawn_trans() {
 	_instFind.resCarry -= unitResCost.trans;
 	
 	// Create instance
-	spawn_unit("oOVLTV", _mouseX, _mouseY);
+	spawn_unit(oOVLTV, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2601,7 +2681,7 @@ function scr_context_spawn_dummy() {
 	}
 		
 	// Create instance
-	spawn_unit("oOVLDummy", _mouseX, _mouseY);
+	spawn_unit(oOVLDummy, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2617,7 +2697,7 @@ function scr_context_spawn_dummyStronk() {
 	}
 		
 	// Create instance
-	spawn_unit("oOVLDummyStronk", _mouseX, _mouseY);
+	spawn_unit(oOVLDummyStronk, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2625,7 +2705,7 @@ function scr_context_spawn_dummyStronk() {
 	close_context(-1);
 }
 	
-function scr_context_spawn_HAB() {
+function scr_context_spawn_HAB() { // BROKEN
 	/*
 	with(oPlayer)
 	{
@@ -2638,46 +2718,18 @@ function scr_context_spawn_HAB() {
 	_instFind.resCarry -= unitResCost.HAB;
 	
 	// Create instance
-	spawn_unit("oHAB", _mouseX, _mouseY);
+	spawn_unit(oHAB, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
 	*/
-	create_building("oOVLHAB");
+	
+	// Create instance
+	create_building(oOVLHAB);
 	
 	close_context(-1);
 }
 		
-function spawn_unit(_object_string, posX, posY) {
-		
-	var _object = asset_get_index(_object_string);
-		
-	// Create instance
-	var _inst = instance_create_layer(posX, posY, "UI", _object);
-		
-	// Add inst to list
-	ds_list_add(global.unitList, _inst);
-	
-	// Resize holding grid
-	var _width	= ds_grid_width(global.instGrid);
-	var _height = ds_grid_height(global.instGrid);
-	ds_grid_resize(global.instGrid, _width + 1, _height);
-	
-	// Find position
-	var _pos = ds_list_find_index(global.unitList, _inst);
-	
-	// Create unit client side
-	var _packet = packet_start(packet_t.add_unit);
-	buffer_write(_packet, buffer_u64, oManager.user);
-	buffer_write(_packet, buffer_u16, _pos);
-	buffer_write(_packet, buffer_string, _object_string);
-	buffer_write(_packet, buffer_f32, posX);
-	buffer_write(_packet, buffer_f32, posY);
-	packet_send_all(_packet);
-	
-	return _inst;
-}
-
 #endregion
 
 #endregion

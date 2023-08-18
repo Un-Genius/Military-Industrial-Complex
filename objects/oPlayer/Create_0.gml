@@ -15,6 +15,9 @@ contextMenu = false;
 goalX = 0;
 goalY = 0;
 
+// Zoning
+zoning = -1;
+
 // Double click
 // 0 = false
 // 1 = pressed once

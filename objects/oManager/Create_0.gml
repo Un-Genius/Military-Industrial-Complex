@@ -146,6 +146,24 @@ enum PR
 
 #endregion
 
+#region Zone type enum
+
+enum zoneType
+{
+	building,
+	inf,
+	gnd,
+	air,
+	HQ,
+	camp,
+	bootCamp,
+	infantry,
+	money,
+	supplies
+}
+
+#endregion
+
 #region Manage Menu & Settings
 
 // Create list for buttons

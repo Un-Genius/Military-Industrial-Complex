@@ -111,6 +111,96 @@ if x != xprevious || y != yprevious
 
 #endregion
 
+#region Zoning
+
+// Toggle Zoning tool
+if(keyboard_check_pressed(ord("1")))
+	if zoning == zoneType.camp
+		zoning = -1;
+	else
+		zoning = zoneType.camp;
+		
+if(keyboard_check_pressed(ord("2")))
+	if zoning == zoneType.money
+		zoning = -1;
+	else
+		zoning = zoneType.money;
+
+if(keyboard_check_pressed(ord("3")))
+	if zoning == zoneType.supplies
+		zoning = -1;
+	else
+		zoning = zoneType.supplies;
+
+if(keyboard_check_pressed(ord("4")))
+	if zoning == zoneType.bootCamp
+		zoning = -1;
+	else
+		zoning = zoneType.bootCamp;
+
+if(keyboard_check_pressed(ord("5")))
+	if zoning == zoneType.infantry
+		zoning = -1;
+	else
+		zoning = zoneType.infantry;
+
+// Zoning functionality
+if(zoning > -1 && !global.mouseUI)
+{
+	var _obj	= enum_to_obj(zoning);
+	var _cost	= oManager.unitCost[zoning];;
+	
+	// Create a tile
+	if(_mb_left_press)
+	{
+		// Create zones only if enough money
+		if(global.supplies - _cost < 0)
+			trace(1, "Not enough supplies");
+		else 
+		{			
+			var _width = 1;
+			var _height = 1;
+	
+			// Increase size if sprite is abnormally big
+			switch zoning
+			{
+				case zoneType.bootCamp: _width = 2; _height = 2; break;
+			}
+			
+			var _halfWidth = ((32*_width)/2);
+			var _halfHeight = ((32*_height)/2);
+	
+			var _zoneX = ((mouse_x div 32) * 32) + _halfWidth;
+			var _zoneY = ((mouse_y div 32) * 32) + _halfHeight;
+			
+			// Create one zone per tile
+			if(collision_rectangle(_zoneX - _halfWidth, _zoneY - _halfHeight, _zoneX + _halfWidth, _zoneY + _halfHeight, oCollision, false, true))
+				trace(1, "Something in the way");
+			else
+			{			
+				// Create zone Tile
+				//instance_create_layer_multiplayer(_zoneX, _zoneY, "Zones", _obj)
+				spawn_unit(_obj, _zoneX, _zoneY);
+			}
+		}
+	}
+	
+	// Delete a tile
+	if(_mb_right_press)
+	{
+		var _tile = collision_point(mouse_x, mouse_y, oParZoneLocal, false, true);
+		
+		// Delete one zone per tile
+		if(instance_exists(_tile))
+		{
+			instance_destroy_multiplayer(_tile);
+		}
+	}
+}
+
+#endregion
+
+#region Selecting, Context Menu, Mousebox
 // Vars
 var _instFind	= noone;
 var _width		= ds_grid_width(global.instGrid);
@@ -425,7 +515,8 @@ else
 				instRightSelected.resCarry -= unitResCost.HAB;
 			
 				// Create instance
-				spawn_unit(buildingName, mouse_x, mouse_y);
+				var _object = asset_get_index(buildingName);
+				spawn_unit(_object, mouse_x, mouse_y);
 		
 				// Delete ghost
 				instance_destroy(buildingPlacement);
@@ -451,6 +542,7 @@ else
 		}
 	}
 }
+#endregion
 
 #region Double select
 
