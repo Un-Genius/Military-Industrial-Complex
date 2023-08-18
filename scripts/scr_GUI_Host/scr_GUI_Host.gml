@@ -5,7 +5,7 @@ function scr_GUI_Host() {
 		if !steam_initialised()
 		{
 			// Send message
-			trace(1, "Steam not connected.");
+			trace(2, "Steam not connected.");
 		
 			// Exit script
 			exit;

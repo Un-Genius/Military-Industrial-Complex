@@ -1,5 +1,7 @@
 #region Steam server
 
+steam_update();
+
 // Check if lobby owner left
 if(lobby)
 {
@@ -325,9 +327,15 @@ switch(state)
 		{
 			// Get data
 			var _lobbyType = ds_grid_get(global.savedSettings, 1, setting.host_type);
-		
+			
 			// Create Friends only lobby with a max of 16 people (8v8)
-			steam_lobby_create(_lobbyType, 16);
+			//steam_lobby_create(_lobbyType, 16);
+			steam_lobby_create(steam_lobby_type_public, 4);
+			
+			if steam_init()
+				show_debug_message("Steam Connected");
+			
+			show_debug_message("Creating lobby...");
 		}
 		
 		_widthList	= 400;

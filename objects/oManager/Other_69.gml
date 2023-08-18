@@ -1,6 +1,17 @@
-var uid;
 var type_event = async_load;
-var ok = type_event[?"success"];
+var success = type_event[?"success"];
+
+var type = async_load[? "type"];
+show_debug_message("Async event triggered: " + string(type));
+show_debug_message("Async event data: " + string(async_load));
+
+if (type == "lobby_created")
+{
+    if (async_load[? "success"])
+        show_debug_message("Lobby created");
+    else
+        show_debug_message("Failed to create lobby");
+}
 
 switch (type_event[?"event_type"])
 {
@@ -15,7 +26,7 @@ switch (type_event[?"event_type"])
 
 	    creating_lobby = false;
 	
-	    if(ok)
+	    if(success)
 		{
 			// Set steam variables
 	        lobby			= true;
@@ -98,7 +109,7 @@ switch (type_event[?"event_type"])
 
 	    // This event is dispatched when you click on an invitation.
 	    // Form an ID and join that lobby:
-	    uid = steam_id_create(type_event[?"lobby_id_high"], type_event[?"lobby_id_low"]);
+	    var uid = steam_id_create(type_event[?"lobby_id_high"], type_event[?"lobby_id_low"]);
 	    steam_lobby_join_id(uid);
 	
 	    trace(3, "Joining a lobby by invitation...");
