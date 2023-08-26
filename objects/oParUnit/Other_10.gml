@@ -1,7 +1,7 @@
 /// @description Set sprite
 
 // Find index
-var _sprite = asset_get_index(unitName + "_" + string(state));
+var _sprite = asset_get_index(objectName + "_" + string(state));
 
 // Set sprite
 sprite_index = _sprite;

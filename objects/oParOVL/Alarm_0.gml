@@ -1,5 +1,5 @@
 /// @description Spawn Units & Update Budget
-global.resources -= cost;
+global.supplies -= cost;
 
 // Formation
 var i = 0;
@@ -15,8 +15,8 @@ for(var j = 0; j < hp; j++)
 		}
 			
 		// Location
-		var _goalX = goalX - (_dist * (k - (floor(hp/3)/4)));
-		var _goalY = goalY - (_dist * (j - (floor(hp/6))));
+		var _goalX = pathGoalX - (_dist * (k - (floor(hp/3)/4)));
+		var _goalY = pathGoalY - (_dist * (j - (floor(hp/6))));
 		
 		// Object to spawn		
 		var _objectString = unit;
@@ -47,7 +47,7 @@ for(var j = 0; j < hp; j++)
 		//ds_grid_resize(global.instGrid, _width + 1, _height);	
 					
 		var _packet = packet_start(packet_t.add_attached_unit);
-		buffer_write(_packet, buffer_u64, oManager.user);
+		buffer_write(_packet, buffer_u64, oManager.steamUserName);
 		buffer_write(_packet, buffer_u16, _pos);
 		buffer_write(_packet, buffer_string, _objectString);
 		buffer_write(_packet, buffer_f32, _goalX);

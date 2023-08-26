@@ -19,11 +19,6 @@ image_blend = hashColor;
 
 #region Debug Monitoring
 
-if keyboard_check_pressed(vk_f1)
-{
-	global.debugMenu = !global.debugMenu;
-}
-
 if global.debugMenu
 {	
 	var _gap = 20;
@@ -49,6 +44,28 @@ if global.debugMenu
 		var _value = ds_grid_get(global.instGrid, i, 0)
 
 		draw_text(20,(20 - _gap * (i - _size)), "Inst_" + string(i) + ": "	+ string(_value));
+	}
+}
+
+#endregion
+
+#region Zoning
+
+if(zoning > 0 && !global.mouseUI)
+{	
+	var _buildingsAmount = instance_number(oParZone);
+	
+	for(var i = 0; i < _buildingsAmount; i++)
+	{
+		var _inst = instance_find(oParZone, i);
+		
+		with(_inst)
+		{
+			var _xScale = sprite_width/32;
+			var _yScale = sprite_height/32;
+			
+			draw_sprite_ext(sZone, 0, x, y, _xScale, _yScale, image_angle, c_red, 0.5);
+		}
 	}
 }
 

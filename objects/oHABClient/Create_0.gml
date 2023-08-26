@@ -7,7 +7,7 @@ event_inherited();
 
 cost		= 0;		// Cost of unit
 
-unitName	= "sHAB";
+objectName	= "sHAB";
 
 unit	= unitType.building; // Type of unit for health
 armor	= 2;
@@ -16,4 +16,4 @@ cover	= 40;				// Default cover
 
 #endregion
 
-update_pathfind();
+path_grid_update();

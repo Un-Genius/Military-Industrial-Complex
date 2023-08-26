@@ -105,7 +105,7 @@ while(steam_net_packet_receive())
 				
 			// Ask for data
 			var _buffer = packet_start(packet_t.data_update_request);
-			buffer_write(_buffer, buffer_u64, user);
+			buffer_write(_buffer, buffer_u64, steamUserName);
 			packet_send_to(_buffer, from);
         }
     }
@@ -542,7 +542,7 @@ switch(state)
 			// Start alarm
 			alarm[3] = 3 * room_speed;
 						
-			reset_pathfind();
+			path_grid_reset();
 		}
 		
 		#endregion

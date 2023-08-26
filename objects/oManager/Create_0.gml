@@ -148,18 +148,19 @@ enum PR
 
 #region Zone type enum
 
-enum zoneType
+enum objectType
 {
-	building,
-	inf,
-	gnd,
-	air,
-	HQ,
-	camp,
-	bootCamp,
-	infantry,
-	money,
-	supplies
+	oPlayer,
+	oZoneHQ,
+	oZoneCamp,
+	oZoneBootCamp,
+	oInfantry,
+	oZoneMoney,
+	oZoneSupplies,
+	oDummy,
+	oDummyStronk,
+	oTransport,
+	oHAB,
 }
 
 #endregion
@@ -281,7 +282,7 @@ if(file_exists(_fileName))
 global.RES_W = display_get_width();
 global.RES_H = display_get_height();
 
-cam_smooth	 = 0.1;
+#macro view view_camera[0]
 
 // Set full screen
 var _fullscreen = ds_grid_get(global.savedSettings, 1, setting.fullscreen);
@@ -315,12 +316,6 @@ surface_resize(application_surface, global.RES_W, global.RES_H);
 display_set_gui_size(global.RES_W, global.RES_H);
 
 room_goto(rm_menu);
-
-// Zoom
-zoom = 1;
-
-// Follow target
-camera_target = oPlayer;
 
 #endregion
 
@@ -367,7 +362,7 @@ game_name		= "Sierra Point";
 game_version	= GM_version;
 
 // Get name
-user	= steam_get_user_steam_id();	// local user ID
+steamUserName	= steam_get_user_steam_id();	// local user ID
 names	= ds_map_create();				// <steamid:int64 -> name:string>
 
 lobby_owner = noone;
@@ -376,7 +371,7 @@ lobby_owner = noone;
 playerDataMap = ds_map_create();	// Uses steam ID to find the data map
 
 // Preload username
-steam_get_user_persona_name_w(user);
+steam_get_user_persona_name_w(steamUserName);
 
 // Store other players
 net_list	= ds_list_create();	// <steamid:int64>
@@ -433,8 +428,6 @@ global.instGrid	= ds_grid_create(0, _height);
 
 #region Spawn Locations & Points
 
-global.resources = 0;
-
 // Create a grid that holds x and y for spawn points
 spawnPointGrid = ds_grid_create(2, 2);
 
@@ -481,8 +474,28 @@ enum unitResCost
 
 #endregion
 
+#region Supplies & Costs
+
+// Money
+global.supplies = 0;
+global.maxSupplies = global.supplies;
+
+// Unit costs
+unitCost = array_create(5);
+unitCost[objectType.oZoneHQ] = 0;
+unitCost[objectType.oInfantry] = 30;
+unitCost[objectType.oZoneCamp] = 20;
+unitCost[objectType.oZoneMoney] = 50;
+unitCost[objectType.oZoneSupplies] = 30;
+unitCost[objectType.oZoneBootCamp] = 80;
+
+#endregion
+
 // Debug menu
 global.debugMenu = false;
+
+// For when mouse is over UI or world
+global.mouseUI = false;
 
 // Make sure seed is random
 randomize();

@@ -1,8 +1,8 @@
 #region ID of Units
 
-unitName	= "noone";
+objectName	= "noone";
 
-moveSpd	= 1;		// pixel per frame
+movementSpeed	= 1;		// pixel per frame
 
 unit	= unitType.inf; // Type of unit for health
 armor	= 0;
@@ -73,8 +73,8 @@ while instance_place(x, y, oHQ) || instance_place(x, y, oHAB)
 	y += 32;
 	
 // Goal
-goalX = x;
-goalY = y;
+pathGoalX = x;
+pathGoalY = y;
 
 pathX = x;
 pathY = y;

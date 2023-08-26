@@ -43,7 +43,7 @@ switch (type_event[?"event_type"])
 	        // set up filters so that the lobby can be found:
 	        steam_lobby_set_data("game_name", game_name);
 	        steam_lobby_set_data("game_version", string(game_version));
-	        steam_lobby_set_data("title", steam_get_user_persona_name_w(user) + "'s lobby");
+	        steam_lobby_set_data("title", steam_get_user_persona_name_w(steamUserName) + "'s lobby");
 			steam_lobby_set_data("game_size_current", string(_lobbyCurrent));
 			steam_lobby_set_data("game_size_max", string(_lobbyMax));
 
@@ -92,7 +92,7 @@ switch (type_event[?"event_type"])
 				
 			// Ask for data
 			var _buffer = packet_start(packet_t.data_update_request);
-			buffer_write(_buffer, buffer_u64, user);
+			buffer_write(_buffer, buffer_u64, steamUserName);
 			packet_send_to(_buffer, lobby_owner);
 	    }
 		else

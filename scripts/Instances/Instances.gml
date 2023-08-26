@@ -111,29 +111,16 @@ function enum_to_obj(_num)
 	
 	switch _num
 	{
-		case zoneType.HQ: 
-			_obj	= oZoneHQ;
-		break;
-		
-		case zoneType.camp: 
-			_obj	= oZoneCamp;
-		break;
-		
-		case zoneType.money:
-			_obj	= oZoneMoney;
-		break;
-		
-		case zoneType.supplies:
-			_obj	= oZoneSupplies;
-		break;
-		
-		case zoneType.bootCamp:
-			_obj	= oZoneBootCamp;
-		break;
-		
-		case zoneType.infantry:
-			_obj	= oZoneInfantry;
-		break;
+		case objectType.oPlayer:		_obj	= oPlayer;			break;
+		case objectType.oZoneHQ:		_obj	= oZoneHQ;			break;
+		case objectType.oZoneCamp:		_obj	= oZoneCamp;		break;
+		case objectType.oZoneMoney:		_obj	= oZoneMoney;		break;
+		case objectType.oZoneSupplies:	_obj	= oZoneSupplies;	break;
+		case objectType.oZoneBootCamp:	_obj	= oZoneBootCamp;	break;
+		case objectType.oInfantry:		_obj	= oInfantry;		break;
+		case objectType.oTransport:		_obj	= oTransport;		break;
+		case objectType.oDummy:			_obj	= oDummy;			break;
+		case objectType.oDummyStronk:	_obj	= oDummyStronk;		break;
 	}
 	
 	return _obj;
@@ -147,29 +134,16 @@ function obj_to_enum(_obj)
 	
 	switch _obj
 	{
-		case oZoneHQ: 
-			_num	= zoneType.HQ;
-		break;
-		
-		case oZoneCamp: 
-			_num	= zoneType.camp;
-		break;
-		
-		case oZoneMoney:
-			_num	= zoneType.money;
-		break;
-		
-		case oZoneSupplies:
-			_num	= zoneType.supplies;
-		break;
-		
-		case oZoneBootCamp:
-			_num	= zoneType.bootCamp;
-		break;
-		
-		case oZoneInfantry: 
-			_num	= zoneType.infantry;
-		break;
+		case oPlayer:		_num	= objectType.oPlayer;		break;
+		case oZoneHQ:		_num	= objectType.oZoneHQ;		break;
+		case oZoneCamp:		_num	= objectType.oZoneCamp;		break;
+		case oZoneMoney:	_num	= objectType.oZoneMoney;	break;
+		case oZoneSupplies: _num	= objectType.oZoneSupplies;	break;
+		case oZoneBootCamp: _num	= objectType.oZoneBootCamp;	break;
+		case oInfantry:		_num	= objectType.oInfantry;		break;
+		case oTransport:	_num	= objectType.oTransport;	break;
+		case oDummy:		_num	= objectType.oDummy;		break;
+		case oDummyStronk:	_num	= objectType.oDummyStronk;	break;
 	}
 	
 	return _num;
@@ -181,29 +155,17 @@ function localObj_to_netObj(_localObj)
 			
 	switch(_localObj)
 	{
-		case oParZoneLocal:
-			_netObj = oParZoneNet;
-		break;
-		
-		case oZoneCamp:
-			_netObj = oZoneNetCamp;
-		break;
-		
-		case oZoneBootCamp:
-			_netObj = oZoneNetBootCamp;
-		break;
-		
-		case oZoneMoney:
-			_netObj = oZoneNetMoney;
-		break;
-		
-		case oZoneSupplies:
-			_netObj = oZoneNetSupplies;
-		break;
-		
-		case oZoneInfantry:
-			_netObj = oZoneNetInfantry;
-		break;
+		case oPlayer:		_netObj = oPlayerClient;	break;
+		case oParZoneLocal:	_netObj = oParZoneNet;		break;
+		case oZoneHQ:		_netObj = oZoneNetHQ;		break;
+		case oZoneCamp:		_netObj = oZoneNetCamp;		break;
+		case oZoneBootCamp:	_netObj = oZoneNetBootCamp;	break;
+		case oZoneMoney:	_netObj = oZoneNetMoney;	break;
+		case oZoneSupplies:	_netObj = oZoneNetSupplies;	break;
+		case oInfantry:		_netObj = oInfantryClient;	break;
+		case oTransport:	_netObj = oTransportClient;	break;
+		default:
+			show_debug_message("Error in Function localObj_to_netObj. Net object not found");
 	}
 	
 	return _netObj;
@@ -217,12 +179,12 @@ function enum_to_spr(_num)
 	
 	switch _num
 	{
-		case zoneType.HQ:		_spr = sZoneHQ; break;
-		case zoneType.infantry:		_spr = sZoneInfantry; break;
-		case zoneType.camp:		_spr = sZoneCamp; break;
-		case zoneType.money:	_spr = sZoneMoney; break;
-		case zoneType.supplies: _spr = sZoneSupplies; break;
-		case zoneType.bootCamp: _spr = sZoneBootCamp; break;
+		case objectType.oZoneHQ:		_spr = sZoneHQ;			break;
+		case objectType.oInfantry:		_spr = sZoneInfantry;	break;
+		case objectType.oZoneCamp:		_spr = sZoneCamp;		break;
+		case objectType.oZoneMoney:		_spr = sZoneMoney;		break;
+		case objectType.oZoneSupplies:	_spr = sZoneSupplies;	break;
+		case objectType.oZoneBootCamp:	_spr = sZoneBootCamp;	break;
 		
 	}
 	

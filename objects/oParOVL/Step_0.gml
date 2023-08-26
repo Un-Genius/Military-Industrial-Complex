@@ -60,8 +60,8 @@ if _click_left_released && release
 	release = false;
 	
 	// Set goal
-	goalX	= _mouse_x;
-	goalY	= _mouse_y;
+	pathGoalX	= _mouse_x;
+	pathGoalY	= _mouse_y;
 	
 	// Update children
 	event_user(1);

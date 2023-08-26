@@ -3,7 +3,7 @@ if captureProgress >= 10 * room_speed
 {
 	if pointCooldown >= 3 * room_speed
 	{
-		global.resources += 2;
+		global.supplies += 2;
 		
 		pointCooldown = 0;
 	}

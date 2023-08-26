@@ -6,9 +6,9 @@ event_inherited();
 cost		= 0;					// Cost of unit
 resCost		= unitResCost.trans;	// Cost of unit in resources
 
-unitName	= "sVeh_USA_basic";
+objectName	= "sVeh_USA_basic";
 
-moveSpd		= 4;		// pixel per frame
+movementSpeed		= 4;		// pixel per frame
 
 unit		= unitType.gnd; // Type of unit for health
 armor		= 1;

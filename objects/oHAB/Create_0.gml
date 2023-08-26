@@ -8,7 +8,7 @@ event_inherited();
 cost		= 0;		// Cost of unit
 resCost		= unitResCost.HAB;		// Cost of unit in resources
 
-unitName	= "sHAB";
+objectName	= "sHAB";
 
 unit	= unitType.building; // Type of unit for health
 armor	= 2;
@@ -24,4 +24,4 @@ maxResCarry	= 10000;	// Resources carried
 
 depth = -bbox_bottom - 5;
 
-update_pathfind();
+path_grid_update();

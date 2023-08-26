@@ -3,7 +3,7 @@ event_inherited();
 
 #region ID of Units
 
-unitName	= "sVeh_USA_basic";
+objectName	= "sVeh_USA_basic";
 
 amount	= 1;			// Amount of units per squad
 range	= 0;			// How far apart each unit can be

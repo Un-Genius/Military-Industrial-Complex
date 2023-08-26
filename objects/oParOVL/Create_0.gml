@@ -2,7 +2,7 @@
 
 #region ID of Units
 
-unitName	= "noone";
+objectName	= "noone";
 
 amount	= 0;			// Amount of units per squad
 range	= 0;			// How far apart each unit can be
@@ -39,8 +39,8 @@ selected	= false;		// Display highlight
 enterVeh	= noone;
 riding		= false;
 
-goalX = x;
-goalY = y;
+pathGoalX = x;
+pathGoalY = y;
 
 // Drag
 release = false;

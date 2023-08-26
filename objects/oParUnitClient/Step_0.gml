@@ -13,7 +13,7 @@ if state == action.attacking || moveState == action.moving
 
 #region Move to position
 
-if point_distance(x, y, goalX, goalY) > 3
+if point_distance(x, y, pathGoalX, pathGoalY) > 3
 {	
 	if moveState != action.moving
 	{	
@@ -21,7 +21,7 @@ if point_distance(x, y, goalX, goalY) > 3
 		update_state(-1, action.moving);
 		
 		// Start pathfind
-		scr_pathfind();
+		path_goal_find(x, y, pathGoalX, pathGoalY, path);
 	}
 	else
 	{
@@ -59,8 +59,8 @@ if point_distance(x, y, goalX, goalY) > 3
 		var _pathDir = point_direction(x, y, xx, yy);
 		
 		// Vector a step
-		x += lengthdir_x(moveSpd, _pathDir);
-		y += lengthdir_y(moveSpd, _pathDir);
+		x += lengthdir_x(movementSpeed, _pathDir);
+		y += lengthdir_y(movementSpeed, _pathDir);
 		
 		#endregion
 	}
@@ -83,11 +83,11 @@ switch state
 		if unit != unitType.building
 		{
 			// Find index
-			var _sprite = asset_get_index(unitName + "_" + string(state));
+			var _sprite = asset_get_index(objectName + "_" + string(state));
 		
 			image_speed = sprite_get_speed(_sprite);
 		
-			if distance_to_point(goalX, goalY) < 3
+			if distance_to_point(pathGoalX, pathGoalY) < 3
 				image_speed = 0;
 		}
 		
