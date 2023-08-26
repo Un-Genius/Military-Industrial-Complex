@@ -1,6 +1,6 @@
 #region Effects
 
-var _spd = moveSpd;
+var _spd = movementSpeed;
 
 #endregion
 
@@ -19,16 +19,16 @@ if state == action.attacking || moveState == action.moving
 
 #region Move to position
 
-if point_distance(x, y, goalX, goalY) > 3
+if point_distance(x, y, pathGoalX, pathGoalY) > 3
 {	
 	if moveState != action.moving
 	{			
 		// Update doppelganger
-		update_goal();
+		path_goal_multiplayer_update(x, y, pathGoalX, pathGoalY);
 		update_state(-1, action.moving);
 		
 		// Start pathfind
-		scr_pathfind();
+		path_goal_find(x, y, pathGoalX, pathGoalY, path);
 	}
 	else
 	{
@@ -98,8 +98,8 @@ if pushTimer > 0.2 * room_speed
 			var _newPosX = lengthdir_x(_spd*1.5, _dir);
 			var _newPosY = lengthdir_y(_spd*1.5, _dir);
 		
-			goalX += _newPosX;
-			goalY += _newPosY;
+			pathGoalX += _newPosX;
+			pathGoalY += _newPosY;
 			
 			pushTimer = 0;
 		}
@@ -123,8 +123,8 @@ if riding
 	y = _newY;
 		
 	// set as goal
-	goalX = _newX;
-	goalY = _newY;
+	pathGoalX = _newX;
+	pathGoalY = _newY;
 		
 	// Delete from vehicles list
 	var _index = ds_list_find_index(enterVeh.riderList, id)
@@ -151,7 +151,7 @@ burstTimer++;
 // Stop if its not hostile or reloading or waiting for next burst
 if gun != noone && state != action.reloading && (burstMax > burstAmount && burstTimer > burstTiming)
 {
-	if squadID.resCarry > 0 
+	if squadID != noone && squadID.resCarry > 0 
 	{
 		// Update frequency
 		bulletTiming += 0.01 * room_speed;
@@ -376,11 +376,11 @@ switch state
 	case action.idle:
 		
 		// Find index
-		var _sprite = asset_get_index(unitName + "_" + string(state));
+		var _sprite = asset_get_index(objectName + "_" + string(state));
 		
 		image_speed = sprite_get_speed(_sprite);
 		
-		if distance_to_point(goalX, goalY) < 3
+		if distance_to_point(pathGoalX, pathGoalY) < 3
 			image_speed = 0;
 		
 		break;

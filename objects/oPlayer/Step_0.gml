@@ -78,16 +78,16 @@ var _vsp = _key_down	- _key_up;
 
 // Faster when moving for longer
 if _vsp != 0 || _hsp != 0
-	moveSpd = clamp(moveSpd + 0.08, 3, 20);
+	movementSpeed = clamp(movementSpeed + 0.08, 3, 20);
 else
-	moveSpd = clamp(moveSpd - 1, 3, 20);
+	movementSpeed = clamp(movementSpeed - 1, 3, 20);
 	
 // Sprite aims towards mouse
 image_angle = point_direction(x, y, mouse_x, mouse_y) - 90;
 
 // Set in motion
-x += _hsp * moveSpd;
-y += _vsp * moveSpd;
+x += _hsp * movementSpeed;
+y += _vsp * movementSpeed;
 
 #region Clamp to room
 
@@ -103,7 +103,7 @@ y = clamp(y, ybuf, room_height - ybuf + 2);
 if x != xprevious || y != yprevious
 {
 	// Update doppelganger
-	update_goal();
+	path_goal_multiplayer_update(x, y, pathGoalX, pathGoalY);
 	
 	xprevious = x;
 	yprevious = y;
@@ -111,21 +111,101 @@ if x != xprevious || y != yprevious
 
 #endregion
 
+#region Zoning
+
+maxTroopsInf = 0;
+
+// Toggle Zoning tool
+if (keyboard_check_pressed(vk_anykey))
+{
+	var _tempZoningObject = zoning;
+	
+    switch (keyboard_lastkey)
+    {
+        case ord("1"):
+            zoning = (zoning == objectType.oZoneCamp) ? -1 : objectType.oZoneCamp;
+            break;
+        
+        case ord("2"):
+            zoning = (zoning == objectType.oZoneMoney) ? -1 : objectType.oZoneMoney;
+            break;
+        
+        case ord("3"):
+            zoning = (zoning == objectType.oZoneSupplies) ? -1 : objectType.oZoneSupplies;
+            break;
+        
+        case ord("4"):
+            zoning = (zoning == objectType.oZoneBootCamp) ? -1 : objectType.oZoneBootCamp;
+            break;
+        
+        case ord("5"):
+            zoning = (zoning == objectType.oInfantry) ? -1 : objectType.oInfantry;
+            break;
+        
+        default: break;
+    }
+	
+	if instance_exists(buildingPlaceholder)
+	{
+		if zoning != -1
+		{
+			if(_tempZoningObject != zoning)
+			{
+				_tempZoningObject = zoning;
+				
+				with(buildingPlaceholder)
+				{
+					buildingType = _tempZoningObject;
+					event_user(0);
+				}
+			}
+		}
+		else
+		{
+			instance_destroy(buildingPlaceholder);
+			buildingPlaceholder = noone;
+		}
+	}
+}
+
+// Zoning functionality
+if(zoning > -1 && !global.mouseUI)
+{
+	var _cost	= oManager.unitCost[zoning];;
+	
+	if buildingPlaceholder == noone
+	{
+		buildingPlaceholder = instance_create_layer(mouse_x, mouse_x, layer, oBuildingTool)
+		
+		var _zoning = zoning;
+		with buildingPlaceholder
+		{
+			buildingType = _zoning;
+			event_user(0);
+		}
+	}
+}
+
+#endregion
+
+#region Selecting, Context Menu, Mousebox
 // Vars
 var _instFind	= noone;
-var _width		= ds_grid_width(global.instGrid);
+var _instancesInHandList		= ds_grid_width(global.instGrid);
 
 // Selecting, Context Menu, Mousebox
-if buildingPlacement == noone
+if buildingPlacement == noone && zoning == -1
 {
 	// Find and select instances
 	if _click_left_pressed && !contextMenu
 	{
 		#region Find instance
 	
-		if instance_exists(oParOVL)
-			_instFind = find_top_Inst(mouse_x, mouse_y, oParOVL);
-		
+		if instance_exists(oInfantryNew)
+			_instFind = find_top_Inst(mouse_x, mouse_y, oInfantryNew);
+			
+		if _instFind == noone
+			_instFind = find_top_Inst(mouse_x, mouse_y, oParZoneLocal);
 		#endregion
 
 		#region Check if already selected
@@ -190,7 +270,7 @@ if buildingPlacement == noone
 		#endregion
 	}
 	
-	#region Select with right click - Cancelled
+	#region Select with right click - Archived
 	
 	/*
 	// Select with right click
@@ -286,8 +366,8 @@ if buildingPlacement == noone
 			{
 				with(_instSel)
 				{
-					goalX = x;
-					goalY = y;
+					pathGoalX = x;
+					pathGoalY = y;
 					moveState = action.idle;
 				
 					var _objectIndex = object_index;
@@ -384,49 +464,184 @@ if buildingPlacement == noone
 	
 		mouseLeftReleased_x = device_mouse_x(0);
 		mouseLeftReleased_y = device_mouse_y(0);
+		
+		var _newSquadList = ds_list_create();
+		
+		#region Find most common object in hand
+		// Create a ds_map to hold the frequency of each object
+		var freq_map = ds_map_create();
+
+		// Initialize variable to keep track of most common object and its count
+		var most_common_object = undefined;
+		var most_common_count = 0;
+
+		// Iterate through the first row of the ds_grid
+		for(var i = 0; i < ds_grid_width(global.instGrid); i++)
+		{
+		    var _instanceInHand = ds_grid_get(global.instGrid, i, 0);
+    
+		    if (_instanceInHand == 0) continue;  // Skip if it's 0
+			
+			var _instanceObject = _instanceInHand.object_index;
+    
+		    // Check if this object is already in freq_map, if not add it
+		    if(!ds_map_exists(freq_map, string(_instanceObject)))
+		    {
+		        ds_map_add(freq_map, string(_instanceObject), 0);
+		    }
+    
+		    // Increment the count for this object
+		    var current_count = ds_map_find_value(freq_map, string(_instanceObject));
+		    ds_map_replace(freq_map, string(_instanceObject), current_count + 1);
+    
+		    // Check if this object is now the most common
+		    if(current_count + 1 > most_common_count)
+		    {
+		        most_common_count = current_count + 1;
+		        most_common_object = _instanceObject;
+		    }
+		}
+		#endregion
+		
+		for(var i = 0; i < _instancesInHandList; i++)
+		{
+			var _instanceInHand = ds_grid_get(global.instGrid, i, 0);
+			
+			if _instanceInHand == 0
+				continue;
+				
+			if _instanceInHand.object_index != most_common_object
+				continue;
+				
+			var _squadObjectID = _instanceInHand.squadObjectID;
+
+			if !instance_exists(_squadObjectID) {
+				ds_list_add(_newSquadList, _instanceInHand);
+				continue;
+			}
+			
+			if ds_list_find_index(squadObjectList, _squadObjectID) == -1 {
+				var _pos = ds_list_find_index(_instanceInHand.squadObjectID.squad, _instanceInHand);
+				ds_list_delete(_instanceInHand.squadObjectID.squad, _pos);
+				ds_list_add(_newSquadList, _instanceInHand);
+				continue;
+			}
+						
+			var _handTrueSize = 0;
+			for(var o = 0; o < _instancesInHandList; o++)
+				if ds_grid_get(global.instGrid, o, 0) != 0
+					_handTrueSize++;
+			
+			// Compare the units in the object squad to the units being held
+			for(var o = 0; o < _instancesInHandList; o++)
+			{
+				var _instanceInHandRepeat = ds_grid_get(global.instGrid, o, 0);
+				
+				if _instanceInHandRepeat == 0
+					continue;
+				
+				if ds_list_find_index(_squadObjectID.squad, _instanceInHandRepeat) == -1 {
+					var _pos = ds_list_find_index(_instanceInHand.squadObjectID.squad, _instanceInHand);
+					ds_list_delete(_instanceInHand.squadObjectID.squad, _pos);
+					ds_list_add(_newSquadList, _instanceInHand);
+					continue;
+				}
+					
+				var _squadTrueSize = 0;
+				for(var p = 0; p < ds_list_size(_squadObjectID.squad); p++)
+					if ds_list_find_value(_squadObjectID.squad, p) != 0
+						_squadTrueSize++;
+						
+				if _squadTrueSize != _handTrueSize {
+					var _pos = ds_list_find_index(_instanceInHand.squadObjectID.squad, _instanceInHand);
+					ds_list_delete(_instanceInHand.squadObjectID.squad, _pos);
+					ds_list_add(_newSquadList, _instanceInHand);
+					continue;
+				}
+			}
+		}
+		
+		if(ds_list_size(_newSquadList) > 0)
+		{
+			var _squadObjInst = instance_create_layer(0, 0, "UI", oSquad)
+		
+			var _newSquadListSize = ds_list_size(_newSquadList);
+
+			for(var i = 0; i < _newSquadListSize; i++)
+			{
+				var _squadInst = ds_list_find_value(_newSquadList, i);
+				
+				if _squadInst.squadObjectID == _squadObjInst
+					continue;
+				
+				_squadInst.squadObjectID = _squadObjInst;
+				ds_list_add(_squadObjInst.squad, _squadInst);
+			}
+			
+			_squadObjInst.event_user(0);
+		}
+		
+		ds_list_destroy(_newSquadList);
 	}
 }
 else
 {
-	var _halfW = (buildingPlacement.sprite_width * buildingPlacement.image_xscale)/3.5;
-	var _halfH = (buildingPlacement.sprite_height * buildingPlacement.image_yscale)/3.5;
+	if zoning == 0
+	{
+		var _halfW = (buildingPlacement.sprite_width * buildingPlacement.image_xscale)/3.5;
+		var _halfH = (buildingPlacement.sprite_height * buildingPlacement.image_yscale)/3.5;
 		
-	var _collision	= collision_rectangle(mouse_x - _halfW, mouse_y - _halfH, mouse_x + _halfW, mouse_y + _halfH, oCollision, false, true)
-	var _distance	= point_distance(instRightSelected.x, instRightSelected.y, mouse_x, mouse_y);
+		var _collision	= collision_rectangle(mouse_x - _halfW, mouse_y - _halfH, mouse_x + _halfW, mouse_y + _halfH, oCollision, false, true)
+		var _distance	= point_distance(instRightSelected.x, instRightSelected.y, mouse_x, mouse_y);
 		
-	// Check if intersecting with walls or units
-	if _collision || _distance > buildingPlacement.resRange + (_halfW + _halfH)/2
-	{
-		buildingIntersect = true;
-	}
-	else
-	{
-		buildingIntersect = false;
-	}
-	
-	if _click_left_pressed
-	{
-		// Check transport for resources
-		if instRightSelected.resCarry - unitResCost.HAB < 0
+		// Check if intersecting with walls or units
+		if _collision || _distance > buildingPlacement.resRange + (_halfW + _halfH)/2
 		{
-			// Delete ghost
-			instance_destroy(buildingPlacement);
-		
-			// Reset variables
-			buildingPlacement = noone;
-			buildingIntersect = false;
+			buildingIntersect = true;
 		}
 		else
-		{	
-			// check for mouse click
-			if !buildingIntersect
+		{
+			buildingIntersect = false;
+		}
+	
+		if _click_left_pressed
+		{
+			// Check transport for resources
+			if instRightSelected.resCarry - unitResCost.HAB < 0
 			{
-				// Take away resources
-				instRightSelected.resCarry -= unitResCost.HAB;
-			
-				// Create instance
-				spawn_unit(buildingName, mouse_x, mouse_y);
+				// Delete ghost
+				instance_destroy(buildingPlacement);
 		
+				// Reset variables
+				buildingPlacement = noone;
+				buildingIntersect = false;
+			}
+			else
+			{	
+				// check for mouse click
+				if !buildingIntersect
+				{
+					// Take away resources
+					instRightSelected.resCarry -= unitResCost.HAB;
+			
+					// Create instance
+					var _object = asset_get_index(buildingName);
+					spawn_unit(_object, mouse_x, mouse_y);
+		
+					// Delete ghost
+					instance_destroy(buildingPlacement);
+		
+					// Reset variables
+					buildingName = "";
+					buildingPlacement = noone;
+					buildingIntersect = false;
+				}
+			}
+		}
+		else
+		{
+			if _click_right_pressed
+			{
 				// Delete ghost
 				instance_destroy(buildingPlacement);
 		
@@ -437,20 +652,41 @@ else
 			}
 		}
 	}
-	else
+}
+
+#region MouseBox
+
+// Check for mouseBox
+if mousePress == 1
+{
+	var _collisionList = ds_list_create();
+	var _collisionBool = collision_rectangle_list(mouseLeftPress_x, mouseLeftPress_y, mouse_x, mouse_y, oInfantry, false, true, _collisionList, false);
+	
+	// Reset Hand
+	wipe_Hand(global.instGrid, 0);
+	
+	// Check for collision
+	if _collisionBool
 	{
-		if _click_right_pressed
+		for(var i = 0; i < _collisionList; i++)
 		{
-			// Delete ghost
-			instance_destroy(buildingPlacement);
-		
-			// Reset variables
-			buildingName = "";
-			buildingPlacement = noone;
-			buildingIntersect = false;
+			var _inst = ds_list_find_value(_collisionList, i);
+			
+			with(_inst)
+			{
+				add_Inst(global.instGrid, 0, id);
+				selected = true;
+			}
 		}
 	}
+	else
+		if !_key_ctrl
+			wipe_Hand(global.instGrid, 0)
 }
+
+#endregion
+
+#endregion
 
 #region Double select
 
@@ -496,7 +732,7 @@ if _key_rawInput
 	{		
 		if _key_rawInput == ord(string(i))
 		{
-			for(var o = 0; o < _width; o++)
+			for(var o = 0; o < _instancesInHandList; o++)
 			{
 				var _hand = ds_grid_get(global.instGrid, o, 0);
 				

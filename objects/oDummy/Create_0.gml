@@ -3,9 +3,9 @@ event_inherited();
 
 #region ID of Units
 
-unitName	= "sInf_USA_basic";
+objectName	= "sInf_USA_basic";
 
-moveSpd	= 2;		// pixel per frame
+movementSpeed	= 2;		// pixel per frame
 
 unit	= unitType.inf; // Type of unit for health
 armor	= 1;

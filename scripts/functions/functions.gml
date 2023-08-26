@@ -66,19 +66,16 @@ function add_Inst(_gridID, _y, _inst) {
 	}
 }
 	
-function create_building(_object_index) {
+function create_building(_object) {
 	// Accepts a string
 	
 	with(oPlayer)
-	{
-		// Find object
-		var _object = asset_get_index(_object_index);
-		
+	{		
 		// Create empty ghost to find sprite
 		buildingPlacement = instance_create_layer(0, 0, "AboveAll", _object);
 		
 		// Remember name
-		buildingName = _object_index;
+		buildingName = buildingPlacement.unit;
 		
 		// Deactivate it to prevent it causing issues in game
 		instance_deactivate_object(buildingPlacement);
@@ -234,21 +231,6 @@ function find_top_Inst(_x, _y, _obj) {
 
 #region Modify/Update Instance
 
-function update_goal() {
-	// Find self in list
-	var _pos = ds_list_find_index(global.unitList, id)
-
-	// Send position and rotation to others
-	var _packet = packet_start(packet_t.move_unit);
-	buffer_write(_packet, buffer_u64, oManager.user);
-	buffer_write(_packet, buffer_u16, _pos);
-	buffer_write(_packet, buffer_f32, x);
-	buffer_write(_packet, buffer_f32, y);
-	buffer_write(_packet, buffer_f32, goalX);
-	buffer_write(_packet, buffer_f32, goalY);
-	packet_send_all(_packet);
-}
-
 function modify_Selected_Slot(_gridID, _x, _y, _selected) {
 
 var _inst = ds_grid_get(_gridID, _x, _y);
@@ -288,7 +270,7 @@ function update_state(_newState, _newMoveState) {
 	
 		// Send position and rotation to others
 		var _packet = packet_start(packet_t.update_unit);
-		buffer_write(_packet, buffer_u64, oManager.user);
+		buffer_write(_packet, buffer_u64, oManager.steamUserName);
 		buffer_write(_packet, buffer_u16, _pos);
 		buffer_write(_packet, buffer_s8, state);
 		packet_send_all(_packet);
@@ -307,7 +289,7 @@ function enter_Vehicle_One(_inst) {
 		ds_list_add(riderList, _id);
 		
 		var _buffer = packet_start(packet_t.veh_interact);
-		buffer_write(_buffer, buffer_u64, oManager.user);
+		buffer_write(_buffer, buffer_u64, oManager.steamUserName);
 		buffer_write(_buffer, buffer_u16, _id);
 		buffer_write(_buffer, buffer_u8, action.enter);
 		packet_send_all(_buffer);
@@ -346,7 +328,7 @@ function exit_Vehicle_All() {
 	
 		// Update doppelganger
 		var _buffer = packet_start(packet_t.veh_interact);
-		buffer_write(_buffer, buffer_u64, oManager.user);
+		buffer_write(_buffer, buffer_u64, oManager.steamUserName);
 		buffer_write(_buffer, buffer_u16, _inst);
 		buffer_write(_buffer, buffer_u8, action.leave);
 		packet_send_all(_buffer);
@@ -382,12 +364,12 @@ function kill_Vehicle_Riders() {
 
 #region Pathfinding
 
-function scr_pathfind() {
+function path_goal_find(startX, startY, _pathGoalX, _pathGoalY, _path) {
 		
 	#region Rerout obstacles
 	
 	// Find nearest path
-	var object = collision_circle(goalX, goalY, 15, oCollision, false, true);
+	var object = collision_circle(_pathGoalX, _pathGoalY, 15, oCollision, false, true);
 	
 	var distance = 0;
 	var _x = 0;
@@ -405,11 +387,11 @@ function scr_pathfind() {
 			_y = lengthdir_y(distance, i);
 			
 			// Check for collision
-			if(!collision_circle(goalX + _x, goalY + _y, 15, oCollision, false, true))
+			if(!collision_circle(_pathGoalX + _x, _pathGoalY + _y, 15, oCollision, false, true))
 			{
 				// Change goals
-				goalX += _x;
-				goalY += _y;
+				_pathGoalX += _x;
+				_pathGoalY += _y;
 				
 				/*var _width = ds_grid_width(global.instGrid);
 				
@@ -443,13 +425,13 @@ function scr_pathfind() {
 	
 	#region Shorten Path
 	
-	if(mp_grid_path(global.grid, path, x, y, goalX, goalY, true))
+	if(mp_grid_path(global.grid, _path, startX, startY, _pathGoalX, _pathGoalY, true))
 	{
 		// path smoothing
-		path_set_kind(path, false);
-		path_set_precision(path, 8);
+		path_set_kind(_path, false);
+		path_set_precision(_path, 8);
 				
-		var _pathAmount = path_get_number(path);
+		var _pathAmount = path_get_number(_path);
 		
 		// Shorten path
 		if _pathAmount > 2
@@ -457,28 +439,28 @@ function scr_pathfind() {
 			var x1, y1, x2, y2;
 	
 			// See if you can skip to the end
-			var _startPointX	= path_get_point_x(path, 0);
-			var _startPointY	= path_get_point_y(path, 0);
-			var _endpointX		= path_get_point_x(path, _pathAmount-1);
-			var _endpointY		= path_get_point_y(path, _pathAmount-1);
+			var _startPointX	= path_get_point_x(_path, 0);
+			var _startPointY	= path_get_point_y(_path, 0);
+			var _endpointX		= path_get_point_x(_path, _pathAmount-1);
+			var _endpointY		= path_get_point_y(_path, _pathAmount-1);
 			
 			if !collision_line(_startPointX, _startPointY, _endpointX, _endpointY, oCollision, false, true)
 			{				
 				// Cut out the middle points			
-				while(path_get_number(path) > 2)
+				while(path_get_number(_path) > 2)
 				{
-					path_delete_point(path, 1);
+					path_delete_point(_path, 1);
 				}
 			}
 			else
 			{
 				for(var i = 1; i < _pathAmount - 1; i++)
 				{
-					x1 = path_get_point_x(path, i - 1)
-					y1 = path_get_point_y(path, i - 1)
+					x1 = path_get_point_x(_path, i - 1)
+					y1 = path_get_point_y(_path, i - 1)
 			
-					x2 = path_get_point_x(path, i + 1)
-					y2 = path_get_point_y(path, i + 1)
+					x2 = path_get_point_x(_path, i + 1)
+					y2 = path_get_point_y(_path, i + 1)
                         
 					//raycast
 					var temp_dir	= point_direction(x1, y1, x2, y2);
@@ -500,7 +482,7 @@ function scr_pathfind() {
                         
 					if !path_collision
 					{
-						path_delete_point(path, i);
+						path_delete_point(_path, i);
 					
 						_pathAmount--;
 					
@@ -520,8 +502,23 @@ function scr_pathfind() {
 	// Start path
 	//path_start(path, moveSpd, path_action_stop, false);
 }
+	
+function path_goal_multiplayer_update(_x, _y, _pathGoalX, _pathGoalY) {
+	// Find self in list
+	var _pos = ds_list_find_index(global.unitList, id)
 
-function reset_pathfind() {
+	// Send position and rotation to others
+	var _packet = packet_start(packet_t.move_unit);
+	buffer_write(_packet, buffer_u64, oManager.steamUserName);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_f32, _x);
+	buffer_write(_packet, buffer_f32, _y);
+	buffer_write(_packet, buffer_f32, _pathGoalX);
+	buffer_write(_packet, buffer_f32, _pathGoalY);
+	packet_send_all(_packet);
+}
+
+function path_grid_reset() {
 	// Create the Grid
 	var cell_width = 8;
 	var cell_height = 8;
@@ -532,10 +529,10 @@ function reset_pathfind() {
 	mp_grid_destroy(global.grid);
 	global.grid = mp_grid_create(0, 0, hcells, vcells, cell_width, cell_height);
 	
-	update_pathfind();
+	path_grid_update();
 }
 
-function update_pathfind() {
+function path_grid_update() {
 	// Clear grid
 	mp_grid_clear_all(global.grid);
 	
@@ -547,7 +544,7 @@ function update_pathfind() {
 	{
 		var _instance = instance_find(oParUnit, i);
 		
-		if _instance.moveSpd == 0
+		if _instance.movementSpeed == 0
 			mp_grid_add_instances(global.grid, _instance, false);
 	}
 	
@@ -556,7 +553,7 @@ function update_pathfind() {
 	{
 		var _instance = instance_find(oParUnitClient, i);
 		
-		if _instance.moveSpd == 0
+		if _instance.movementSpeed == 0
 			mp_grid_add_instances(global.grid, _instance, false);
 	}
 }
@@ -570,8 +567,8 @@ function veh_position(_veh) {
 	}
 	
 	// Set goal
-	goalX = _newX;
-	goalY = _newY;
+	pathGoalX = _newX;
+	pathGoalY = _newY;
 }
 
 #endregion
@@ -692,7 +689,8 @@ function steam_reset_state() {
 		inGame			= false;
 		menuOpen		= false;
 		
-		global.resources	= 0;
+		global.supplies		= 0;
+		global.maxSupplies	= global.supplies;
 					
 	    state = menu.home;
 		
@@ -809,7 +807,7 @@ function packet_handle_auth(from) {
 				
 		// Ask for data
 		_buffer = packet_start(packet_t.data_update_request);
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		packet_send_to(_buffer, from);
 	
 	    // inform the player that they are now connected:
@@ -857,7 +855,7 @@ function packet_handle_client(from) {
 				
 			// Ask for data
 			var _buffer = packet_start(packet_t.data_update_request);
-			buffer_write(_buffer, buffer_u64, user);
+			buffer_write(_buffer, buffer_u64, steamUserName);
 			packet_send_to(_buffer, from);
 		
 	        break;
@@ -1117,10 +1115,10 @@ function packet_handle_client(from) {
 					y = _y;
 					
 					// Start pathfind for unit
-					goalX = _goalX;
-					goalY = _goalY;
+					pathGoalX = _goalX;
+					pathGoalY = _goalY;
 					
-					//scr_pathfind();
+					//path_goal_find();
 				}
 				else
 				{
@@ -1273,7 +1271,7 @@ function packet_handle_client(from) {
 					if _data == 1
 						team = 1
 	
-					buffer_write(_buffer, buffer_u64, user);
+					buffer_write(_buffer, buffer_u64, steamUserName);
 					buffer_write(_buffer, buffer_string, "team");
 					buffer_write(_buffer, buffer_s16, team);
 	
@@ -1299,7 +1297,7 @@ function packet_handle_client(from) {
 			var _buffer = packet_start(packet_t.data_update_packet);
 			
 			// Write who is sending this
-			buffer_write(_buffer, buffer_u64, user);
+			buffer_write(_buffer, buffer_u64, steamUserName);
 			
 			// Write all the data
 			buffer_write(_buffer, buffer_s16, ready);
@@ -1308,7 +1306,7 @@ function packet_handle_client(from) {
 			
 			buffer_write(_buffer, buffer_s16, team);
 			
-			buffer_write(_buffer, buffer_s16, global.resources);
+			buffer_write(_buffer, buffer_s16, global.supplies);
 			
 			var _gameMode = ds_grid_get(global.savedSettings, 1, setting.game_mode);
 			buffer_write(_buffer, buffer_s16, _gameMode);
@@ -1335,7 +1333,7 @@ function packet_handle_client(from) {
 			
 			var _mode		= buffer_read(_buffer, buffer_s16);
 			
-			global.resources	= buffer_read(_buffer, buffer_s16);
+			global.supplies	= buffer_read(_buffer, buffer_s16);
 									
 			// Get color
 			var _colorHash = findColor(_numColor);	
@@ -1360,7 +1358,7 @@ function packet_handle_client(from) {
 				
 				// Update everyone else
 				var _buffer = packet_start(packet_t.data_map);
-				buffer_write(_buffer, buffer_u64, user);
+				buffer_write(_buffer, buffer_u64, steamUserName);
 				buffer_write(_buffer, buffer_string, "team");
 				buffer_write(_buffer, buffer_s16, team);
 				packet_send_all(_buffer);
@@ -1425,7 +1423,7 @@ function packet_handle_server(from) {
 		
 	        // inform the other players:
 	        var _buffer = packet_start(packet_t.leaving);
-	        buffer_write_int64(_buffer, user);
+	        buffer_write_int64(_buffer, steamUserName);
 	        packet_send_all(_buffer);
 			
 			// Get data
@@ -1433,7 +1431,7 @@ function packet_handle_server(from) {
 			_color = color.orange;
 			
 			// Get data
-			var _name = steam_get_user_persona_name_w(user);
+			var _name = steam_get_user_persona_name_w(steamUserName);
 		
 			// show a notice in chat:
 			chat_add(_name, _string, _color);
@@ -1444,19 +1442,19 @@ function packet_handle_server(from) {
 			
 			var _from			= buffer_read(_buffer, buffer_u64);
 			var _pos			= buffer_read(_buffer, buffer_u16);
-			var _object_string	= buffer_read(_buffer, buffer_string);
+			var _object_enum	= buffer_read(_buffer, buffer_u8);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
 			
 			var _buffer = packet_start(packet_t.add_unit);
 			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _pos);
-			buffer_write(_buffer, buffer_string, _object_string);
+			buffer_write(_buffer, buffer_u8, _object_enum);
 			buffer_write(_buffer, buffer_f32, posX);
 			buffer_write(_buffer, buffer_f32, posY);
 			packet_send_except(_buffer, from);
 			
-			var _object = asset_get_index(_object_string + "Client");
+			var _object = enum_to_obj(_object_enum);
 			
 			// Create instance
 			var _inst	= instance_create_layer(posX, posY, "Instances", _object);
@@ -1495,7 +1493,7 @@ function packet_handle_server(from) {
 	
 			var _from			= buffer_read(_buffer, buffer_u64);
 			var _pos			= buffer_read(_buffer, buffer_u16);
-			var _object_string	= buffer_read(_buffer, buffer_string);
+			var _object_enum	= buffer_read(_buffer, buffer_u8);
 			var posX			= buffer_read(_buffer, buffer_f32);
 			var posY			= buffer_read(_buffer, buffer_f32);
 			var _parentPos		= buffer_read(_buffer, buffer_u16);
@@ -1503,13 +1501,13 @@ function packet_handle_server(from) {
 			var _buffer = packet_start(packet_t.add_unit);
 			buffer_write(_buffer, buffer_u64, _from);
 			buffer_write(_buffer, buffer_u16, _pos);
-			buffer_write(_buffer, buffer_string, _object_string);
+			buffer_write(_buffer, buffer_u8, _object_enum);
 			buffer_write(_buffer, buffer_f32, posX);
 			buffer_write(_buffer, buffer_f32, posY);
 			buffer_write(_buffer, buffer_u16, _parentPos);
 			packet_send_except(_buffer, from);
 						
-			var _object		= asset_get_index(_object_string + "Client");
+			var _object		= enum_to_obj(_object_enum);
 			
 			// Create instance
 			var _inst		= instance_create_layer(posX, posY, "Instances", _object);
@@ -1624,10 +1622,10 @@ function packet_handle_server(from) {
 					y = _y;
 					
 					// Start pathfind for unit
-					goalX = _goalX;
-					goalY = _goalY;
+					pathGoalX = _goalX;
+					pathGoalY = _goalY;
 					
-					//scr_pathfind();
+					//path_goal_find();
 				}
 				else
 				{
@@ -1793,7 +1791,7 @@ function packet_handle_server(from) {
 					// Send new team number
 					var _buffer = packet_start(packet_t.data_map);
 	
-					buffer_write(_buffer, buffer_u64, user);
+					buffer_write(_buffer, buffer_u64, steamUserName);
 					buffer_write(_buffer, buffer_string, "team");
 					buffer_write(_buffer, buffer_s16, team);
 	
@@ -1822,7 +1820,7 @@ function packet_handle_server(from) {
 			var _buffer = packet_start(packet_t.data_update_packet);
 			
 			// Write who is sending this
-			buffer_write(_buffer, buffer_u64, user);
+			buffer_write(_buffer, buffer_u64, steamUserName);
 			
 			// Write all the data
 			buffer_write(_buffer, buffer_s16, ready);
@@ -1831,7 +1829,7 @@ function packet_handle_server(from) {
 			
 			buffer_write(_buffer, buffer_s16, team);
 			
-			buffer_write(_buffer, buffer_s16, global.resources);
+			buffer_write(_buffer, buffer_s16, global.supplies);
 			
 			var _gameMode = ds_grid_get(global.savedSettings, 1, setting.game_mode);
 			buffer_write(_buffer, buffer_s16, _gameMode);
@@ -1996,6 +1994,36 @@ function buffer_write_int64(_buffer, _client) {
 
 #region Shortcuts
 
+function spawn_unit(_object_enum, posX, posY) {
+	
+	var _object = enum_to_obj(_object_enum)
+		
+	// Create instance
+	var _inst = instance_create_layer(posX, posY, "Instances", _object);
+		
+	// Add inst to list
+	ds_list_add(global.unitList, _inst);
+	
+	// Resize holding grid
+	var _width	= ds_grid_width(global.instGrid);
+	var _height = ds_grid_height(global.instGrid);
+	ds_grid_resize(global.instGrid, _width + 1, _height);
+	
+	// Find position
+	var _pos = ds_list_find_index(global.unitList, _inst);
+	
+	// Create unit client side
+	var _packet = packet_start(packet_t.add_unit);
+	buffer_write(_packet, buffer_u64, oManager.steamUserName);
+	buffer_write(_packet, buffer_u16, _pos);
+	buffer_write(_packet, buffer_u8, _object_enum);
+	buffer_write(_packet, buffer_f32, posX);
+	buffer_write(_packet, buffer_f32, posY);
+	packet_send_all(_packet);
+	
+	return _inst;
+}
+
 function packet_start(_type) {	
 	
 	var _buffer = oManager.outbuf;
@@ -2006,6 +2034,7 @@ function packet_start(_type) {
 	return _buffer;
 }
 	
+// Unoptimized way of saying you are ready in a lobby to play
 function readyChange() {
 	// Access parent
 	with(parent)
@@ -2015,7 +2044,7 @@ function readyChange() {
 		playersReady += (ready * 2) - 1;
 		
 		var _buffer = packet_start(packet_t.data_map);
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "ready");
 		buffer_write(_buffer, buffer_s16, ready);
 		packet_send_all(_buffer);
@@ -2025,6 +2054,8 @@ function readyChange() {
 	}
 }
 	
+// Links a number color to a hashtag color
+// Used to save bytes on networking packages
 function findColor(_numColor) {
 	
 	var _hashColor;
@@ -2376,8 +2407,10 @@ function scr_context_move() {
 			release = false;
 	
 			// Set goal
-			goalX	= _mouse_x;
-			goalY	= _mouse_y;
+			pathGoalX	= _mouse_x + random_range(-15, 15);
+			pathGoalY	= _mouse_y + random_range(-15, 15);
+			
+			sm.swap(moveToLocState);
 			
 			event_user(1);
 		}
@@ -2416,7 +2449,7 @@ function scr_context_select_all() {
 			break;
 	
 		// Check if not a building
-		if _inst.object_index != oPlayer && _inst.moveSpd != 0
+		if _inst.object_index != oPlayer && _inst.movementSpeed != 0
 		{
 			// Find name of selected instance		
 			with _inst
@@ -2565,7 +2598,7 @@ function scr_context_spawn_inf() {
 	_instFind.resCarry -= unitResCost.inf;
 	
 	// Create instance
-	spawn_unit("oOVLInf", _mouseX, _mouseY);
+	spawn_unit(objectType.oInfantry, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2585,7 +2618,7 @@ function scr_context_spawn_trans() {
 	_instFind.resCarry -= unitResCost.trans;
 	
 	// Create instance
-	spawn_unit("oOVLTV", _mouseX, _mouseY);
+	spawn_unit(objectType.oTransport, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2601,7 +2634,7 @@ function scr_context_spawn_dummy() {
 	}
 		
 	// Create instance
-	spawn_unit("oOVLDummy", _mouseX, _mouseY);
+	spawn_unit(objectType.oDummy, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2617,7 +2650,7 @@ function scr_context_spawn_dummyStronk() {
 	}
 		
 	// Create instance
-	spawn_unit("oOVLDummyStronk", _mouseX, _mouseY);
+	spawn_unit(objectType.oDummyStronk, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2625,7 +2658,7 @@ function scr_context_spawn_dummyStronk() {
 	close_context(-1);
 }
 	
-function scr_context_spawn_HAB() {
+function scr_context_spawn_HAB() { // BROKEN
 	/*
 	with(oPlayer)
 	{
@@ -2643,41 +2676,13 @@ function scr_context_spawn_HAB() {
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
 	*/
-	create_building("oOVLHAB");
+	
+	// Create instance
+	create_building(oOVLHAB);
 	
 	close_context(-1);
 }
 		
-function spawn_unit(_object_string, posX, posY) {
-		
-	var _object = asset_get_index(_object_string);
-		
-	// Create instance
-	var _inst = instance_create_layer(posX, posY, "UI", _object);
-		
-	// Add inst to list
-	ds_list_add(global.unitList, _inst);
-	
-	// Resize holding grid
-	var _width	= ds_grid_width(global.instGrid);
-	var _height = ds_grid_height(global.instGrid);
-	ds_grid_resize(global.instGrid, _width + 1, _height);
-	
-	// Find position
-	var _pos = ds_list_find_index(global.unitList, _inst);
-	
-	// Create unit client side
-	var _packet = packet_start(packet_t.add_unit);
-	buffer_write(_packet, buffer_u64, oManager.user);
-	buffer_write(_packet, buffer_u16, _pos);
-	buffer_write(_packet, buffer_string, _object_string);
-	buffer_write(_packet, buffer_f32, posX);
-	buffer_write(_packet, buffer_f32, posY);
-	packet_send_all(_packet);
-	
-	return _inst;
-}
-
 #endregion
 
 #endregion
@@ -2775,7 +2780,7 @@ function chat_send(_string, _color) {
 		if(lobby)
 		{
 		    var _packet = packet_start(packet_t.chat);
-			buffer_write(_packet, buffer_u64, user);
+			buffer_write(_packet, buffer_u64, steamUserName);
 		    buffer_write(_packet, buffer_string, _string);
 			buffer_write(_packet, buffer_u16, _color);
 		    packet_send_all(_packet);
@@ -2814,15 +2819,15 @@ function scr_GUI_list0() {
 // Spawn Points
 function scr_GUI_list3() {
 	// Update resources
-	global.resources = ds_grid_get(global.savedSettings, 1, setting.spawn_points);
+	global.supplies = ds_grid_get(global.savedSettings, 1, setting.spawn_points);
 	
 	with(oManager)
 	{
 		// Update everyone else
 		var _buffer = packet_start(packet_t.data_map);
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "resources");
-		buffer_write(_buffer, buffer_s16, global.resources);
+		buffer_write(_buffer, buffer_s16, global.supplies);
 		packet_send_all(_buffer);
 	}
 }
@@ -2892,7 +2897,7 @@ function scr_GUI_list4() {
 						
 		// Update everyone else
 		var _buffer = packet_start(packet_t.data_map);
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "numColor");
 		buffer_write(_buffer, buffer_s16, numColor);
 		packet_send_all(_buffer);
@@ -2986,7 +2991,7 @@ function scr_GUI_list14() {
 		// Send new team number
 		var _buffer = packet_start(packet_t.data_map);
 	
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "team");
 		buffer_write(_buffer, buffer_s16, team);
 	
@@ -2995,7 +3000,7 @@ function scr_GUI_list14() {
 		// Send gamemode
 		_buffer = packet_start(packet_t.data_map);
 		
-		buffer_write(_buffer, buffer_u64, user);
+		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "game_mode");
 		buffer_write(_buffer, buffer_s16, _gameMode);
 		

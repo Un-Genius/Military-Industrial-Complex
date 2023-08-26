@@ -4,6 +4,9 @@
   "name": "oInfantry",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":2,"eventType":3,"isDnD":false,},
+    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
@@ -12,8 +15,8 @@
     "path": "folders/Objects/Units/Infantry Squad.yy",
   },
   "parentObjectId": {
-    "name": "oParUnit",
-    "path": "objects/oParUnit/oParUnit.yy",
+    "name": "oObject",
+    "path": "objects/oObject/oObject.yy",
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,
@@ -31,8 +34,8 @@
   "properties": [],
   "solid": false,
   "spriteId": {
-    "name": "sInf_USA_basic_0",
-    "path": "sprites/sInf_USA_basic_0/sInf_USA_basic_0.yy",
+    "name": "sZoneInfantry",
+    "path": "sprites/sZoneInfantry/sZoneInfantry.yy",
   },
   "spriteMaskId": null,
   "visible": true,

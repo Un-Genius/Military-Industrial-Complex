@@ -1,5 +1,5 @@
 // Move speed
-moveSpd = 1;
+movementSpeed = 1;
 
 numColor = oManager.numColor;
 
@@ -9,11 +9,27 @@ hashColor = oManager.hashColor;
 contextInstList = ds_list_create();
 ds_list_clear(contextInstList);
 
+squadObjectList = ds_list_create();
+
 contextMenu = false;
 
 // Duds
-goalX = 0;
-goalY = 0;
+pathGoalX = 0;
+pathGoalY = 0;
+
+// Zoning
+zoning = -1;
+
+// Zoom
+zoom = 1;
+target_zoom = zoom;
+cam_smooth	= 0.1;
+zoom_smooth	= 0.1;
+
+// Follow target
+camera_target = oPlayer;
+
+buildingPlaceholder = noone;
 
 // Double click
 // 0 = false

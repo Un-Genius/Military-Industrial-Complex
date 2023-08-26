@@ -6,7 +6,7 @@ sprite_size = sprite_get_height(spr_lobbybox);
 // Get data
 with(oManager)
 {
-	var _username	= steam_get_user_persona_name_w(user);
+	var _username	= steam_get_user_persona_name_w(steamUserName);
 	var _team		= team;
 	var _list		= net_list;
 	var _hashColor	= hashColor;

@@ -12,10 +12,7 @@
     "name": "Buildings",
     "path": "folders/Objects/Units/.Client/Buildings.yy",
   },
-  "parentObjectId": {
-    "name": "oParUnitClientOLD",
-    "path": "objects/oParUnitClientOLD/oParUnitClientOLD.yy",
-  },
+  "parentObjectId": null,
   "persistent": false,
   "physicsAngularDamping": 0.1,
   "physicsDensity": 0.5,

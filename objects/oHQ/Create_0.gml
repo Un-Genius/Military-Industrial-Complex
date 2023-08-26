@@ -5,9 +5,9 @@ event_inherited();
 
 #region ID of Units
 
-unitName	= "sInf_USA_basic";
+objectName	= "sInf_USA_basic";
 
-moveSpd	= 0;		// pixel per frame
+movementSpeed	= 0;		// pixel per frame
 
 unit	= unitType.building; // Type of unit for health
 armor	= 2;
@@ -21,4 +21,4 @@ maxResCarry	= 10000;	// Resources carried
 
 depth = -bbox_bottom - 5;
 
-update_pathfind();
+path_grid_update();

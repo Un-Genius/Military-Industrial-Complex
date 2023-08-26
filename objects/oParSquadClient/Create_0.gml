@@ -1,6 +1,6 @@
 #region ID of Units
 
-unitName	= "noone";
+objectName	= "noone";
 
 amount		= 0;			// Amount of units per squad
 range		= 0;			// How far apart each unit can be
@@ -19,5 +19,5 @@ team		= 0;		// Which team its on
 numColor	= 0;		// number relating to "red" or "blue" using an enum: color.red = 0
 hashColor	= noone;	// "red" or "blue"
 
-goalX = x;
-goalY = y;
+pathGoalX = x;
+pathGoalY = y;

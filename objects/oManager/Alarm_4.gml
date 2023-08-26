@@ -1,3 +1,3 @@
 /// @description Delayed pathfinding update
 
-update_pathfind();
+path_grid_update();

@@ -7,7 +7,7 @@ enterVeh = noone;
 // Only for infantry
 if(type	== unitType.inf)
 {
-	var _veh = collision_point(goalX, goalY, oOVLTV, false, true);
+	var _veh = collision_point(pathGoalX, pathGoalY, oOVLTV, false, true);
 
 	// Check position
 	if(instance_exists(_veh))
@@ -35,16 +35,16 @@ for(var j = 0; j < hp; j++)
 		
 		var _inst = ds_list_find_value(childList, i);
 			
-		var _goalX = goalX - (_dist * (k - (floor(hp/3)/4)));
-		var _goalY = goalY - (_dist * (j - (floor(hp/6))));
+		var _goalX = pathGoalX - (_dist * (k - (floor(hp/3)/4)));
+		var _goalY = pathGoalY - (_dist * (j - (floor(hp/6))));
 		
 		with(_inst)
 		{
 			update_state(-1, action.idle);
 		
 			// Set goal
-			goalX	= _goalX;
-			goalY	= _goalY;
+			pathGoalX	= _goalX;
+			pathGoalY	= _goalY;
 			
 			// Set vehicle
 			enterVeh = _enterVeh;
