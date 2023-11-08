@@ -1,7 +1,7 @@
 #region Modifiable		Variables
 
 // Identification		Variables
-objectName = "oInfantryNew";
+objectName = "Infantry";
 
 // Health				Variables
 maxHealth = 1;
@@ -23,6 +23,10 @@ selected	= false;
 #region Squad Identification Variables
 
 squadObjectID = noone;
+
+team		= oManager.team;		// Which team its on
+numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
+hash_color	= oManager.hash_color;	// "red" or "blue"
 
 #endregion
 

@@ -1,10 +1,5 @@
-// Var
-
-capRange = 45;
-capList = ds_list_create();
-
-_color = c_white;
-_team = 0;
-
-captureProgress = 0;
-pointCooldown = 0;
+capture_range = 45;
+flag_color = c_white;
+flag_team = 0; // Using an enum for clarity
+capture_progress = 0;
+point_cooldown = 0;

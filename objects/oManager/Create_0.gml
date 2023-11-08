@@ -459,7 +459,7 @@ blue	= $FFBB91;
 purple	= $FF8C9B;
 pink	= $F6A8FF;
 
-hashColor = findColor(numColor);
+hash_color = findColor(numColor);
 
 #endregion
 

@@ -8,7 +8,7 @@ function scr_GUI_Host() {
 			trace(2, "Steam not connected.");
 		
 			// Exit script
-			exit;
+			//exit;
 		}
 	
 		creating_lobby	= true;

@@ -626,7 +626,7 @@ function steam_reset_state() {
 		
 		#region Multiplayer instance map
 		
-		var _length = ds_map_size(net_list);
+		var _length = ds_list_size(net_list);
 		
 		for(var i = 0; i < _length; i++)
 		{
@@ -989,7 +989,7 @@ function packet_handle_client(from) {
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
-			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+			var _hashColor	= ds_map_find_value(_dataMap, "hash_color");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 			
 			with(_inst)
@@ -997,7 +997,7 @@ function packet_handle_client(from) {
 				// Transfer data
 				team			= _team;
 				numColor		= _numColor;
-				hashColor		= _hashColor;
+				hash_color		= _hashColor;
 				
 				// Give drone a name
 				if _object_string == "oPlayer"
@@ -1036,7 +1036,7 @@ function packet_handle_client(from) {
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
-			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+			var _hashColor	= ds_map_find_value(_dataMap, "hash_color");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 						
 			with(_inst)
@@ -1044,7 +1044,7 @@ function packet_handle_client(from) {
 				// Transfer data
 				team			= _team;
 				numColor		= _numColor;
-				hashColor		= _hashColor;
+				hash_color		= _hashColor;
 				
 				// Add parent
 				squadID			= _parent;
@@ -1253,7 +1253,7 @@ function packet_handle_client(from) {
 					_color = findColor(_data);
 								
 					// Set data
-					ds_map_set(_dataMap, "hashColor", _color);
+					ds_map_set(_dataMap, "hash_color", _color);
 					
 					break;
 				
@@ -1340,7 +1340,7 @@ function packet_handle_client(from) {
 			
 			// Set data
 			ds_map_set(_dataMap, "numColor",	_numColor);
-			ds_map_set(_dataMap, "hashColor",	_colorHash);
+			ds_map_set(_dataMap, "hash_color",	_colorHash);
 			ds_map_set(_dataMap, "ready",		_ready);
 			ds_map_set(_dataMap, "team",		_team);
 			
@@ -1470,7 +1470,7 @@ function packet_handle_server(from) {
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
-			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+			var _hashColor	= ds_map_find_value(_dataMap, "hash_color");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 						
 			with(_inst)
@@ -1478,7 +1478,7 @@ function packet_handle_server(from) {
 				// Transfer data
 				team			= _team;
 				numColor		= _numColor;
-				hashColor		= _hashColor;
+				hash_color		= _hashColor;
 				
 				// Give drone a name
 				if _object_string == "oPlayer"
@@ -1526,7 +1526,7 @@ function packet_handle_server(from) {
 			
 			// Get data
 			var _team		= ds_map_find_value(_dataMap, "team");
-			var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+			var _hashColor	= ds_map_find_value(_dataMap, "hash_color");
 			var _numColor	= ds_map_find_value(_dataMap, "numColor");
 						
 			with(_inst)
@@ -1534,7 +1534,7 @@ function packet_handle_server(from) {
 				// Transfer data
 				team			= _team;
 				numColor		= _numColor;
-				hashColor		= _hashColor;
+				hash_color		= _hashColor;
 				
 				// Add parent
 				squadID			= _parent;
@@ -1780,7 +1780,7 @@ function packet_handle_server(from) {
 					var _dataMap = ds_map_find_value(playerDataMap, _from);
 			
 					// Set data
-					ds_map_set(_dataMap, "hashColor", _color);
+					ds_map_set(_dataMap, "hash_color", _color);
 					
 					break;
 					
@@ -1859,7 +1859,7 @@ function packet_handle_server(from) {
 			
 			// Set data
 			ds_map_set(_dataMap, "numColor",	_numColor);
-			ds_map_set(_dataMap, "hashColor",	_hashColor);
+			ds_map_set(_dataMap, "hash_color",	_hashColor);
 			ds_map_set(_dataMap, "ready",		_ready);
 			ds_map_set(_dataMap, "team",		_team);
 						
@@ -2893,7 +2893,7 @@ function scr_GUI_list4() {
 		ds_grid_set(global.savedSettings, 1, setting.color, numColor);
 		
 		// Find color
-		hashColor = findColor(numColor);
+		hash_color = findColor(numColor);
 						
 		// Update everyone else
 		var _buffer = packet_start(packet_t.data_map);

@@ -4,13 +4,13 @@
 with(oManager)
 {
 	var _team		= team;
-	var _hashColor	= hashColor;
+	var _hashColor	= hash_color;
 	var _ready		= ready;
 }
 
 size		= ds_list_size(nameList);
 team		= _team;
-hashColor	= _hashColor;
+hash_color	= _hashColor;
 ready		= _ready;
 
 maxWidth	= 175;

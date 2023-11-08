@@ -9,7 +9,7 @@ with(oManager)
 	var _username	= steam_get_user_persona_name_w(steamUserName);
 	var _team		= team;
 	var _list		= net_list;
-	var _hashColor	= hashColor;
+	var _hashColor	= hash_color;
 	var _ready		= ready;
 	var _playerDataMap = playerDataMap;
 }
@@ -17,7 +17,7 @@ with(oManager)
 username	= _username;
 team		= _team;
 nameList	= _list;
-hashColor	= _hashColor;
+hash_color	= _hashColor;
 ready		= _ready;
 playerDataMap = _playerDataMap;
 size		= ds_list_size(nameList);

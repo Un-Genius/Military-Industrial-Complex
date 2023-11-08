@@ -1,6 +1,6 @@
 var _zoom = oManager.zoom;
 
-var _col = hashColor;
+var _col = hash_color;
 
 // Change color if selected
 if(selected)

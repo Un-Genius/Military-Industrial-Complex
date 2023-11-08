@@ -279,6 +279,7 @@ switch(state)
 		if lobby
 		{
 			var _lobbyCount = steam_lobby_get_member_count();
+			show_debug_message(_lobbyCount)
 				
 			if _lobbyCount == playersReady
 			{

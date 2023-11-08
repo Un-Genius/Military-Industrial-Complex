@@ -3,7 +3,7 @@ playerName	= "";
 
 team		= 0;
 numColor	= 0;
-hashColor	= noone;
+hash_color	= noone;
 
 // Remember previous position
 preX = x;

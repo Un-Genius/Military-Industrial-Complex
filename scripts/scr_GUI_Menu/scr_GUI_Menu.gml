@@ -1,6 +1,6 @@
 function scr_GUI_Menu() {
 	// Change room
-	room = room_goto(rm_menu);
+	room_goto(rm_menu);
 
 	// Access parent
 	with(parent)

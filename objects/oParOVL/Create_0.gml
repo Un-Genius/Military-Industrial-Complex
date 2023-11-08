@@ -31,7 +31,7 @@ childList = ds_list_create();
 
 team		= oManager.team;		// Which team its on
 numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
-hashColor	= oManager.hashColor;	// "red" or "blue"
+hash_color	= oManager.hash_color;	// "red" or "blue"
 
 selected	= false;		// Display highlight
 

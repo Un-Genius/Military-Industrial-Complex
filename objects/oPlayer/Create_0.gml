@@ -3,7 +3,7 @@ movementSpeed = 1;
 
 numColor = oManager.numColor;
 
-hashColor = oManager.hashColor;
+hash_color = oManager.hash_color;
 
 // Create and clear list
 contextInstList = ds_list_create();
@@ -12,6 +12,8 @@ ds_list_clear(contextInstList);
 squadObjectList = ds_list_create();
 
 contextMenu = false;
+
+maxTroopsInf = 0;
 
 // Duds
 pathGoalX = 0;
@@ -43,6 +45,9 @@ buildingName = "";
 buildingPlacement = noone;
 buildingIntersect = false;
 
+instance_selected = noone;
+instances_selected_list = ds_grid_width(global.instGrid);
+
 #region Mouse actions
 
 // 0 = nothing
@@ -56,8 +61,8 @@ mouseRightPress_y = device_mouse_y(0);
 
 instRightSelected = noone;
 
-mouseLeftPress_x = device_mouse_x(0);
-mouseLeftPress_y = device_mouse_y(0);
+mouseLeftPress_x = mouse_x;
+mouseLeftPress_y = mouse_y;
 
 mouseLeftReleased_x = device_mouse_x(0);
 mouseLeftReleased_y = device_mouse_y(0);
@@ -67,3 +72,15 @@ mouseRightPressGui_x	= device_mouse_x_to_gui(0);
 mouseRightPressGui_y	= device_mouse_y_to_gui(0);
 
 #endregion
+
+// Create Particles
+global.Wind_Direction = 270;
+//global.P_System = part_system_create_layer("Particles", false);
+global.Clouds_System = part_system_create_layer("Clouds", false);
+
+// Create Clouds
+repeat(8)
+{
+	var _cloud = instance_create_layer(0, 0, "Clouds", oCloud);
+	_cloud.y = irandom(room_height)-500;
+}

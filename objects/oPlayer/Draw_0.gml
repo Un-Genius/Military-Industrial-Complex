@@ -15,7 +15,7 @@ if buildingPlacement != noone
 		draw_sprite_ext(_sprite, 0, mouse_x, mouse_y, image_xscale, image_yscale, 0, c_white, 0.1);
 }
 
-image_blend = hashColor;
+image_blend = hash_color;
 
 #region Debug Monitoring
 

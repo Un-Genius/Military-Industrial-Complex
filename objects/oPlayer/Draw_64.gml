@@ -11,7 +11,7 @@ var _value = ds_grid_get(global.instGrid, i, 0);
 //Checks to see if there is an instance in the first slot
 if(instance_exists(_value) && _value > 1000)
 {
-	draw_set_color(hashColor);
+	draw_set_color(hash_color);
 	draw_set_alpha(0.8);
 	
 	//Draw the display and display background	
@@ -33,3 +33,15 @@ if(instance_exists(_value) && _value > 1000)
 }
 
 #endregion 
+
+var _key_shft	= keyboard_check(vk_shift);
+
+if _key_shft
+{
+	var special_sprite = spr_order;
+	
+	if mousePress == 1 // Change if making a mouse box
+		special_sprite = spr_regroup;
+	
+	draw_sprite_ext(special_sprite, 0, device_mouse_x_to_gui(0)-32, device_mouse_y_to_gui(0)-16, 0.5,0.5,0,image_blend, 1);
+}

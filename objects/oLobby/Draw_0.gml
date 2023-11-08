@@ -4,7 +4,7 @@
 if ready
 	draw_sprite(spr_ready, -1, x - 16, y - 16)
 		
-draw_set_color(hashColor);
+draw_set_color(hash_color);
 	
 // Draws box for user
 draw_sprite_stretched(spr_lobbybox, -1, x , y - 32, maxWidth + 10, maxHeight);
@@ -26,7 +26,7 @@ for (var i = 0; i < size; i++)
 	if !is_undefined(_dataMap)
 	{
 		var _ready		= ds_map_find_value(_dataMap, "ready");
-		var _hashColor	= ds_map_find_value(_dataMap, "hashColor");
+		var _hashColor	= ds_map_find_value(_dataMap, "hash_color");
 		var _team		= ds_map_find_value(_dataMap, "team");
 		
 		if !is_undefined(_ready) || !is_undefined(_hashColor)
