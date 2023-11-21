@@ -83,7 +83,7 @@ switch state
 		if unit != unitType.building
 		{
 			// Find index
-			var _sprite = asset_get_index(objectName + "_" + string(state));
+			var _sprite = asset_get_index(object_name + "_" + string(state));
 		
 			image_speed = sprite_get_speed(_sprite);
 		

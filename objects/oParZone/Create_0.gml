@@ -7,7 +7,7 @@ event_user(0);
 
 #region ID of Units
 
-objectName	= "noone";
+object_name	= "noone";
 
 movementSpeed	= 1;		// pixel per frame
 

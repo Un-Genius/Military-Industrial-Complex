@@ -1,9 +1,9 @@
 #region Identification	Variables
-objectName = "oInfantryNew";
+object_name = "oInfantryNew";
 #endregion
 #region Movement		Variables
-moveSpeed = 1;
-runSpeed = 1.8;
+default_speed = 1;
+fast_speed = 1.8;
 #endregion
 #region Pathfinding		Variables
 path = path_add();
@@ -12,8 +12,8 @@ pathGoalY = y;
 selected	= false;
 #endregion
 #region Health			Variables
-maxHealth = 1;
-health = maxHealth;
+max_health = 1;
+health = max_health;
 #endregion
 #region State Machine	Variables
 sm = new StateMachine();

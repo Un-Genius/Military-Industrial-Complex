@@ -1,4 +1,4 @@
-#region Multiplayer Packets enum
+#region Multiplayer Packets enums
 
 // formats specified when sent by client \ when sent by server
 enum packet_t
@@ -161,6 +161,7 @@ enum objectType
 	oDummyStronk,
 	oTransport,
 	oHAB,
+	oInfantryAI
 }
 
 #endregion
@@ -347,14 +348,18 @@ fntSize = font_get_size(ftDefault);
 
 // Initialise steam
 if steam_initialised()
-	trace(1, "Steam Connected.");
+{
+	if steam_is_user_logged_on()
+		trace(1, "Steam Connected");
+	else
+		trace(2, "Steam is not online");
+}
 else
 {
 	if steam_is_user_logged_on()
 		trace(2, "Failed to connect to steam servers.");
 	else
 		trace(2, "Failed to find steam running.");
-	trace(2, "Please restart the game.");
 }
 
 // Game details

@@ -223,20 +223,6 @@ if(global.debugMenu > 0)
 			}
 			
 			#endregion
-			
-			#region Instances Selected
-			
-			draw_text(_L2x, _L2y + (_L2Inc * _L2IncStep), "Selected Instances: ");
-			_L2IncStep++;
-								
-			for(var i = 0; i < ds_list_size(global.instances_selected); i++)
-			{
-				var _inst = ds_list_find_value(global.instances_selected, i);
-				draw_text(_L2x, _L2y + (_L2Inc * _L2IncStep), string(i) + ": " + string(object_get_name(_inst.object_index)) + " - " + string(_inst));
-				_L2IncStep++;
-			}
-			
-			#endregion
 		break;
 	}
 }

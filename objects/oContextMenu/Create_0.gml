@@ -3,14 +3,32 @@
 0 - "Name"
 1 - Script
 2 - Boolean
+3 - Script Argument array
+
+Width for button data
+Height for levels of buttons
 */
-contextGrid = ds_grid_create(3, 1);
+cm_grid = ds_grid_create(10, 1);
 
 // Update position
-mousePressGui_x	= device_mouse_x_to_gui(0);
-mousePressGui_y	= device_mouse_y_to_gui(0);
+mp_gui_x	= device_mouse_x_to_gui(0);
+mp_gui_y	= device_mouse_y_to_gui(0);
 
-openMenu = -1;
+click_left_pressed	= false;
+grid_height = 0;
+padding = 5;
+outside_padding = 300;
+slot_height = 0;
+hovering = false;
+cm_background_height = 0;
+height_level = 0;
+
+draw_set_font(ftContextMenu);
+	width	= string_width("M");;
+	height	= string_height("M");
+draw_set_font(ftDefault);
+
+folder_timer = -1;
 
 // Set heirarchy
 level = 0;

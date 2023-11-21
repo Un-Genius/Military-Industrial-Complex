@@ -6,7 +6,7 @@ event_inherited();
 cost		= 0;					// Cost of unit
 resCost		= unitResCost.trans;	// Cost of unit in resources
 
-objectName	= "sVeh_USA_basic";
+object_name	= "sVeh_USA_basic";
 
 movementSpeed		= 4;		// pixel per frame
 

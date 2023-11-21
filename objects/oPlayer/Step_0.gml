@@ -20,32 +20,24 @@ var _click_right_released	= device_mouse_check_button_released(0, mb_right);
 // Raw Input
 var _key_rawInput = keyboard_key;
 
-#region Double Click
-
+#region Double Click OLD
+/*
 var _click_left_double = false;
-var _click_right_double = false;
 
-if doublePress == 3
+if left_press_type == left_press.holding
 {
-	_click_right_double = true;
 	
 	// Reset
-	doublePress = 0;
+	left_press_type = left_press.noone;
 }
 else
 {
-	if doublePress == 1
+	if left_press_type == left_press.once
 	{	
 		if _click_left_pressed
 		{
-			doublePress = 2;
+			left_press_type = left_press.twice;
 			_click_left_double = true;
-		}
-	
-		if _click_right_pressed
-		{
-			doublePress = 2;
-			_click_right_double = true;
 		}
 	}
 	else
@@ -53,20 +45,52 @@ else
 		// If pressed, 
 		if _click_left_pressed
 		{
-			doublePress = 1;
+			left_press_type = left_press.once;
 			alarm[0] = 0.25 * room_speed;
 		}
 
 		// If pressed, 
 		if _click_right_pressed
 		{
-			doublePress = 1;
+			left_press_type = left_press.once;
 			alarm[1] = 0.25 * room_speed;
 		}
 	}
 }
-
+*/
 #endregion
+
+if (_click_left_pressed) {
+    if (current_time - last_click_time <= double_click_threshold) {
+        // Double click detected
+        left_press_type = press_type.twice;
+        // Handle the double click event
+        //handle_double_click();
+    } else {
+        left_press_type = press_type.once;
+    }
+    
+    last_click_time = current_time;
+}
+else {
+	left_press_type = press_type.noone;
+}
+
+if (_click_left_pressed) {
+    if (current_time - last_click_time <= double_click_threshold) {
+        // Double click detected
+        right_press_type = press_type.twice;
+        // Handle the double click event
+        //handle_double_click();
+    } else {
+        right_press_type = press_type.once;
+    }
+    
+    last_click_time = current_time;
+}
+else {
+	right_press_type = press_type.noone;
+}
 
 #endregion
 
@@ -117,13 +141,15 @@ mouse_box();
 #region Double select
 
 // Double click an instance
-if _click_left_double && instance_selected != noone
+if left_press_type == press_type.twice && instance_selected != noone
 {
 	// Find name of selected instance
-	var _objName	= object_get_name(instance_selected.object_index);
-	var _objAsset	= asset_get_index(_objName);
+	//var _objName	= object_get_name(instance_selected.object_index);
+	//var _objAsset	= asset_get_index(_objName);
+	
+	var _object = instance_selected.object_index;
 		
-	with _objAsset
+	with _object
 	{
 		// Get current camera position
 		var _camX = camera_get_view_x(view_camera[0]);

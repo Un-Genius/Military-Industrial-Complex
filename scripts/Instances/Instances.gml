@@ -121,6 +121,7 @@ function enum_to_obj(_num)
 		case objectType.oTransport:		_obj	= oTransport;		break;
 		case objectType.oDummy:			_obj	= oDummy;			break;
 		case objectType.oDummyStronk:	_obj	= oDummyStronk;		break;
+		case objectType.oInfantryAI:	_obj	= oInfantryAI;		break;
 	}
 	
 	return _obj;
@@ -144,6 +145,7 @@ function obj_to_enum(_obj)
 		case oTransport:	_num	= objectType.oTransport;	break;
 		case oDummy:		_num	= objectType.oDummy;		break;
 		case oDummyStronk:	_num	= objectType.oDummyStronk;	break;
+		case oInfantryAI:	_num	= objectType.oInfantryAI;	break;
 	}
 	
 	return _num;

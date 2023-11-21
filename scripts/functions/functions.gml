@@ -517,6 +517,35 @@ function path_goal_multiplayer_update(_x, _y, _pathGoalX, _pathGoalY) {
 	buffer_write(_packet, buffer_f32, _pathGoalY);
 	packet_send_all(_packet);
 }
+	
+function path_point_direction(_x, _y, _dist, _path) {
+	// Loop until next point is found
+	while(true)
+	{
+		// Get amount left
+		var _amount = path_get_number(_path);
+			
+		// Get next waypoint
+		var xx = path_get_x(_path, 0);
+		var yy = path_get_y(_path, 0);
+		
+		// Delete waypoint if arrived
+		if point_distance(x, y, xx, yy) > speed*1.5
+			break;
+			
+		// Stop path
+		if _amount > 1
+		{
+			path_delete_point(_path, 0);
+			break;
+		}
+			
+		return [0, _path, true];
+	}
+	
+	var _dir = point_direction(x, y, xx, yy);
+	return [_dir, _path, false];
+}
 
 function path_grid_reset() {
 	// Create the Grid
@@ -556,6 +585,16 @@ function path_grid_update() {
 		if _instance.movementSpeed == 0
 			mp_grid_add_instances(global.grid, _instance, false);
 	}
+}
+	
+function path_finished() {
+	var _answer_array = path_point_direction(x, y, speed*1.5, path);
+		
+	direction	= _answer_array[0];
+	path		= _answer_array[1];
+	_path_finished	= _answer_array[2];
+	
+	return _path_finished;
 }
 	
 function veh_position(_veh) {
@@ -1211,7 +1250,7 @@ function packet_handle_client(from) {
 			var _numColor	= buffer_read(_buffer, buffer_u16);
 			
 			// Create a bullet
-			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet);
+			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet_old);
 			
 			with(_bullet)
 			{			
@@ -1739,7 +1778,7 @@ function packet_handle_server(from) {
 			packet_send_except(_packet, from);
 			
 			// Create a bullet
-			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet);
+			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet_old);
 			
 			with(_bullet)
 			{			
@@ -1996,7 +2035,7 @@ function buffer_write_int64(_buffer, _client) {
 
 function spawn_unit(_object_enum, posX, posY) {
 	
-	var _object = enum_to_obj(_object_enum)
+	var _object = enum_to_obj(_object_enum);
 		
 	// Create instance
 	var _inst = instance_create_layer(posX, posY, "Instances", _object);
@@ -2110,7 +2149,9 @@ function saveStringToFile(_filename, _string) {
 
 #region Modify Context Menu
 
-function add_context(_string, _scriptID, _folder) {
+function add_context(_string, _scriptID, _folder, _scriptArg=-1) {
+	
+	var _cm_grid = instance_find(oContextMenu, 0).cm_grid;
 
 	// Make sure context is not in list
 	if _string != "break"
@@ -2121,17 +2162,18 @@ function add_context(_string, _scriptID, _folder) {
 			exit;
 	}
 
-	var _height = ds_grid_height(contextGrid)
+	var _height = ds_grid_height(_cm_grid)
 
 	for(var i = 0; i < _height; i++)
 	{		
-		var _findSlot = ds_grid_get(contextGrid, 0, i);
+		var _findSlot = ds_grid_get(_cm_grid, 0, i);
 	
 		if _findSlot == 0
 		{
-			ds_grid_set(contextGrid, 0, i, _string);
-			ds_grid_set(contextGrid, 1, i, _scriptID);
-			ds_grid_set(contextGrid, 2, i, _folder);
+			ds_grid_set(_cm_grid, 0, i, _string);
+			ds_grid_set(_cm_grid, 1, i, _scriptID);
+			ds_grid_set(_cm_grid, 2, i, _folder);
+			ds_grid_set(_cm_grid, 3, i, _scriptArg);
 			break;
 		}
 		else
@@ -2140,12 +2182,13 @@ function add_context(_string, _scriptID, _folder) {
 			if i+1 == _height
 			{
 				// Resize grid
-				ds_grid_resize(contextGrid, 3, i+2);
+				ds_grid_resize(_cm_grid, ds_grid_width(_cm_grid)+1, i+2);
 			
 				// Add value
-				ds_grid_set(contextGrid, 0, i+1, _string);
-				ds_grid_set(contextGrid, 1, i+1, _scriptID);
-				ds_grid_set(contextGrid, 2, i+1, _folder);
+				ds_grid_set(_cm_grid, 0, i+1, _string);
+				ds_grid_set(_cm_grid, 1, i+1, _scriptID);
+				ds_grid_set(_cm_grid, 2, i+1, _folder);
+				ds_grid_set(_cm_grid, 3, i+1, _scriptArg);
 			}
 		}
 	}
@@ -2216,7 +2259,7 @@ function create_context(_x, _y) {
 			var _width		= _prevInst.width;
 		
 			_inst.x = _start_x + _width;
-			_inst.mousePressGui_x = _start_x + _width;
+			_inst.mp_gui_x = _start_x + _width;
 		}
 	}
 
@@ -2225,12 +2268,14 @@ function create_context(_x, _y) {
 	
 function find_context(_string) {
 	
+	var _cm_grid = instance_find(oContextMenu, 0).cm_grid;
+	
 	var _y		= -1;
-	var _height	= ds_grid_height(contextGrid);
+	var _height	= ds_grid_height(_cm_grid);
 
 	for(var i = 0; i < _height; i++)
 	{
-		if ds_grid_get(contextGrid, 0, i) == _string
+		if ds_grid_get(_cm_grid, 0, i) == _string
 		{
 			_y = i;
 			break;
@@ -2262,7 +2307,7 @@ function scr_context_folder_HQspawn() {
 	}
 
 	// Create context menu
-	var _inst = create_context(mousePressGui_x, mousePressGui_y);
+	var _inst = create_context(mp_gui_x, mp_gui_y);
 
 	if _inst == -1
 		exit;
@@ -2305,7 +2350,7 @@ function scr_context_folder_HABspawn() {
 	}
 
 	// Create context menu
-	var _inst = create_context(mousePressGui_x, mousePressGui_y);
+	var _inst = create_context(mp_gui_x, mp_gui_y);
 
 	if _inst == -1
 		exit;
@@ -2353,7 +2398,7 @@ function scr_context_folder_LOGspawn() {
 	}
 	
 	// Create context menu
-	var _inst = create_context(mousePressGui_x, mousePressGui_y);
+	var _inst = create_context(mp_gui_x, mp_gui_y);
 
 	if _inst == -1
 		exit;
@@ -2385,7 +2430,7 @@ function scr_context_folder_LOGspawn() {
 	}
 }
 	
-function scr_context_move() {
+function scr_context_move(movement_type=noone) {
 	with(oPlayer)
 	{
 		// Find goal
@@ -2401,8 +2446,46 @@ function scr_context_move() {
 	{
 		var _inst = ds_grid_get(global.instGrid, i, 0);
 		
+		if !instance_exists(_inst)
+			continue;
+			
+		if _inst.object_index != oInfantry
+			continue;
+		
 		with(_inst)
 		{
+			switch(movement_type)
+			{
+				case "m_scout":
+					movement_type = m_scout;
+					break;
+				case "m_retreat":
+					movement_type = m_retreat;
+					break;
+				case "m_capture":
+					movement_type = m_capture;
+					break;
+				case "m_patrol":
+					movement_type = m_patrol;
+					break;
+				case "m_roam":
+					movement_type = m_roam;
+					break;
+				case "m_protect":
+					movement_type = m_protect;
+					break;
+				case "m_follow":
+					movement_type = m_follow;
+					break;
+				case "m_engage":
+					movement_type = m_engage;
+					break;
+				case "m_haste":
+					movement_type = m_haste;
+				case "m_move":
+				default: movement_type = m_move;
+			}
+			
 			// Drop instance
 			release = false;
 	
@@ -2410,9 +2493,9 @@ function scr_context_move() {
 			pathGoalX	= _mouse_x + random_range(-15, 15);
 			pathGoalY	= _mouse_y + random_range(-15, 15);
 			
-			sm.swap(moveToLocState);
+			m_sm.swap(movement_type);
 			
-			event_user(1);
+			// event_user(1);
 		}
 	}
 
@@ -2447,18 +2530,21 @@ function scr_context_select_all() {
 		// Check if exists
 		if !instance_exists(_inst)
 			break;
+		
+		if _inst.object_index == oParZone
+			break;
 	
 		// Check if not a building
-		if _inst.object_index != oPlayer && _inst.movementSpeed != 0
-		{
-			// Find name of selected instance		
-			with _inst
-			{
-				// Add inst to hand
-				add_Inst(global.instGrid, 0, id);
+		if _inst.object_index == oPlayer
+			break;
 			
-				selected = true;
-			}
+		// Find name of selected instance		
+		with _inst
+		{
+			// Add inst to hand
+			add_Inst(global.instGrid, 0, id);
+			
+			selected = true;
 		}
 	}
 
@@ -2483,22 +2569,24 @@ function scr_context_select_onScreen() {
 		// Check if exists
 		if !instance_exists(_inst)
 			break;
-	
-		// Check if not a building
-		if _inst.object_index == oOVLInf || _inst.object_index == oOVLTV
+		
+		if _inst.object_index == oParZone
+			break;
+			
+		if _inst.object_index == oPlayer
+			break;
+			
+		// Find name of selected instance		
+		with _inst
 		{
-			// Find name of selected instance		
-			with _inst
+			if bbox_right	> _camX
+			&& bbox_left	< _camX + _camW
+			&& bbox_bottom	> _camY
+			&& bbox_top		< _camY + _camH
 			{
-				if bbox_right	> _camX
-				&& bbox_left	< _camX + _camW
-				&& bbox_bottom	> _camY
-				&& bbox_top		< _camY + _camH
-				{
-					// Add inst to hand
-					add_Inst(global.instGrid, 0, id);
-					selected = true;
-				}
+				// Add inst to hand
+				add_Inst(global.instGrid, 0, id);
+				selected = true;
 			}
 		}
 	}
@@ -2680,6 +2768,47 @@ function scr_context_spawn_HAB() { // BROKEN
 	// Create instance
 	create_building(oOVLHAB);
 	
+	close_context(-1);
+}
+	
+function scr_context_spawn_object() {
+	var _amount = 1;
+	var _objectTypeEnum = noone;
+	
+	switch(argument_count)
+	{
+		case 2:
+			_amount = argument[1];
+		case 1: 
+			var _objectTypeEnum = argument[0];
+	}
+	
+	var right_selected = oPlayer.instRightSelected;
+	var _x = mouse_x;
+	var _y = mouse_y;
+	
+	if instance_exists(right_selected)
+	{
+		_x = right_selected.x;
+		_y = right_selected.y+32;
+	}
+		
+	repeat(_amount)
+		spawn_unit(_objectTypeEnum, _x, _y);
+
+	close_context(-1);
+}
+	
+function scr_create_squad(_x, _y, _objectTypeEnum, _amount) {
+	var _squad_inst = instance_create_layer(_x, _y, "UI", oSquad);
+	var _inst;
+	
+	repeat(_amount)
+	{
+		_inst = spawn_unit(_objectTypeEnum, _x, _y);
+		ds_list_add(_squad_inst.squad, _inst);
+	}
+		
 	close_context(-1);
 }
 		

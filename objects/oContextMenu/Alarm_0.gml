@@ -1,3 +1,3 @@
 /// @description Confirm hover
 
-openMenu += 0.1;
+folder_timer += 0.1;

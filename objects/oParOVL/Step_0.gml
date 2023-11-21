@@ -22,7 +22,7 @@ var _mouseDragAmount = point_distance(_mousePress_x, _mousePress_y, _mouse_x, _m
 #region MouseBox
 
 // Check for mouseBox
-if _mousePress == 1
+if _mousePress == press_type.box
 {
 	// Check for collision
 	if collision_rectangle(_mousePress_x, _mousePress_y, mouse_x, mouse_y, self, false, false)
@@ -49,7 +49,7 @@ if _mousePress == 1
 
 #region Selecting & Dragging unit around
 
-if selected && _mousePress == 2 && _mouseDragAmount >= 3
+if selected && _mousePress == press_type.drag && _mouseDragAmount >= 3
 {
 	release = true;
 }

@@ -10,7 +10,7 @@
   "bitRate": 128,
   "compression": 0,
   "conversionMode": 0,
-  "duration": 0.845,
+  "duration": 0.84,
   "parent": {
     "name": "Impact Person",
     "path": "folders/Sounds/Impact Person.yy",

@@ -2,11 +2,13 @@ function scr_GUI_Host() {
 	// Access parent
 	with(parent)
 	{
-		if !steam_initialised()
+		if !steam_is_user_logged_on()
 		{
 			// Send message
-			trace(2, "Steam not connected.");
-		
+			trace(2, "Unable to host online lobby.");
+			
+			lobby = true;
+			lobby_owner = id;
 			// Exit script
 			//exit;
 		}

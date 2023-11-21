@@ -1,3 +1,3 @@
 /// @description Double Right Click
 
-doublePress = false;
+left_press_type = false;

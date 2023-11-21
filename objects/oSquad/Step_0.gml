@@ -41,3 +41,5 @@ else
 	image_blend = c_white;
 
 image_alpha = clamp(1 - (oPlayer.zoom - 0.5)/(10-9), 0.1, 1);
+
+depth = -room_height-y;

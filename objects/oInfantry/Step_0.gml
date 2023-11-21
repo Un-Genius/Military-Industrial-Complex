@@ -1,2 +1,4 @@
 // Run the State Machine
-sm.run();
+m_sm.run();
+a_sm.run();
+b_sm.run();

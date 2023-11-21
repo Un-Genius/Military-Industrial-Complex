@@ -239,7 +239,7 @@ if gun != noone && state != action.reloading && (burstMax > burstAmount && burst
 						var _y = y + lengthdir_y(26, _angle-10);
 						
 						// Shoot bullet
-						var _bullet		= instance_create_layer(_x, _y, "Bullets", oBullet);
+						var _bullet		= instance_create_layer(_x, _y, "Bullets", oBullet_old);
 				
 						// Add randomness
 						var _adjustment = random_range(0.65, 1.35);
@@ -376,7 +376,7 @@ switch state
 	case action.idle:
 		
 		// Find index
-		var _sprite = asset_get_index(objectName + "_" + string(state));
+		var _sprite = asset_get_index(object_name + "_" + string(state));
 		
 		image_speed = sprite_get_speed(_sprite);
 		

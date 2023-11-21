@@ -5,7 +5,7 @@ event_inherited();
 
 #region ID of Units
 
-objectName	= "sInf_USA_basic";
+object_name	= "sInf_USA_basic";
 
 movementSpeed	= 0;		// pixel per frame
 

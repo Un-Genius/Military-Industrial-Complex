@@ -8,7 +8,7 @@ event_inherited();
 cost		= 0;		// Cost of unit
 resCost		= unitResCost.HAB;		// Cost of unit in resources
 
-objectName	= "sHAB";
+object_name	= "sHAB";
 
 unit	= unitType.building; // Type of unit for health
 armor	= 2;

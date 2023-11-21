@@ -23,24 +23,25 @@ if (wheel != 0)
     if (wheel == 0.5 && target_zoom < 10)
         target_zoom += 0.5;
 
-    // Set image_alpha to decrease as we zoom in (increase target_zoom)
-    var zoomMin = 0.25; // minimum zoom value
-    var zoomMax = 2; // maximum zoom value
-    var alphaMin = 0; // minimum alpha value (completely transparent)
-    var alphaMax = 0.75; // maximum alpha value (completely opaque)
+	if instance_exists(oCloud)
+	{
+	    // Set image_alpha to decrease as we zoom in (increase target_zoom)
+	    var zoomMin = 0.25; // minimum zoom value
+	    var zoomMax = 2; // maximum zoom value
+	    var alphaMin = 0; // minimum alpha value (completely transparent)
+	    var alphaMax = 0.75; // maximum alpha value (completely opaque)
+	
+	    // Map target_zoom inversely to image_alpha
+	    oCloud.image_alpha = alphaMax - (target_zoom - zoomMin) / (zoomMax - zoomMin) * (alphaMax - alphaMin);
 
-    // Map target_zoom inversely to image_alpha
-    oCloud.image_alpha = alphaMax - (target_zoom - zoomMin) / (zoomMax - zoomMin) * (alphaMax - alphaMin);
-
-    // Clamp the image_alpha just in case
-    oCloud.image_alpha = clamp(oCloud.image_alpha, alphaMin, alphaMax);
+	    // Clamp the image_alpha just in case
+	    oCloud.image_alpha = clamp(oCloud.image_alpha, alphaMin, alphaMax);
+	}
 }
 
 
 // Smoothly transition zoom level
 zoom = lerp(zoom, target_zoom, zoom_smooth);  // zoom_smooth is a value between 0 and 1
-
-show_debug_message(zoom)
 
 // Update camW and camH based on the new zoom
 camW = global.RES_W / zoom;

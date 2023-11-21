@@ -88,27 +88,49 @@ function zoning_display()
 
 function select_instance()
 {
+	var _click_left_pressed = device_mouse_check_button_pressed(0, mb_left);
+	if _click_left_pressed
+	{
+		mouseLeftPress_x = mouse_x;
+		mouseLeftPress_y = mouse_y;
+	}
+	
 	if buildingPlacement != noone 
 		exit;
 
 	if zoning != -1
 		exit;
 	
-	var _click_left_pressed = device_mouse_check_button_pressed(0, mb_left);
-	var _key_ctrl	= keyboard_check(vk_control);
-	var _selectx2 = false;
-	
-	// Find and select instances
-	if !_click_left_pressed
-		exit;
-	
 	if contextMenu
 		exit;
 	
-	if instance_exists(oInfantryNew)
+	var _click_left_hold = device_mouse_check_button(0, mb_left)
+	var _key_ctrl	= keyboard_check(vk_control);
+	var _selectx2 = false;
+	
+	if _click_left_hold
+	{
+		var _dragging = 3 < point_distance(mouse_x, mouse_y, mouseLeftPress_x, mouseLeftPress_y);
+		
+		if _dragging
+		{
+			if instance_selected == noone
+				mousePress = press_type.box;	
+			else
+				mousePress = press_type.drag;
+		}
+	}
+	
+	if !_click_left_pressed
+		exit;
+		
+	if instance_exists(oSquad) && zoom < 1.5
+		instance_selected = find_top_Inst(mouse_x, mouse_y, oSquad);
+		
+	if instance_selected == noone && instance_exists(oInfantryNew)
 		instance_selected = find_top_Inst(mouse_x, mouse_y, oInfantryNew);
-			
-	if instance_selected == noone
+		
+	if instance_selected == noone && instance_exists(oParZoneLocal)
 		instance_selected = find_top_Inst(mouse_x, mouse_y, oParZoneLocal);
 
 	// Check if already selected	
@@ -118,6 +140,12 @@ function select_instance()
 	// Unselect
 	if !_key_ctrl && !_selectx2
 		wipe_Hand(global.instGrid, 0);
+		
+	if instance_selected != noone && instance_selected.object_index == oSquad
+	{
+		select_squad_instances(instance_selected)
+		instance_selected = noone;
+	}
 	
 	// Unselect if pressed on again
 	else if _key_ctrl && _selectx2 && instance_selected.selected
@@ -135,17 +163,6 @@ function select_instance()
 
 		instance_selected.selected = true;
 	}
-	
-	// Remember location of press
-	mouseLeftPress_x = mouse_x;
-	mouseLeftPress_y = mouse_y;
-	
-	if instance_selected == noone
-		// Start mousebox
-		mousePress = 1;	
-	else
-		// Allow dragging
-		mousePress = 2;
 }
 
 function context_menu_open()
@@ -155,11 +172,18 @@ function context_menu_open()
 	
 	if !_key_shft
 	{
-		if _click_right_released
+		switch(right_press_type)
 		{
-			mouseRightPress_x = mouse_x;
-			mouseRightPress_y = mouse_y;
-			scr_context_move();
+			case press_type.once:
+				_movement_type = "move";
+			case press_type.twice:
+				_movement_type = "haste";
+				scr_context_move(_movement_type);
+				
+				mouseRightPress_x = mouse_x;
+				mouseRightPress_y = mouse_y;
+				
+			scr_context_move(_movement_type);
 		}
 		exit;
 	}
@@ -187,29 +211,57 @@ function context_menu_open()
 	// Spawn Units through a unit
 	instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParUnit);
 	
+	if instRightSelected == noone
+		instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParZoneLocal);
+		
+	if instance_exists(instRightSelected)
+	{
+		with(instRightSelected)
+		{
+			add_Inst(global.instGrid, 0, id);
+			selected = true;
+		}
+	}
+	
 	var _instSel = instRightSelected;
 	
-	var _inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
+	var _cm_inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
+	
+	context_menu_select_all(_instSel);
+	
+	var unique_list = ds_list_create();
+	var _inst_in_hand;
+	var _size = ds_grid_width(global.instGrid);
 		
-	// Add buttons
-	with(_inst)
+	ds_list_add(unique_list, _instSel);
+	context_menu_unit_actions(_instSel);
+
+	for (var i = 0; i < _size; i++)
 	{
-		context_menu_select_all(_instSel)
+	    _inst_in_hand = ds_grid_get(global.instGrid, i, 0);
 		
-		context_menu_unit_actions(_instSel)
-			
-		context_menu_debug()
+	    if(_inst_in_hand == 0)
+			continue;
 		
-		// Update size
-		event_user(0);
+		if ds_list_find_index(unique_list, _inst_in_hand) != -1
+			continue;
+
+	    ds_list_add(unique_list, _inst_in_hand);
+		context_menu_unit_actions(_inst_in_hand);
 	}
+
+	context_menu_debug();
+	
+	with _cm_inst event_user(0);
+	
+	ds_list_destroy(unique_list);
 }
 function context_menu_select_all(_instSel)
 {
 	if(instance_exists(_instSel))
 		exit;
 
-	var _size = ds_grid_width(global.instGrid);
+	// var _size = ds_grid_width(global.instGrid);
 				
 	/*/ Check if any units are selected
 	for(var i = 0; i < _size; i++)
@@ -226,9 +278,14 @@ function context_menu_select_all(_instSel)
 	}*/
 				
 	// Select multiple instances
-	//add_context("Select all",			scr_context_select_all, false);
-	add_context("Select all on screen", scr_context_select_onScreen, false);
-
+	var _inst = instance_find(oContextMenu, 0);
+	with(_inst) { 
+		add_context("Select all",			scr_context_select_all,			false);
+		add_context("Select all on screen", scr_context_select_onScreen,	false);
+		add_context("break", on_click, false);
+		add_context("Spawn AI",				scr_create_squad,		false, [mouse_x, mouse_y, objectType.oInfantryAI, 3]);
+		add_context("break", on_click, false);		
+	}
 }
 function context_menu_unit_actions(_instSel)
 {
@@ -244,85 +301,91 @@ function context_menu_unit_actions(_instSel)
 		var _objectIndex = object_index;
 		var _x = x;
 		var _y = y;
-		var _resCarry = resCarry;
-		var _resRange = resRange;
-		var _maxResCarry = maxResCarry;
 	}
-				
-	switch(_objectIndex)
-	{
-		case oHQ:
-			// Spawn units
-			add_context("Spawn Units", scr_context_folder_HQspawn, true);
-			break;
+	
+	with(instance_find(oContextMenu, 0)) { 
+		switch(_objectIndex)
+		{
+			case oZoneBootCamp:
+				// Spawn units
+				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
+				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, objectType.oInfantry, 7]);
+				break;
 			
-		case oHAB:
-			// Spawn troops, Destroy self
-			if _resCarry > 0
-			{
-				add_context("Spawn Units", scr_context_folder_HABspawn, true);
-				add_context("break", on_click, false);
-				add_context("Destroy Self", scr_context_destroy, false);
-			}
-						
-			// Search for nearby vehicles
-			var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
-		
-			// Transfer supplies
-			if _LOG && _LOG.resCarry > 0
-			{
-				if _resCarry <= 0
-					add_context("break", on_click, false);
-				add_context("Grab Resources", scr_context_grab_res,	 false);
-			}
-			break;
-					
-		case oTransport:
-			// Move unit
-			//add_context("Move", scr_context_move, false);
-						
-			// Dismount troops
-			if ds_list_size(_instSel.riderList) > 0
-			{
-				add_context("break", on_click, false);
-				add_context("Exit Vehicle", exit_Vehicle_All, false);
-			}
-					
-			// Spawn Units
-			if _resCarry > 0
-			{
-				add_context("break", on_click, false);
-				add_context("Spawn Units", scr_context_folder_LOGspawn, true);
-			}
-				
-			// Search for nearby building
-			var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
-		
-			// Transfer supplies
-			if _HAB
-			{
-				if _resCarry <= 0
-					add_context("break", on_click, false);
-							
-				// Check if can give resources
+			case oHQ:
+				// Spawn units
+				add_context("Spawn Units", scr_context_folder_HQspawn, true);
+				break;
+			
+			case oHAB:
+				// Spawn troops, Destroy self
 				if _resCarry > 0
-					add_context("Drop Resources", scr_context_drop_res,	 false);
-							
-				// Take resourcess
-				if _resCarry != _maxResCarry && _HAB.resCarry > 0
+				{
+					add_context("Spawn Units", scr_context_folder_HABspawn, true);
+					add_context("break", on_click, false);
+					add_context("Destroy Self", scr_context_destroy, false);
+				}
+						
+				// Search for nearby vehicles
+				var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
+		
+				// Transfer supplies
+				if _LOG && _LOG.resCarry > 0
+				{
+					if _resCarry <= 0
+						add_context("break", on_click, false);
 					add_context("Grab Resources", scr_context_grab_res,	 false);
-			}
-			break;
+				}
+				break;
+					
+			case oTransport:
+				// Move unit
+				//add_context("Move", scr_context_move, false);
+						
+				// Dismount troops
+				if ds_list_size(_instSel.riderList) > 0
+				{
+					add_context("break", on_click, false);
+					add_context("Exit Vehicle", exit_Vehicle_All, false);
+				}
+					
+				// Spawn Units
+				if _resCarry > 0
+				{
+					add_context("break", on_click, false);
+					add_context("Spawn Units", scr_context_folder_LOGspawn, true);
+				}
+				
+				// Search for nearby building
+				var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
+		
+				// Transfer supplies
+				if _HAB
+				{
+					if _resCarry <= 0
+						add_context("break", on_click, false);
+							
+					// Check if can give resources
+					if _resCarry > 0
+						add_context("Drop Resources", scr_context_drop_res,	 false);
+							
+					// Take resourcess
+					if _resCarry != _maxResCarry && _HAB.resCarry > 0
+						add_context("Grab Resources", scr_context_grab_res,	 false);
+				}
+				break;
+		}
 	}
 }
 function context_menu_debug()
 {
 	if(!global.debugMenu)
 		exit;
-	
-	add_context("break", on_click, false);
-	add_context("Spawn Dummy",			scr_context_spawn_dummy, false);
-	add_context("Spawn DummyStronk",	scr_context_spawn_dummyStronk, false);
+	with(instance_find(oContextMenu, 0)) { 
+		//add_context("break", on_click, false);
+		//add_context("Spawn AI",	scr_context_spawn_object, false, [oInfantryAI, 3]);
+		//add_context("Spawn AI Spawner",	scr_context_spawn_ai_spawner, false);
+	}
 }
 
 function mouse_box_close()
@@ -529,7 +592,7 @@ function reset_building()
 function mouse_box()
 {
 	// Check for mouseBox
-	if mousePress != 1
+	if mousePress != press_type.box
 		exit;
 	
 	var _key_ctrl	= keyboard_check(vk_control);
@@ -550,16 +613,7 @@ function mouse_box()
 			
 		if _inst.object_index == oSquad
 		{
-			var _length = ds_list_size(_inst.squad);
-			for(var o = 0; o < _length; o++)
-			{
-				var _inst_squad = ds_list_find_value(_inst.squad, o);
-				with(_inst_squad)
-				{
-					add_Inst(global.instGrid, 0, id);
-					selected = true;
-				}
-			}
+			select_squad_instances(_inst)
 			continue;
 		}
 						
@@ -571,7 +625,18 @@ function mouse_box()
 	}
 }
 
-
+function select_squad_instances(squad_instance) {
+	var _length = ds_list_size(squad_instance.squad);
+	for(var o = 0; o < _length; o++)
+	{
+		var _inst_squad = ds_list_find_value(squad_instance.squad, o);
+		with(_inst_squad)
+		{
+			add_Inst(global.instGrid, 0, id);
+			selected = true;
+		}
+	}
+}
 
 
 

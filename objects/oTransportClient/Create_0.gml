@@ -3,7 +3,7 @@ event_inherited();
 
 #region ID of Units
 
-objectName	= "sVeh_USA_basic";
+object_name	= "sVeh_USA_basic";
 
 movementSpeed	= 4;		// pixel per frame
 

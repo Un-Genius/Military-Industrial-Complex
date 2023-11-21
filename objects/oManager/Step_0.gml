@@ -5,7 +5,10 @@ steam_update();
 // Check if lobby owner left
 if(lobby)
 {
-	var _lobby_owner = steam_lobby_get_owner_id();
+	var _lobby_owner = id;
+	
+	if steam_is_user_logged_on()
+		_lobby_owner = steam_lobby_get_owner_id();
 	
 	if _lobby_owner != lobby_owner
 	{
@@ -278,8 +281,10 @@ switch(state)
 		
 		if lobby
 		{
-			var _lobbyCount = steam_lobby_get_member_count();
-			show_debug_message(_lobbyCount)
+			var _lobbyCount = 1;
+			
+			if steam_is_user_logged_on()
+				_lobbyCount = steam_lobby_get_member_count();
 				
 			if _lobbyCount == playersReady
 			{

@@ -1,8 +1,12 @@
-var _inst = ds_list_find_value(squad, 0)
+var _inst = ds_list_find_value(squad, 0);
+
+if !instance_exists(_inst)
+	exit;
 
 switch(_inst.object_index)
 {
 	case oInfantry:
+	case oInfantryAI:
 		sprite_index = sOVLInf;
 		break;
 	case oHQ:
@@ -14,6 +18,8 @@ switch(_inst.object_index)
 	case oZoneCamp:
 	case oZoneMoney:
 	case oZoneSupplies:
+	default:
 		sprite_index = sOVLHAB;
-		break;
 }
+if variable_instance_exists(_inst, "hash_color")
+	image_blend = _inst.hash_color;

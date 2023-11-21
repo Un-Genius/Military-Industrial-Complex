@@ -6,6 +6,10 @@ draw_self();
 if(global.debugMenu)
 {
 	draw_set_font(ftSmall);
-		draw_text(x+4, y, "State: " + string(sm.stateName));
+		draw_text(x+4, y, "Move State: " + string(m_sm.state_name));
+		draw_text(x+4, y+6, "Act State: " + string(a_sm.state_name));
+		draw_text(x+4, y+12, "Behave State: " + string(b_sm.state_name));
 	draw_set_font(ftDefault);
+	
+	draw_circle(x, y, weapon_range, true);
 }

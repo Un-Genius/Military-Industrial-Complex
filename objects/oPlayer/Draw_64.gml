@@ -27,7 +27,7 @@ if(instance_exists(_value) && _value > 1000)
 	draw_sprite_ext(_value.sprite_index,0,115,global.RES_H/2 + 300,4,4,0,image_blend,1);
 	
 	// Draws unit name and stats
-	draw_text(125,global.RES_H/2 + 215,string(_value.objectName));
+	draw_text(125,global.RES_H/2 + 215,string(_value.object_name));
 	//draw_text(225,global.RES_H/2 + 250,"Health: " + string(_value.hp));
 	//draw_text(225,global.RES_H/2 + 275,"Ammo: " + string(_value.resCarry));
 }
@@ -40,7 +40,7 @@ if _key_shft
 {
 	var special_sprite = spr_order;
 	
-	if mousePress == 1 // Change if making a mouse box
+	if mousePress == press_type.box // Change if making a mouse box
 		special_sprite = spr_regroup;
 	
 	draw_sprite_ext(special_sprite, 0, device_mouse_x_to_gui(0)-32, device_mouse_y_to_gui(0)-16, 0.5,0.5,0,image_blend, 1);
