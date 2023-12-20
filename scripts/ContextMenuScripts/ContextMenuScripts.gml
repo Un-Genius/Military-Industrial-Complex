@@ -121,6 +121,9 @@ function cm_execute(i)
 	
 	var _script = ds_grid_get(cm_grid, 1, i);	
 	var _script_arg = ds_grid_get(cm_grid, 3, i);
+	
+	if _script == 0
+		exit;
 
 	if _script_arg != -1
 		script_execute_ext(_script, _script_arg);
@@ -176,8 +179,9 @@ function cm_close_distance()
 		_inst = id;
 		_x1 = mp_gui_x - outside_padding - (width/2);
 	}
-
-	if get_hover(_x1, _y1,_x2, _y2)
+	
+	hovering = get_hover(_x1, _y1,_x2, _y2)
+	if hovering
 		exit;
 
 	close_context(_inst);

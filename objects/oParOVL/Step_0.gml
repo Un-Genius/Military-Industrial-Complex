@@ -9,7 +9,7 @@ var _mouse_y = device_mouse_y(0);
 with(oPlayer)
 {
 	// MouseBox data
-	var _mousePress	= mousePress;
+	var _mousePress	= left_mouse_state;
 	
 	var _mousePress_x = mouseLeftPress_x;
 	var _mousePress_y = mouseLeftPress_y;
@@ -22,7 +22,7 @@ var _mouseDragAmount = point_distance(_mousePress_x, _mousePress_y, _mouse_x, _m
 #region MouseBox
 
 // Check for mouseBox
-if _mousePress == press_type.box
+if _mousePress == mouse_type.box
 {
 	// Check for collision
 	if collision_rectangle(_mousePress_x, _mousePress_y, mouse_x, mouse_y, self, false, false)
@@ -49,7 +49,7 @@ if _mousePress == press_type.box
 
 #region Selecting & Dragging unit around
 
-if selected && _mousePress == press_type.drag && _mouseDragAmount >= 3
+if selected && _mousePress == mouse_type.dragging && _mouseDragAmount >= 3
 {
 	release = true;
 }
@@ -60,8 +60,8 @@ if _click_left_released && release
 	release = false;
 	
 	// Set goal
-	pathGoalX	= _mouse_x;
-	pathGoalY	= _mouse_y;
+	goal_x	= _mouse_x;
+	goal_y	= _mouse_y;
 	
 	// Update children
 	event_user(1);

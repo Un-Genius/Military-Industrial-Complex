@@ -39,8 +39,8 @@ selected	= false;		// Display highlight
 enterVeh	= noone;
 riding		= false;
 
-pathGoalX = x;
-pathGoalY = y;
+goal_x = x;
+goal_y = y;
 
 // Drag
 release = false;

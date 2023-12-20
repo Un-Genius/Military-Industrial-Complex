@@ -12,7 +12,7 @@ function zoning_switch()
 {
 	// Toggle Zoning tool
 	if!(keyboard_check_pressed(vk_anykey))
-		exit;
+		return;
 	
 	var _prev_zoning = zoning;
 	
@@ -42,7 +42,7 @@ function zoning_switch()
 	}
 	
 	if(_prev_zoning == zoning)
-		exit;
+		return;
 		
 	if zoning == -1
 	{
@@ -50,7 +50,7 @@ function zoning_switch()
 			instance_destroy(buildingPlaceholder);
 			
 		buildingPlaceholder = noone;
-		exit;
+		return;
 	}
 		
 	_prev_zoning = zoning;
@@ -66,15 +66,15 @@ function zoning_display()
 {
 	// Zoning functionality
 	if zoning == -1
-		exit;
+		return;
 	
-	if global.mouseUI
-		exit;
+	if global.mouse_on_ui
+		return;
 	
 	//var _cost = oManager.unitCost[zoning];;
 	
 	if buildingPlaceholder != noone
-		exit;
+		return;
 	
 	buildingPlaceholder = instance_create_layer(mouse_x, mouse_x, layer, oBuildingTool)
 		
@@ -87,22 +87,15 @@ function zoning_display()
 }
 
 function select_instance()
-{
-	var _click_left_pressed = device_mouse_check_button_pressed(0, mb_left);
-	if _click_left_pressed
-	{
-		mouseLeftPress_x = mouse_x;
-		mouseLeftPress_y = mouse_y;
-	}
-	
+{	
 	if buildingPlacement != noone 
-		exit;
+		return;
 
 	if zoning != -1
-		exit;
+		return;
 	
 	if contextMenu
-		exit;
+		return;
 	
 	var _click_left_hold = device_mouse_check_button(0, mb_left)
 	var _key_ctrl	= keyboard_check(vk_control);
@@ -115,14 +108,14 @@ function select_instance()
 		if _dragging
 		{
 			if instance_selected == noone
-				mousePress = press_type.box;	
+				left_mouse_state = mouse_type.box;	
 			else
-				mousePress = press_type.drag;
+				left_mouse_state = mouse_type.dragging;
 		}
 	}
 	
-	if !_click_left_pressed
-		exit;
+	if left_mouse_state != mouse_type.pressed
+		return;
 		
 	if instance_exists(oSquad) && zoom < 1.5
 		instance_selected = find_top_Inst(mouse_x, mouse_y, oSquad);
@@ -170,33 +163,30 @@ function context_menu_open()
 	var _click_right_released	= device_mouse_check_button_released(0, mb_right);
 	var _key_shft	= keyboard_check(vk_shift);
 	
+	if right_mouse_state == mouse_type.released || right_mouse_state == mouse_type.released_twice
+	{ }
+	else
+		return;
+	
 	if !_key_shft
 	{
-		switch(right_press_type)
+		var _movement_type = "m_move";
+		switch(right_mouse_state)
 		{
-			case press_type.once:
-				_movement_type = "move";
-			case press_type.twice:
-				_movement_type = "haste";
+			case mouse_type.released_twice:
+				_movement_type = "m_haste";
+			case mouse_type.released:
 				scr_context_move(_movement_type);
-				
-				mouseRightPress_x = mouse_x;
-				mouseRightPress_y = mouse_y;
-				
-			scr_context_move(_movement_type);
+				break;
 		}
-		exit;
+		return;
 	}
 	
 	if buildingPlacement != noone 
-		exit;
+		return;
 
 	if zoning != -1
-		exit;
-	
-	// Context Menu
-	if !_click_right_released
-		exit;
+		return;
 		
 	// Reset context
 	close_context(-1);
@@ -259,7 +249,7 @@ function context_menu_open()
 function context_menu_select_all(_instSel)
 {
 	if(instance_exists(_instSel))
-		exit;
+		return;
 
 	// var _size = ds_grid_width(global.instGrid);
 				
@@ -290,12 +280,12 @@ function context_menu_select_all(_instSel)
 function context_menu_unit_actions(_instSel)
 {
 	if(!instance_exists(_instSel))
-		exit;
+		return;
 		
 	with(_instSel)
 	{
-		pathGoalX = x;
-		pathGoalY = y;
+		goal_x = x;
+		goal_y = y;
 		moveState = action.idle;
 				
 		var _objectIndex = object_index;
@@ -306,6 +296,8 @@ function context_menu_unit_actions(_instSel)
 	with(instance_find(oContextMenu, 0)) { 
 		switch(_objectIndex)
 		{
+			case oInfantry:
+				add_context("Change Behavior", scr_context_folder_behavior, true)
 			case oZoneBootCamp:
 				// Spawn units
 				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
@@ -380,7 +372,7 @@ function context_menu_unit_actions(_instSel)
 function context_menu_debug()
 {
 	if(!global.debugMenu)
-		exit;
+		return;
 	with(instance_find(oContextMenu, 0)) { 
 		//add_context("break", on_click, false);
 		//add_context("Spawn AI",	scr_context_spawn_object, false, [oInfantryAI, 3]);
@@ -391,20 +383,20 @@ function context_menu_debug()
 function mouse_box_close()
 {
 	if buildingPlacement != noone 
-		exit;
+		return;
 
 	if zoning != -1
-		exit;
+		return;
 	
 	var _click_left_released	= device_mouse_check_button_released(0, mb_left);
 	
 	if !_click_left_released
-		exit;
+		return;
 	
 	if contextMenu
-		exit;
+		return;
 
-	mousePress = false;
+	left_mouse_state = false;
 	mouseLeftReleased_x = mouse_x;
 	mouseLeftReleased_y = mouse_y;
 		
@@ -438,7 +430,7 @@ function mouse_box_close()
 	if !_key_shft
 	{
 		ds_list_destroy(_newSquadList);
-		exit;
+		return;
 	}
 
 	for(var i = 0; i < instances_selected_list; i++)
@@ -511,7 +503,7 @@ function mouse_box_close()
 function create_squad(_newSquadList)
 {
 	if(ds_list_size(_newSquadList) == 0)
-		exit;
+		return;
 
 	var _squadObjInst = instance_create_layer(0, 0, "UI", oSquad)
 		
@@ -535,7 +527,7 @@ function create_squad(_newSquadList)
 function create_zone()
 {
 	if zoning != 0
-		exit;
+		return;
 		
 	var _click_right_pressed	= device_mouse_check_button_pressed(0, mb_right);
 	var _click_left_pressed		= device_mouse_check_button_pressed(0, mb_left);
@@ -555,19 +547,19 @@ function create_zone()
 	if _click_right_pressed
 	{
 		reset_building()
-		exit;
+		return;
 	}
 
 	// Check transport for resources
 	if instRightSelected.resCarry - unitResCost.HAB <= 0
 	{
 		reset_building()
-		exit;
+		return;
 	}
 
 	// check for mouse click
 	if buildingIntersect
-		exit;
+		return;
 			
 	// Take away resources
 	instRightSelected.resCarry -= unitResCost.HAB;
@@ -592,8 +584,8 @@ function reset_building()
 function mouse_box()
 {
 	// Check for mouseBox
-	if mousePress != press_type.box
-		exit;
+	if left_mouse_state != mouse_type.box
+		return;
 	
 	var _key_ctrl	= keyboard_check(vk_control);
 	var _collision_list = ds_list_create();

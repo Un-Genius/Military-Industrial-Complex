@@ -4,9 +4,6 @@
   "name": "oInfantryAI",
   "eventList": [
     {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":2,"eventType":3,"isDnD":false,},
-    {"resourceType":"GMEvent","resourceVersion":"1.0","name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,},
   ],
   "managed": true,
   "overriddenProperties": [],
@@ -15,8 +12,8 @@
     "path": "folders/Objects/Units/Infantry Squad.yy",
   },
   "parentObjectId": {
-    "name": "oObject",
-    "path": "objects/oObject/oObject.yy",
+    "name": "oInfantry",
+    "path": "objects/oInfantry/oInfantry.yy",
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,

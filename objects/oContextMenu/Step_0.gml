@@ -13,3 +13,7 @@ if _click_right_pressed
 }
 
 grid_height = ds_grid_height(cm_grid);
+
+cm_update_position();
+cm_close_distance();
+cm_close();

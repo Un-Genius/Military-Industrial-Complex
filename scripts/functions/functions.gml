@@ -606,8 +606,8 @@ function veh_position(_veh) {
 	}
 	
 	// Set goal
-	pathGoalX = _newX;
-	pathGoalY = _newY;
+	goal_x = _newX;
+	goal_y = _newY;
 }
 
 #endregion
@@ -1154,8 +1154,8 @@ function packet_handle_client(from) {
 					y = _y;
 					
 					// Start pathfind for unit
-					pathGoalX = _goalX;
-					pathGoalY = _goalY;
+					goal_x = _goalX;
+					goal_y = _goalY;
 					
 					//path_goal_find();
 				}
@@ -1661,8 +1661,8 @@ function packet_handle_server(from) {
 					y = _y;
 					
 					// Start pathfind for unit
-					pathGoalX = _goalX;
-					pathGoalY = _goalY;
+					goal_x = _goalX;
+					goal_y = _goalY;
 					
 					//path_goal_find();
 				}
@@ -2151,7 +2151,7 @@ function saveStringToFile(_filename, _string) {
 
 function add_context(_string, _scriptID, _folder, _scriptArg=-1) {
 	
-	var _cm_grid = instance_find(oContextMenu, 0).cm_grid;
+	var _cm_grid = cm_grid;
 
 	// Make sure context is not in list
 	if _string != "break"
@@ -2430,6 +2430,41 @@ function scr_context_folder_LOGspawn() {
 	}
 }
 	
+function scr_context_folder_behavior() {
+	// Set heirarchy
+	var _level = 1;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(contextInstList)
+	
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(contextInstList, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mp_gui_x, mp_gui_y);
+		
+	with(_inst)
+	{	
+		// Set heirarchy
+		level = _level;
+	
+		// Add buttons
+		add_context("Set Passive",		scr_context_behavior,	 false, ["b_passive"]);
+		add_context("Set Aggressive",	scr_context_behavior,	 false, ["b_aggressive"]);
+		add_context("Set Defensive",	scr_context_behavior,	 false, ["b_defensive"]);
+	
+		// Update size
+		event_user(0);
+	}
+}
+	
 function scr_context_move(movement_type=noone) {
 	with(oPlayer)
 	{
@@ -2440,6 +2475,8 @@ function scr_context_move(movement_type=noone) {
 	
 	// Get maximum width
 	var _width = ds_grid_width(global.instGrid);
+	
+	var _set_type;
 	
 	// Move all instances selected
 	for(var i = 0; i < _width; i++)
@@ -2457,43 +2494,86 @@ function scr_context_move(movement_type=noone) {
 			switch(movement_type)
 			{
 				case "m_scout":
-					movement_type = m_scout;
+					_set_type = m_scout;
 					break;
 				case "m_retreat":
-					movement_type = m_retreat;
+					_set_type = m_retreat;
 					break;
 				case "m_capture":
-					movement_type = m_capture;
+					_set_type = m_capture;
 					break;
 				case "m_patrol":
-					movement_type = m_patrol;
+					_set_type = m_patrol;
 					break;
 				case "m_roam":
-					movement_type = m_roam;
+					_set_type = m_roam;
 					break;
 				case "m_protect":
-					movement_type = m_protect;
+					_set_type = m_protect;
 					break;
 				case "m_follow":
-					movement_type = m_follow;
+					_set_type = m_follow;
 					break;
 				case "m_engage":
-					movement_type = m_engage;
+					_set_type = m_engage;
 					break;
 				case "m_haste":
-					movement_type = m_haste;
+					_set_type = m_haste;
+					break;
 				case "m_move":
-				default: movement_type = m_move;
+				default: _set_type = m_move;
 			}
 			
 			// Drop instance
 			release = false;
 	
 			// Set goal
-			pathGoalX	= _mouse_x + random_range(-15, 15);
-			pathGoalY	= _mouse_y + random_range(-15, 15);
+			goal_x	= _mouse_x + random_range(-15, 15);
+			goal_y	= _mouse_y + random_range(-15, 15);
 			
-			m_sm.swap(movement_type);
+			b_sm.swap(b_idle)
+			m_sm.swap(_set_type);
+			
+			// event_user(1);
+		}
+	}
+
+	close_context(-1);
+}
+	
+function scr_context_behavior(_behavior) {
+	var _width = ds_grid_width(global.instGrid);
+	
+	var _set_type;
+	
+	for(var i = 0; i < _width; i++)
+	{
+		var _inst = ds_grid_get(global.instGrid, i, 0);
+		
+		if !instance_exists(_inst)
+			continue;
+			
+		if _inst.object_index != oInfantry
+			continue;
+		
+		with(_inst)
+		{
+			switch(_behavior)
+			{
+				case "b_defensive":
+					_set_type = b_defensive;
+					break;
+				case "b_aggressive":
+					_set_type = b_aggressive;
+					break;
+				case "b_passive":
+				default: _set_type = b_passive;
+			}
+			
+			// Drop instance
+			//release = false;
+			
+			b_sm.swap(_set_type);
 			
 			// event_user(1);
 		}

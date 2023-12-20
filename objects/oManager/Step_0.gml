@@ -154,6 +154,8 @@ while(steam_net_packet_receive())
 
 #region GUI creation
 
+global.mouse_on_ui = false;
+
 // Positioning value
 var _centerX = global.RES_W/2;
 

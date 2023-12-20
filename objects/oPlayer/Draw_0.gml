@@ -1,7 +1,7 @@
 /// @description Debug && MouseBox
 
 // Draw Box
-if mousePress == press_type.box
+if left_mouse_state == mouse_type.box
 	draw_rectangle(mouseLeftPress_x, mouseLeftPress_y, mouse_x, mouse_y, true);
 	
 // Display placement of new building
@@ -19,7 +19,7 @@ image_blend = hash_color;
 
 #region Zoning
 
-if(zoning > 0 && !global.mouseUI)
+if(zoning > 0 && !global.mouse_on_ui)
 {	
 	var _buildingsAmount = instance_number(oParZone);
 	

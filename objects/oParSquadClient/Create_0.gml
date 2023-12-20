@@ -19,5 +19,5 @@ team		= 0;		// Which team its on
 numColor	= 0;		// number relating to "red" or "blue" using an enum: color.red = 0
 hash_color	= noone;	// "red" or "blue"
 
-pathGoalX = x;
-pathGoalY = y;
+goal_x = x;
+goal_y = y;

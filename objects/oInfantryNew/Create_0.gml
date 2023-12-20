@@ -7,8 +7,8 @@ fast_speed = 1.8;
 #endregion
 #region Pathfinding		Variables
 path = path_add();
-pathGoalX = x;
-pathGoalY = y;
+goal_x = x;
+goal_y = y;
 selected	= false;
 #endregion
 #region Health			Variables
@@ -30,7 +30,7 @@ idleState.update = function() {
 moveToLocState = new State();
 moveToLocState.create = function() {
     // Within moveToLocState's update
-	if (distance_to_point(pathGoalX, pathGoalY) < 5) {
+	if (distance_to_point(goal_x, goal_y) < 5) {
 	    sm.swap(idleState); // Switch to Idle when close to the target
 	}
 };

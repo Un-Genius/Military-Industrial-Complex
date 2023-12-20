@@ -6,91 +6,72 @@ var _key_down	= keyboard_check(ord("S"));
 var _key_left	= keyboard_check(ord("A"));
 var _key_right	= keyboard_check(ord("D"));
 
-// Additional button
-var _key_ctrl	= keyboard_check(vk_control);
-
-// Left Click
-var _click_left_pressed		= device_mouse_check_button_pressed(0, mb_left);
-var _click_left_released	= device_mouse_check_button_released(0, mb_left);
-
-// Right Click
-var _click_right_pressed	= device_mouse_check_button_pressed(0, mb_right);
-var _click_right_released	= device_mouse_check_button_released(0, mb_right);
-
 // Raw Input
 var _key_rawInput = keyboard_key;
 
-#region Double Click OLD
-/*
-var _click_left_double = false;
+// Additional button
+var _key_ctrl	= keyboard_check(vk_control);
 
-if left_press_type == left_press.holding
+// Get mouse button states
+var _click_left_pressed = device_mouse_check_button_pressed(0, mb_left);
+var _click_left_released = device_mouse_check_button_released(0, mb_left);
+
+var _click_right_pressed = device_mouse_check_button_pressed(0, mb_right);
+var _click_right_released = device_mouse_check_button_released(0, mb_right);
+
+// Handle left click
+if (_click_left_pressed)
 {
-	
-	// Reset
-	left_press_type = left_press.noone;
+    left_mouse_state = mouse_type.pressed;
+	mouseLeftPress_x = mouse_x;
+	mouseLeftPress_y = mouse_y;
 }
 else
 {
-	if left_press_type == left_press.once
-	{	
-		if _click_left_pressed
+	if (_click_left_released)
+	{
+	    if (current_time - last_left_click_time <= double_click_threshold)
 		{
-			left_press_type = left_press.twice;
-			_click_left_double = true;
-		}
+	        left_mouse_state = mouse_type.released_twice;
+	    }
+		else
+		{
+			left_mouse_state = mouse_type.released;
+			last_left_click_time = current_time;
+	    }
 	}
 	else
+		if left_mouse_state == mouse_type.released || left_mouse_state == mouse_type.released_twice
+			left_mouse_state = mouse_type.noone;
+}
+
+// Handle right click
+if (_click_right_pressed)
+{
+    right_mouse_state = mouse_type.pressed;
+	mouseRightPress_x = mouse_x;
+	mouseRightPress_y = mouse_y;
+}
+else
+{
+	if (_click_right_released)
 	{
-		// If pressed, 
-		if _click_left_pressed
+		var _difference = current_time - last_right_click_time;
+	    if (_difference <= double_click_threshold)
 		{
-			left_press_type = left_press.once;
-			alarm[0] = 0.25 * room_speed;
+	        right_mouse_state = mouse_type.released_twice;
 		}
-
-		// If pressed, 
-		if _click_right_pressed
+		else
 		{
-			left_press_type = left_press.once;
-			alarm[1] = 0.25 * room_speed;
-		}
+			right_mouse_state = mouse_type.released;
+			last_right_click_time = current_time;
+	    }
 	}
-}
-*/
-#endregion
-
-if (_click_left_pressed) {
-    if (current_time - last_click_time <= double_click_threshold) {
-        // Double click detected
-        left_press_type = press_type.twice;
-        // Handle the double click event
-        //handle_double_click();
-    } else {
-        left_press_type = press_type.once;
-    }
-    
-    last_click_time = current_time;
-}
-else {
-	left_press_type = press_type.noone;
+	else
+		if right_mouse_state == mouse_type.released || right_mouse_state == mouse_type.released_twice
+			right_mouse_state = mouse_type.noone;
 }
 
-if (_click_left_pressed) {
-    if (current_time - last_click_time <= double_click_threshold) {
-        // Double click detected
-        right_press_type = press_type.twice;
-        // Handle the double click event
-        //handle_double_click();
-    } else {
-        right_press_type = press_type.once;
-    }
-    
-    last_click_time = current_time;
-}
-else {
-	right_press_type = press_type.noone;
-}
 
 #endregion
 
@@ -118,7 +99,7 @@ clamp_to_room();
 if x != xprevious || y != yprevious
 {
 	// Update doppelganger
-	path_goal_multiplayer_update(x, y, pathGoalX, pathGoalY);
+	path_goal_multiplayer_update(x, y, goal_x, goal_y);
 	
 	xprevious = x;
 	yprevious = y;
@@ -141,7 +122,7 @@ mouse_box();
 #region Double select
 
 // Double click an instance
-if left_press_type == press_type.twice && instance_selected != noone
+if left_mouse_state == mouse_type.released_twice && instance_selected != noone
 {
 	// Find name of selected instance
 	//var _objName	= object_get_name(instance_selected.object_index);

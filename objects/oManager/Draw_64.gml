@@ -102,7 +102,7 @@ if(global.debugMenu > 0)
 			#region Mouse UI
 			draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Mouse over UI: ");
 			
-			if(global.mouseUI)
+			if(global.mouse_on_ui)
 			{
 				// Draw active
 				draw_text_color(_Lx + 150, _Ly + (_LInc * _LIncStep), "TRUE", c_green, c_green, c_green, c_green, 1);

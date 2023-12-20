@@ -3,15 +3,21 @@ function StateMachine() constructor {
     static nullState = new State();
 
     state = nullState;
+	prev_state = nullState;
 	state_name = "null";
     time = 0;
 
     // Swap to a new state
     swap = function(_state = nullState) {
         state.destroy();
-
-        state = _state;
-		state_name = _state.state_name;
+		
+		if state != _state
+		{
+			prev_state = state;
+			state = _state;
+			state_name = _state.state_name;
+		}
+		
         time = 0;
 
         state.create();
@@ -36,7 +42,7 @@ function State(name="null") constructor {
 }
 
 function enemy_in_range() {
-	var _list = enemy_list();
+	var _list = enemy_list(weapon_range, team);
 	var _enemy_in_range = ds_list_size(_list) > 0
 	
 	ds_list_destroy(_list);
@@ -46,9 +52,44 @@ function enemy_in_range() {
 		
 	return true
 }
+	
+function enemy_in_view() {
+	var _list = enemy_list(view_distance, team);
+	var _enemy_in_range = ds_list_size(_list) > 0
+	
+	ds_list_destroy(_list);
+	
+	if !_enemy_in_range
+		return false
+		
+	return true
+}
+	
+function enemy_in_roam() {}
+
+function is_low_health() {
+	if health > (max_health/4)
+		return false;
+	
+	return true;
+}
+	
+function is_idle() {
+	var _idleness = true;
+	
+	for(var i = 0; i < argument_count; i++)
+	{
+		var _state_name = argument[i].state_name;
+		var _count = string_count("idle", _state_name);
+		if _count == 0
+			_idleness = false;
+	}		
+	
+	return _idleness;
+}
 
 function nearest_enemy() {
-	var _list = enemy_list();
+	var _list = enemy_list(view_distance, team);
 	var _enemy_in_range = ds_list_size(_list) > 0
 	
 	if !_enemy_in_range
@@ -64,14 +105,24 @@ function nearest_enemy() {
 	return _inst;
 }
 
-function enemy_list() {
-    var enemy = oInfantryAI;
-	if id.object_index == oInfantryAI
-		enemy = oInfantry;
+function enemy_list(_distance, _team) {
+    var _object = oInfantry;
 		
 	var _list = ds_list_create();
 
-    var enemies_in_range = collision_circle_list(x, y, weapon_range, enemy, false, true, _list, true);
+    var enemies_in_range = collision_circle_list(x, y, _distance, _object, false, true, _list, true);
+	
+	// Filter list
+	for(var i = 0; i < enemies_in_range; i++)
+	{
+		var _inst = ds_list_find_value(_list, i)
+		if _inst.team == _team
+		{
+			ds_list_delete(_list, i);
+			enemies_in_range--;
+			i--;
+		}
+	}
 
     return _list;
 }

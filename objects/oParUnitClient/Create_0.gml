@@ -45,8 +45,8 @@ while instance_place(x, y, oHQ) || instance_place(x, y, oHAB)
 	y += 32;
 	
 // Goal
-pathGoalX = x;
-pathGoalY = y;
+goal_x = x;
+goal_y = y;
 
 pathX = x;
 pathY = y;

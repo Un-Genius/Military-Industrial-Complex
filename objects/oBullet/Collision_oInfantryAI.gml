@@ -32,14 +32,14 @@ if oPlayer.zoom-0.5 < 0.4
 	if _dist <= 1000
 	{
 		_volume = clamp((2000 - _dist) / 800, 0, 0.8);
-		_snd = snd_explosion_light;
+		//_snd = snd_explosion_light;
 	}
 	else
 	{
 		if _dist > 1000
 		{
 			_volume = clamp((2000 - _dist) / 800, 0, 0.8);
-			_snd = choose(snd_explosion_far1, snd_explosion_far2, snd_explosion_far3);
+			//_snd = choose(snd_explosion_far1, snd_explosion_far2, snd_explosion_far3);
 		}
 	}
 }

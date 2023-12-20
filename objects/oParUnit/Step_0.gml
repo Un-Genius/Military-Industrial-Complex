@@ -19,16 +19,16 @@ if state == action.attacking || moveState == action.moving
 
 #region Move to position
 
-if point_distance(x, y, pathGoalX, pathGoalY) > 3
+if point_distance(x, y, goal_x, goal_y) > 3
 {	
 	if moveState != action.moving
 	{			
 		// Update doppelganger
-		path_goal_multiplayer_update(x, y, pathGoalX, pathGoalY);
+		path_goal_multiplayer_update(x, y, goal_x, goal_y);
 		update_state(-1, action.moving);
 		
 		// Start pathfind
-		path_goal_find(x, y, pathGoalX, pathGoalY, path);
+		path_goal_find(x, y, goal_x, goal_y, path);
 	}
 	else
 	{
@@ -98,8 +98,8 @@ if pushTimer > 0.2 * room_speed
 			var _newPosX = lengthdir_x(_spd*1.5, _dir);
 			var _newPosY = lengthdir_y(_spd*1.5, _dir);
 		
-			pathGoalX += _newPosX;
-			pathGoalY += _newPosY;
+			goal_x += _newPosX;
+			goal_y += _newPosY;
 			
 			pushTimer = 0;
 		}
@@ -123,8 +123,8 @@ if riding
 	y = _newY;
 		
 	// set as goal
-	pathGoalX = _newX;
-	pathGoalY = _newY;
+	goal_x = _newX;
+	goal_y = _newY;
 		
 	// Delete from vehicles list
 	var _index = ds_list_find_index(enterVeh.riderList, id)
@@ -380,7 +380,7 @@ switch state
 		
 		image_speed = sprite_get_speed(_sprite);
 		
-		if distance_to_point(pathGoalX, pathGoalY) < 3
+		if distance_to_point(goal_x, goal_y) < 3
 			image_speed = 0;
 		
 		break;

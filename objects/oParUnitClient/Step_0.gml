@@ -13,7 +13,7 @@ if state == action.attacking || moveState == action.moving
 
 #region Move to position
 
-if point_distance(x, y, pathGoalX, pathGoalY) > 3
+if point_distance(x, y, goal_x, goal_y) > 3
 {	
 	if moveState != action.moving
 	{	
@@ -21,7 +21,7 @@ if point_distance(x, y, pathGoalX, pathGoalY) > 3
 		update_state(-1, action.moving);
 		
 		// Start pathfind
-		path_goal_find(x, y, pathGoalX, pathGoalY, path);
+		path_goal_find(x, y, goal_x, goal_y, path);
 	}
 	else
 	{
@@ -87,7 +87,7 @@ switch state
 		
 			image_speed = sprite_get_speed(_sprite);
 		
-			if distance_to_point(pathGoalX, pathGoalY) < 3
+			if distance_to_point(goal_x, goal_y) < 3
 				image_speed = 0;
 		}
 		

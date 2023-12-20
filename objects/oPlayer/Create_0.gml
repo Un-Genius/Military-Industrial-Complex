@@ -16,8 +16,8 @@ contextMenu = false;
 maxTroopsInf = 0;
 
 // Duds
-pathGoalX = 0;
-pathGoalY = 0;
+goal_x = 0;
+goal_y = 0;
 
 // Zoning
 zoning = -1;
@@ -33,27 +33,6 @@ camera_target = oPlayer;
 
 buildingPlaceholder = noone;
 
-// Double click
-// 0 = false
-// 1 = pressed once
-// 2 = pressed twice
-// 3 = Holding down
-
-enum press_type
-{
-	noone,
-	once,
-	twice,
-	holding,
-	drag,
-	box
-}
-
-left_press_type = press_type.noone;
-right_press_type = press_type.noone;
-double_click_threshold = 30;
-last_click_time = -double_click_threshold;
-
 buildingName = "";
 buildingPlacement = noone;
 buildingIntersect = false;
@@ -63,26 +42,37 @@ instances_selected_list = ds_grid_width(global.instGrid);
 
 #region Mouse actions
 
-// 0 = nothing
-// 1 = mouseBox
-// 2 = mouseDrag
-mousePress = press_type.noone;
+// Enum for mouse types
+enum mouse_type {
+    noone,
+    pressed,
+    released,
+    released_twice,
+    holding,
+    dragging,
+    box
+}
 
-// Mouse starting position
+// Initialize variables
+left_mouse_state = mouse_type.noone;
+right_mouse_state = mouse_type.noone;
+double_click_threshold = 200;
+last_left_click_time = -double_click_threshold;
+last_right_click_time = -double_click_threshold;
+
+// Mouse starting positions
 mouseRightPress_x = device_mouse_x(0);
 mouseRightPress_y = device_mouse_y(0);
-
-instRightSelected = noone;
-
 mouseLeftPress_x = mouse_x;
 mouseLeftPress_y = mouse_y;
 
+// Mouse released positions
 mouseLeftReleased_x = device_mouse_x(0);
 mouseLeftReleased_y = device_mouse_y(0);
 
-// Mouse starting position to GUI
-mouseRightPressGui_x	= device_mouse_x_to_gui(0);
-mouseRightPressGui_y	= device_mouse_y_to_gui(0);
+// Mouse position in GUI
+mouseRightPressGui_x = device_mouse_x_to_gui(0);
+mouseRightPressGui_y = device_mouse_y_to_gui(0);
 
 #endregion
 

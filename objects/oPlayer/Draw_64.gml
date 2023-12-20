@@ -40,7 +40,7 @@ if _key_shft
 {
 	var special_sprite = spr_order;
 	
-	if mousePress == press_type.box // Change if making a mouse box
+	if left_mouse_state == mouse_type.box // Change if making a mouse box
 		special_sprite = spr_regroup;
 	
 	draw_sprite_ext(special_sprite, 0, device_mouse_x_to_gui(0)-32, device_mouse_y_to_gui(0)-16, 0.5,0.5,0,image_blend, 1);

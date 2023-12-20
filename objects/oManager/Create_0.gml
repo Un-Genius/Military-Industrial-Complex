@@ -500,7 +500,7 @@ unitCost[objectType.oZoneBootCamp] = 80;
 global.debugMenu = false;
 
 // For when mouse is over UI or world
-global.mouseUI = false;
+global.mouse_on_ui = false;
 
 // Make sure seed is random
 randomize();

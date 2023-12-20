@@ -52,7 +52,3 @@ if !hovering
 	
 // Reset Font
 draw_set_font(ftDefault);
-
-cm_update_position();
-cm_close_distance();
-cm_close();

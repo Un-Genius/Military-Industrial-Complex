@@ -15,8 +15,8 @@ for(var j = 0; j < hp; j++)
 		}
 			
 		// Location
-		var _goalX = pathGoalX - (_dist * (k - (floor(hp/3)/4)));
-		var _goalY = pathGoalY - (_dist * (j - (floor(hp/6))));
+		var _goalX = goal_x - (_dist * (k - (floor(hp/3)/4)));
+		var _goalY = goal_y - (_dist * (j - (floor(hp/6))));
 		
 		// Object to spawn		
 		var _objectString = unit;

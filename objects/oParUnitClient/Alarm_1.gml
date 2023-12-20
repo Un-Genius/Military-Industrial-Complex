@@ -1,5 +1,5 @@
 /// @description Update direction
-if point_distance(x, y, pathGoalX, pathGoalY) > 3
+if point_distance(x, y, goal_x, goal_y) > 3
 {
 	oldPathX = pathX;
 	oldPathY = pathY;
