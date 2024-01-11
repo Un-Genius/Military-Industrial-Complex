@@ -1,1 +1,0 @@
-/// @description Dummy draw event

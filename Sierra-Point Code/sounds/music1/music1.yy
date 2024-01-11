@@ -1,0 +1,23 @@
+{
+  "resourceType": "GMSound",
+  "resourceVersion": "1.0",
+  "name": "music1",
+  "audioGroupId": {
+    "name": "audiogroup_default",
+    "path": "audiogroups/audiogroup_default",
+  },
+  "bitDepth": 1,
+  "bitRate": 128,
+  "compression": 0,
+  "conversionMode": 0,
+  "duration": 199.07918,
+  "parent": {
+    "name": "Music",
+    "path": "folders/MonasteryFramework/02-Sounds/Music.yy",
+  },
+  "preload": false,
+  "sampleRate": 44100,
+  "soundFile": "music1.mp3",
+  "type": 0,
+  "volume": 1.0,
+}
