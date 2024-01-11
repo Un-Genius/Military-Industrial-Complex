@@ -401,13 +401,13 @@ inGame			= false;
 #region Pathfinding Grid
 
 // Create the Grid
-var cell_width	= 8;
-var cell_height = 8;
+#macro grid_cell_width 8
+#macro grid_cell_height 8
 
-var hcells = room_width div cell_width;
-var vcells = room_height div cell_height;
+var hcells = room_width div grid_cell_width;
+var vcells = room_height div grid_cell_width;
 
-global.grid = mp_grid_create(0, 0, hcells, vcells, cell_width, cell_height);
+global.grid = mp_grid_create(0, 0, hcells, vcells, grid_cell_width, grid_cell_width);
 
 #endregion
 

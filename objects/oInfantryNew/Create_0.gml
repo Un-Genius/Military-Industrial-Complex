@@ -12,8 +12,8 @@ goal_y = y;
 selected	= false;
 #endregion
 #region Health			Variables
-max_health = 1;
-health = max_health;
+max_hp = 1;
+hp = max_hp;
 #endregion
 #region State Machine	Variables
 sm = new StateMachine();

@@ -4,8 +4,8 @@
 object_name = "Infantry";
 
 // Health				Variables
-max_health = 20;
-health = max_health;
+max_hp = 20;
+hp = max_hp;
 
 // Movement				Variables
 default_speed = 1;
@@ -43,6 +43,8 @@ bullet_reload_timer = 0;
 #region Dont Touch		Variables
 
 path = path_add();
+path_set_kind(path, false);
+path_set_precision(path, 8);
 goal_x = x;
 goal_y = y;
 
@@ -55,7 +57,6 @@ squadObjectID = noone;
 team		= oManager.team;		// Which team its on
 numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
 hash_color	= oManager.hash_color;	// "red" or "blue"
-
 #endregion
 
 #region State Machines Setup
@@ -67,15 +68,12 @@ b_sm = new StateMachine(); // Handles Strategic Behaviour
 m_idle =	new State("m_idle") {}
 m_move =	new State("m_move") {
 	m_move.create = function() {
-		path_goal_multiplayer_update(x, y, goal_x, goal_y);
-		path_goal_find(x, y, goal_x, goal_y, path);
 		speed = default_speed;
+		alarm[0] = 1;
 	};
 	m_move.update = function() {
-		
 	    if (distance_to_point(goal_x, goal_y) < default_speed*1.5) {
-		    m_sm.swap(m_idle);
-			exit;
+		    m_sm.swap(m_idle); exit;
 		}
 		
 		if path_finished()
@@ -87,74 +85,60 @@ m_move =	new State("m_move") {
 	};
 	m_move.destroy = function() {
 		speed = 0;
+		while(path_get_number(path) > 0)
+		{
+			path_delete_point(path, 0);
+		}
+		goal_x = x;
+		goal_y = y;
 	};
 };
 m_haste =	new State("m_haste") {
 	m_haste.create = function() {
-		path_goal_multiplayer_update(x, y, goal_x, goal_y);
-		path_goal_find(x, y, goal_x, goal_y, path);
 		speed = fast_speed;
+		alarm[0] = 1;
 	}
 	m_haste.update = m_move.update;
 	m_haste.destroy = m_move.destroy;
 };
 m_engage =	new State("m_engage") {
 	m_engage.create = function() {
-		speed = default_speed;
-		
-		if !instance_exists(target_inst)
-		{
-			m_sm.swap(m_idle);
-			exit;
+		if !instance_exists(target_inst) {
+			m_sm.swap(m_idle); exit;
 		}
-		
-		goal_x = target_inst.x;
-		goal_y = target_inst.y;
-		
-		// Update goal
-		path_goal_multiplayer_update(x, y, goal_x, goal_y);
-		path_goal_find(x, y, goal_x, goal_y, path);
+		speed = default_speed;
+		alarm[0] = 1;
 	};
 	m_engage.update = function() {
-		if !instance_exists(target_inst)
-		{
-			m_sm.swap(m_idle);
-			exit;
+		if !instance_exists(target_inst) {
+			m_sm.swap(m_idle); exit;
 		}
 		
-		if m_sm.time % 30
-		{
-			goal_x = target_inst.x;
-			goal_y = target_inst.y;
-		
-			path_goal_multiplayer_update(x, y, goal_x, goal_y);
-			path_goal_find(x, y, goal_x, goal_y, path);
+	    if (distance_to_point(goal_x, goal_y) < weapon_range-(default_speed*10)) {
+			if(is_line_of_sight()) {
+				m_sm.swap(m_idle); exit;
+			}
 		}
-		
-	    if (distance_to_point(goal_x, goal_y) < weapon_range-(speed*5))
-			exit;
 		
 		if path_finished()
 			m_sm.swap(m_idle);
 	};
 	m_engage.destroy = function() {
 		speed = 0;
+		alarm[0] = -1;
+		while(path_get_number(path) > 0)
+		{
+			path_delete_point(path, 0);
+		}
+		goal_x = x;
+		goal_y = y;
 	};
 };
 m_follow =	new State("m_follow") {
 	m_follow.create = m_engage.create;
 	m_follow.update = function() {
 		if !instance_exists(target_inst) {
-			m_sm.swap(m_idle);
-			exit;
-		}
-		
-		if time % 30 {
-			goal_x = target_inst.x;
-			goal_y = target_inst.y;
-		
-			path_goal_multiplayer_update(x, y, goal_x, goal_y);
-			path_goal_find(x, y, goal_x, goal_y, path);
+			m_sm.swap(m_idle); exit;
 		}
 		
 	    if (distance_to_point(goal_x, goal_y) < speed*5)
@@ -177,7 +161,8 @@ m_scout =	new State("m_scout") {}
 a_idle =		new State("a_idle") {
 	a_idle.update = function() {
 		if (enemy_in_range()) {
-			randAudio("snd_smallArmsSpotted", 3, 0.15, 0.05, 0.8, 1.2, x, y);
+			if(random(1) < 0.2)
+				randAudio("snd_smallArmsSpotted", 3, 0.15, 0.05, 0.8, 1.2, x, y);
 		    a_sm.swap(a_shoot);
 		}
 	};
@@ -190,13 +175,15 @@ a_shoot =		new State("a_shoot") {
 		target_inst = nearest_enemy();
 		
 		if target_inst == noone {
-			a_sm.swap(a_idle);
-			exit;
+			a_sm.swap(a_idle); exit;
+		}
+		
+		if(!is_line_of_sight()) {
+			a_sm.swap(a_idle); exit;
 		}
 			
 		if point_distance(x, y, target_inst.x, target_inst.y) > weapon_range {
-			a_sm.swap(a_idle);
-			exit;
+			a_sm.swap(a_idle); exit;
 		}
 			
 		weapon_angle = aim_intercept(id, target_inst, bullet_speed);
@@ -226,7 +213,7 @@ b_passive =		new State("b_passive") {
 		if a_sm.state_name != "a_shoot" && enemy_in_range()
 			a_sm.swap(a_shoot);
 	
-		if is_low_health()
+		if is_low_hp()
 		{
 			if is_idle(a_sm)
 				a_sm.swap(a_heal);
@@ -237,19 +224,22 @@ b_passive =		new State("b_passive") {
 }
 b_aggressive =	new State("b_aggressive") {
 	b_aggressive.update = function() {
-		if a_sm.state_name != "a_shoot" && enemy_in_range()
+		if a_sm.state_name != "a_shoot"
 		{
-			a_sm.swap(a_shoot);
-			m_sm.swap(m_idle);
-		}
-		
-		if a_sm.state_name != "a_shoot" && m_sm.state_name != "m_engage" && enemy_in_view()
-		{
-			target_inst = nearest_enemy();
-			m_sm.swap(m_engage);
+			if enemy_in_range()
+				a_sm.swap(a_shoot);
+			
+			if enemy_in_view()
+			{
+				if m_sm.state_name != "m_engage"
+				{
+					target_inst = nearest_enemy();
+					m_sm.swap(m_engage);
+				}
+			}
 		}
 	
-		if is_idle(a_sm) && is_low_health()
+		if is_idle(a_sm) && is_low_hp()
 			a_sm.swap(a_heal);
 		
 		switch(m_sm.state_name)
@@ -269,7 +259,7 @@ b_defensive =	new State("b_defensive") {
 		if a_sm.state_name != "a_shoot" && enemy_in_range()
 			a_sm.swap(a_shoot);
 	
-		if is_idle(a_sm) && is_low_health()
+		if is_idle(a_sm) && is_low_hp()
 			a_sm.swap(a_heal);
 		
 		switch(m_sm.state_name)

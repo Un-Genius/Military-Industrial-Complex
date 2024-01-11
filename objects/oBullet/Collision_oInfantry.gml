@@ -48,8 +48,6 @@ if oPlayer.zoom-0.5 < 0.4
 var _dmg = damage;
 with(other)
 {
-	health -= _dmg;
-				
 	var partEmit = part_emitter_create(global.P_System);
 	part_type_direction(global.pixelPartType, _bulletDir+120, _bulletDir+240, 0, 0);
 	part_emitter_region(global.P_System, partEmit, x-5, x+5, y-5, y+5, ps_shape_ellipse, ps_distr_linear);
@@ -57,9 +55,17 @@ with(other)
 
 	// Remember to destroy the emitter after the burst so it doesn't keep emitting
 	part_emitter_destroy(global.P_System, partEmit);	
+	
+	hp -= _dmg;
+	
+	if hp <= 0
+	{
+		b_sm.swap(b_idle);
+		instance_destroy();
+	}
 }
 		
 if _snd != noone
 	audio_play_sound(_snd, 0, false, _volume, 0, random_range(0.4, 1));
 	
-instance_destroy(self);
+instance_destroy(_id);

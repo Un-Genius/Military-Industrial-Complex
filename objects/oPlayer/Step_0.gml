@@ -72,6 +72,23 @@ else
 			right_mouse_state = mouse_type.noone;
 }
 
+/* ============================== Alternative Code
+if (_click_right_pressed) {
+    if (current_time - last_click_time <= double_click_threshold) {
+        // Double click detected
+        right_press_type = press_type.twice;
+        // Handle the double click event
+        //handle_double_click();
+    } else {
+        right_press_type = press_type.once;
+    }
+
+    last_click_time = current_time;
+}
+else {
+	right_press_type = press_type.noone;
+}
+*/
 
 #endregion
 
@@ -86,7 +103,7 @@ if _vsp != 0 || _hsp != 0
 	movementSpeed = clamp(movementSpeed + 0.08, 3, 20);
 else
 	movementSpeed = clamp(movementSpeed - 1, 3, 20);
-	
+
 // Sprite aims towards mouse
 image_angle = point_direction(x, y, mouse_x, mouse_y) - 90;
 
@@ -100,7 +117,7 @@ if x != xprevious || y != yprevious
 {
 	// Update doppelganger
 	path_goal_multiplayer_update(x, y, goal_x, goal_y);
-	
+
 	xprevious = x;
 	yprevious = y;
 }
@@ -127,9 +144,9 @@ if left_mouse_state == mouse_type.released_twice && instance_selected != noone
 	// Find name of selected instance
 	//var _objName	= object_get_name(instance_selected.object_index);
 	//var _objAsset	= asset_get_index(_objName);
-	
+
 	var _object = instance_selected.object_index;
-		
+
 	with _object
 	{
 		// Get current camera position
@@ -137,7 +154,7 @@ if left_mouse_state == mouse_type.released_twice && instance_selected != noone
 		var _camY = camera_get_view_y(view_camera[0]);
 		var _camW = camera_get_view_width(view_camera[0]);
 		var _camH = camera_get_view_height(view_camera[0]);
-		
+
 		if bbox_right	> _camX
 		&& bbox_left	< _camX + _camW
 		&& bbox_bottom	> _camY
@@ -145,7 +162,7 @@ if left_mouse_state == mouse_type.released_twice && instance_selected != noone
 		{
 			// Add inst to hand
 			add_Inst(global.instGrid, 0, id);
-			
+
 			selected = true;
 		}
 	}
@@ -159,34 +176,35 @@ if left_mouse_state == mouse_type.released_twice && instance_selected != noone
 if _key_rawInput
 {
 	var _height		= ds_grid_height(global.instGrid);
-	
+
 	// Find correct number
 	for(var i = 0; i < _height - 2; i++)
-	{		
+	{
 		if _key_rawInput == ord(string(i))
 		{
 			for(var o = 0; o < instances_selected_list; o++)
 			{
 				var _hand = ds_grid_get(global.instGrid, o, 0);
-				
+				if (!instance_exists(_hand)) continue;
+
 				if _key_ctrl
 				{
-					// Replace key with hand					
+					// Replace key with hand
 					ds_grid_set(global.instGrid, o, i, _hand);
 				}
 				else
 				{
 					// Replace hand with key
 					var _key = ds_grid_get(global.instGrid, o, i);
-					
+
 					if _hand != 0
 						_hand.selected = false;
-										
+
 					if _key != 0
 						_key.selected = true;
-					
+
 					ds_grid_set(global.instGrid, o, 0, _key);
-				}				
+				}
 			}
 			break;
 		}

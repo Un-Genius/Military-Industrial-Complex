@@ -1,8 +1,6 @@
 if selected
 	draw_circle_color(x, y, 2, c_yellow, c_yellow, true)
 
-draw_self();
-
 if(global.debugMenu)
 {
 	draw_set_font(ftSmall);
@@ -12,4 +10,10 @@ if(global.debugMenu)
 	draw_set_font(ftDefault);
 	
 	draw_circle(x, y, weapon_range, true);
+	draw_path(path, x, y, true);
+	draw_arrow(x, y, goal_x, goal_y, 15)
 }
+
+// Draw Shadow
+draw_sprite_ext(sprite_index, image_index, x + 1, y - 2, image_xscale, image_yscale, image_angle+5, c_dkgray, 0.2);
+draw_self();

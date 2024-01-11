@@ -8,11 +8,16 @@ selected = false;
 object_name = "Squad";
 
 // Health				Variables
-max_health = 1;
-health = max_health;
+max_hp = 1;
+hp = max_hp;
 
 // Movement				Variables
 default_speed = 1;
 fast_speed = 1.8;
+
+moving_x = x;
+moving_y = y;
+moving_target = [];
+shooting_targets = ds_list_create();
 
 alarm[0] = 5;

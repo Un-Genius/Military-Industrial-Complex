@@ -26,7 +26,7 @@ if (_amount_in_range > 0) {
     }
 
     if (same_team) {
-        flag_color = _first_unit.hash_color;
+        flag_color = findColor(_first_unit.hash_color);
         flag_team = _first_unit.team;
         if (capture_progress < _ten_seconds) {
             capture_progress++;

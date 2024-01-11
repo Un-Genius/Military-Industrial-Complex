@@ -67,25 +67,30 @@ function enemy_in_view() {
 	
 function enemy_in_roam() {}
 
-function is_low_health() {
-	if health > (max_health/4)
+function is_line_of_sight() {
+	if !collision_line(x, y, target_inst.x, target_inst.y, oCollision, false, true)
+		return true
+	return false
+}
+
+function is_low_hp() {
+	if hp > (max_hp/4)
 		return false;
 	
 	return true;
 }
-	
+
+// Inputs: m_sm, a_sm, b_sm
 function is_idle() {
-	var _idleness = true;
-	
 	for(var i = 0; i < argument_count; i++)
 	{
 		var _state_name = argument[i].state_name;
 		var _count = string_count("idle", _state_name);
-		if _count == 0
-			_idleness = false;
+		if _count > 0
+			return true;
 	}		
 	
-	return _idleness;
+	return false;
 }
 
 function nearest_enemy() {
