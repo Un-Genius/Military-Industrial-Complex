@@ -9,8 +9,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "OptionsMenu",
-    "path": "folders/MonasteryFramework/00-UI/OptionsMenu.yy",
+    "name": "MenuOptions",
+    "path": "folders/MonasteryFramework/00-UI/MenuOptions.yy",
   },
   "parentObjectId": {
     "name": "objGUISlider",

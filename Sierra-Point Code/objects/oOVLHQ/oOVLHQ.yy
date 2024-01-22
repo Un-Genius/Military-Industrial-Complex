@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Buildings",
-    "path": "folders/Objects/Units/Buildings.yy",
+    "name": "Units",
+    "path": "folders/Objects/Units.yy",
   },
   "parentObjectId": {
     "name": "oParOVL",

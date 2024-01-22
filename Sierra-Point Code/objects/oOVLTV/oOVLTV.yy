@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Transport Vehicle Squad",
-    "path": "folders/Objects/Units/Transport Vehicle Squad.yy",
+    "name": "Old Code",
+    "path": "folders/Old Code.yy",
   },
   "parentObjectId": {
     "name": "oParOVL",

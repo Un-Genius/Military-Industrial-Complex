@@ -1,7 +1,7 @@
 /// @description Update settings every now and then
 
 // Get data
-with(oManager)
+with(oFaction)
 {
 	var _team		= team;
 	var _hashColor	= hash_color;

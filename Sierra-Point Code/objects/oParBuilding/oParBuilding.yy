@@ -13,7 +13,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Buildings",
-    "path": "folders/Objects/Buildings.yy",
+    "path": "folders/Old Code/Buildings.yy",
   },
   "parentObjectId": null,
   "persistent": false,

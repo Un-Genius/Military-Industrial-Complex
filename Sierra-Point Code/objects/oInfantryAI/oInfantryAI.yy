@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Infantry Squad",
-    "path": "folders/Objects/Units/Infantry Squad.yy",
+    "name": "Units",
+    "path": "folders/Objects/Units.yy",
   },
   "parentObjectId": {
     "name": "oInfantry",

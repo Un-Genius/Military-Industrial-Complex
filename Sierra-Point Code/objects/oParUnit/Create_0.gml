@@ -32,9 +32,9 @@ clipSize	= maxClipSize;
 
 #endregion
 
-team		= oManager.team;		// Which team its on
-numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
-hash_color	= oManager.hash_color;	// "red" or "blue"
+team		= oFaction.team;		// Which team its on
+numColor	= oFaction.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
+hash_color	= oFaction.hash_color;	// "red" or "blue"
 
 // Pathfinding
 path = path_add();

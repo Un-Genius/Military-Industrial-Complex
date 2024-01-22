@@ -1,5 +1,5 @@
 // Set Font
-draw_set_font(ftContextMenu);
+draw_set_font_ext(ftContextMenu, c_white, fa_left, fa_top, 1);
 
 cm_background();
 
@@ -49,6 +49,3 @@ for(var i = 0; i < grid_height; i++)
 // Reset hover confirmation
 if !hovering
 	folder_timer = -1;
-	
-// Reset Font
-draw_set_font(ftDefault);

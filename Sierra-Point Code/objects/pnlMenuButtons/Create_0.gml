@@ -19,7 +19,7 @@ gui_create_button(wx, wy, btnWidth, btnHeight, "Start", func_start_game);
 //inst.toggled = true;
 
 wy += btnHeight + btnOffset;
-inst = gui_create_button(wx, wy, btnWidth, btnHeight, "Main Menu", func_room_goto, roomMainFramework);
+inst = gui_create_button(wx, wy, btnWidth, btnHeight, "Main Menu", func_room_goto, roomMenuMain);
 
 
 

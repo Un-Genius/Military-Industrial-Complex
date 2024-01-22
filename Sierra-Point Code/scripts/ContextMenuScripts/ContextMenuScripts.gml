@@ -180,8 +180,8 @@ function cm_close_distance()
 		_x1 = mp_gui_x - outside_padding - (width/2);
 	}
 	
-	hovering = get_hover(_x1, _y1,_x2, _y2)
-	if hovering
+	hovering_proximity = get_hover(_x1, _y1,_x2, _y2)
+	if hovering_proximity
 		exit;
 
 	close_context(_inst);

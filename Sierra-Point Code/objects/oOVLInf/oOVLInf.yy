@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "Infantry Squad",
-    "path": "folders/Objects/Units/Infantry Squad.yy",
+    "name": "Old Code",
+    "path": "folders/Old Code.yy",
   },
   "parentObjectId": {
     "name": "oParOVL",

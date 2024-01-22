@@ -35,7 +35,7 @@ function func_in_game_menu(){
 		array_push(menu_elements, inst);
 		
 		_wy += _btn_height + _btn_offset;
-		inst = gui_create_button(_wx, _wy, _btn_width, _btn_height, "Main Menu", func_room_goto, roomMainFramework);
+		inst = gui_create_button(_wx, _wy, _btn_width, _btn_height, "Main Menu", func_room_goto, roomMenuMain);
 		array_push(menu_elements, inst);
 
 		_wy += _btn_height + _btn_offset;

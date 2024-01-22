@@ -13,8 +13,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "GUI",
-    "path": "folders/Objects/GUI.yy",
+    "name": "Old Code",
+    "path": "folders/Old Code.yy",
   },
   "parentObjectId": null,
   "persistent": false,

@@ -270,7 +270,7 @@ function update_state(_newState, _newMoveState) {
 
 		// Send position and rotation to others
 		var _packet = packet_start(packet_t.update_unit);
-		buffer_write(_packet, buffer_u64, oManager.steamUserName);
+		buffer_write(_packet, buffer_u64, oNetwork.steamUserName);
 		buffer_write(_packet, buffer_u16, _pos);
 		buffer_write(_packet, buffer_s8, state);
 		packet_send_all(_packet);
@@ -289,7 +289,7 @@ function enter_Vehicle_One(_inst) {
 		ds_list_add(riderList, _id);
 
 		var _buffer = packet_start(packet_t.veh_interact);
-		buffer_write(_buffer, buffer_u64, oManager.steamUserName);
+		buffer_write(_buffer, buffer_u64, oNetwork.steamUserName);
 		buffer_write(_buffer, buffer_u16, _id);
 		buffer_write(_buffer, buffer_u8, action.enter);
 		packet_send_all(_buffer);
@@ -328,7 +328,7 @@ function exit_Vehicle_All() {
 
 		// Update doppelganger
 		var _buffer = packet_start(packet_t.veh_interact);
-		buffer_write(_buffer, buffer_u64, oManager.steamUserName);
+		buffer_write(_buffer, buffer_u64, oNetwork.steamUserName);
 		buffer_write(_buffer, buffer_u16, _inst);
 		buffer_write(_buffer, buffer_u8, action.leave);
 		packet_send_all(_buffer);
@@ -486,7 +486,7 @@ function path_goal_multiplayer_update(_x, _y, _pathGoalX, _pathGoalY) {
 
 	// Send position and rotation to others
 	var _packet = packet_start(packet_t.move_unit);
-	buffer_write(_packet, buffer_u64, oManager.steamUserName);
+	buffer_write(_packet, buffer_u64, oNetwork.steamUserName);
 	buffer_write(_packet, buffer_u16, _pos);
 	buffer_write(_packet, buffer_f32, _x);
 	buffer_write(_packet, buffer_f32, _y);
@@ -553,6 +553,7 @@ function path_grid_update() {
 			mp_grid_add_instances(global.grid, _instance, false);
 	}
 
+	/*
 	// Add stationary buildings & weapons for client
 	for(var i = 0; i < instance_number(oParUnitClient); i++)
 	{
@@ -561,6 +562,7 @@ function path_grid_update() {
 		if _instance.movementSpeed == 0
 			mp_grid_add_instances(global.grid, _instance, false);
 	}
+	*/
 }
 
 function path_finished() {
@@ -603,7 +605,7 @@ function steam_get_user_persona_name_w(_id) {
 	_name = "id" + string(_id);
 
 	// Find ID in list
-	var _name = oManager.names[?_id];
+	var _name = oNetwork.names[?_id];
 
 	// Check if it returns positive
 	if (_name == undefined)
@@ -612,13 +614,13 @@ function steam_get_user_persona_name_w(_id) {
 	    steam_get_user_persona_name(_id);
 
 		// Remember it
-	    oManager.names[?_id] = _name;
+	    oNetwork.names[?_id] = _name;
 	}
 	return _name;
 }
 
 function steam_reset_state() {
-	with(oManager)
+	with(oNetwork)
 	{
 		#region Clear all lists and maps
 
@@ -1944,7 +1946,7 @@ function buffer_read_int64(_buffer) {
 #region Send
 
 function packet_send_all(_buffer) {
-	with (oManager)
+	with (oNetwork)
 	{
 		// Get data
 	    var _position = buffer_tell(_buffer);
@@ -1970,7 +1972,7 @@ function packet_send_except(_buffer, _target) {
 	/// @param buf
 	/// @param  except_to_id
 
-	with (oManager)
+	with (oNetwork)
 	{
 	    var _position = buffer_tell(_buffer);
 
@@ -2033,7 +2035,7 @@ function spawn_unit(_object_enum, posX, posY) {
 
 	// Create unit client side
 	var _packet = packet_start(packet_t.add_unit);
-	buffer_write(_packet, buffer_u64, oManager.steamUserName);
+	buffer_write(_packet, buffer_u64, oNetwork.steamUserName);
 	buffer_write(_packet, buffer_u16, _pos);
 	buffer_write(_packet, buffer_u8, _object_enum);
 	buffer_write(_packet, buffer_f32, posX);
@@ -2045,7 +2047,7 @@ function spawn_unit(_object_enum, posX, posY) {
 
 function packet_start(_type) {
 
-	var _buffer = oManager.outbuf;
+	var _buffer = oNetwork.outbuf;
 
 	buffer_seek(_buffer, buffer_seek_start, 0);
 	buffer_write(_buffer, buffer_u8, _type);
@@ -2964,7 +2966,7 @@ function chat_add(_client, _text, _color) {
 
 function chat_send(_string, _color) {
 
-	with(oManager)
+	with(oNetwork)
 	{
 		if(lobby)
 		{
@@ -3010,7 +3012,7 @@ function scr_GUI_list3() {
 	// Update resources
 	global.supplies = ds_grid_get(global.savedSettings, 1, setting.spawn_points);
 
-	with(oManager)
+	with(oNetwork)
 	{
 		// Update everyone else
 		var _buffer = packet_start(packet_t.data_map);
@@ -3023,7 +3025,7 @@ function scr_GUI_list3() {
 
 // Color
 function scr_GUI_list4() {
-	with(oManager)
+	with(oNetwork)
 	{
 		// Hold previous color
 		var _prevNumColor = numColor;
@@ -3101,7 +3103,7 @@ function scr_GUI_list8() {
 	// Get data
 	var _windowType = ds_grid_get(global.savedSettings, 1, setting.fullscreen);
 
-	with(oManager)
+	with(oNetwork)
 	{
 		window_set_fullscreen(_windowType);
 
@@ -3150,7 +3152,7 @@ function scr_GUI_list8() {
 // Game Mode
 function scr_GUI_list13() {
 
-	with(oManager)
+	with(oNetwork)
 	{
 		// Update GUI
 		alarm[3] = 1;
@@ -3165,7 +3167,7 @@ function scr_GUI_list14() {
 	// Get data
 	var _gameMode = ds_grid_get(global.savedSettings, 1, setting.game_mode);
 
-	with(oManager)
+	with(oNetwork)
 	{
 		// Update team
 		team = ds_grid_get(global.savedSettings, 1, setting.team_number) + 1;

@@ -28,7 +28,7 @@ inst.width = btnWidth;
 inst.height = btnHeight div 4;
 
 wy += btnHeight + btnOffset;
-inst = gui_create_button(wx, wy, btnWidth, btnHeight, "Main Menu", func_room_goto, roomMainFramework);
+inst = gui_create_button(wx, wy, btnWidth, btnHeight, "Main Menu", func_room_goto, roomMenuMain);
 #endregion
 
 #region LOAD INI

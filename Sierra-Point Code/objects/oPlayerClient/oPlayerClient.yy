@@ -12,7 +12,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": ".Client",
-    "path": "folders/Objects/Units/.Client.yy",
+    "path": "folders/Old Code/.Client.yy",
   },
   "parentObjectId": null,
   "persistent": false,

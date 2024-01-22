@@ -54,9 +54,9 @@ target_inst = noone;
 
 squadObjectID = noone;
 
-team		= oManager.team;		// Which team its on
-numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
-hash_color	= oManager.hash_color;	// "red" or "blue"
+team		= oFaction.team;		// Which team its on
+numColor	= oFaction.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
+hash_color	= oFaction.hash_color;	// "red" or "blue"
 #endregion
 
 #region State Machines Setup
@@ -68,10 +68,12 @@ b_sm = new StateMachine(); // Handles Strategic Behaviour
 m_idle =	new State("m_idle") {}
 m_move =	new State("m_move") {
 	m_move.create = function() {
+
 		speed = default_speed;
 		alarm[0] = 1;
 	};
 	m_move.update = function() {
+
 	    if (distance_to_point(goal_x, goal_y) < default_speed*1.5) {
 		    m_sm.swap(m_idle); exit;
 		}
@@ -84,13 +86,16 @@ m_move =	new State("m_move") {
 		//y += lengthdir_y(speed, _pathDir);
 	};
 	m_move.destroy = function() {
+
 		speed = 0;
+		/*
 		while(path_get_number(path) > 0)
 		{
 			path_delete_point(path, 0);
 		}
 		goal_x = x;
 		goal_y = y;
+		*/
 	};
 };
 m_haste =	new State("m_haste") {
@@ -204,12 +209,14 @@ a_skill =		new State("a_skill") {};
 #region Behavior States
 b_idle =		new State("b_idle") {
 	b_idle.update = function() {
-		if is_idle(a_sm, m_sm)
+
+		if is_idle(a_sm) && is_idle(m_sm)
 			b_sm.swap(b_sm.prev_state);
 	}
 }
 b_passive =		new State("b_passive") {
 	b_passive.update = function() {
+
 		if a_sm.state_name != "a_shoot" && enemy_in_range()
 			a_sm.swap(a_shoot);
 	
@@ -301,7 +308,7 @@ audio_pause_sound(movingSound);
 #endregion
 
 #region Spawn in the Open
-while instance_place(x, y, oHQ) || instance_place(x, y, oObject)
+while instance_place(x, y, oObject)
 {
 	x += irandom_range(-2, 2);
 	y += irandom_range(-2, 2);

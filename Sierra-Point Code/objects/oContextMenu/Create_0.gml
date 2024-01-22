@@ -20,6 +20,7 @@ padding = 5;
 outside_padding = 300;
 slot_height = 0;
 hovering = false;
+hovering_proximity = false
 cm_background_height = 0;
 height_level = 0;
 

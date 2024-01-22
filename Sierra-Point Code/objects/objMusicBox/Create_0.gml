@@ -15,7 +15,7 @@ playlistB[0] = music2;
 
 //add your alternative rooms here
 lstAltRooms = ds_list_create();
-ds_list_add(lstAltRooms, roomPlayMenu);
+ds_list_add(lstAltRooms, roomMenuPlay);
 
 
 roomType = "PLAY_A"; //PLAY_A, PLAY_B

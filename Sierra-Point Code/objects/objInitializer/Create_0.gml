@@ -3,19 +3,6 @@
 ///LOAD SOUND ALWAYS ON
 audio_group_load(AlwaysOn);
 
-#region RESIZE GAME WINDOW AND SURFACE
-
-// 1920, 1080 is default
-var _width = display_get_width();
-var _height = display_get_height();
-
-surface_resize(application_surface, _width, _height);
-window_set_size(_width, _height);
-
-window_set_fullscreen(true);
-
-#endregion
-
 #region INI FILE
 ini_open("CONFIG.INI");
 
@@ -36,6 +23,14 @@ ini_close();
 instance_create(-1000, -1000, objMouseGui);
 instance_create(-1000, -1000, objParticleEngine);
 instance_create(-1000, -1000, objGamepadDetector);
+instance_create(-1000, -1000, oSaveLoad);
+instance_create(-1000, -1000, oCamera);
+instance_create(-1000, -1000, oChat);
+instance_create(-1000, -1000, oNetwork);
+instance_create(-1000, -1000, oFaction);
+instance_create(-1000, -1000, oPathfinder);
+instance_create(-1000, -1000, oBuildingTool);
+instance_create(-1000, -1000, oMap);
 
 #endregion
 
@@ -44,111 +39,48 @@ instance_create(-1000, -1000, objGamepadDetector);
 lang_initialize();
 rebind_keys_initialize();
 
-#endregion
-
-#region GAME ENUMS
-
-randomize();
-
-global.character_list	= ds_list_create();
-global.gender			= "Elder";
-global.name				= "Greenie";
-global.in_game_menu		= 0;
-global.chatGPT			= "gpt-3.5-turbo";
-global.gameLanguage		= "English";
-global.debug			= false;
-
-enum types
-{
-	text,
-	choice,
-	input,
-	GeneratedText
-}
-
-enum generatedTextState
-{
-	idle,
-	sent,
-	received
-}
-
-enum effect
-{
-	normal,
-	shakey,
-	wave,
-	colour_shift,
-	wave_and_colour_shift,
-	spin,
-	pulse,
-	flicker
-}
-
-enum keyTypes
-{
-	text,
-	effects,
-	effects_color,
-	effects_color_speed
-}
+global.language_font = fntStandard;
 
 #endregion
 
-#region ChatGPT GLOBAL VARS
+#region Pathfinding Grid
 
-global.prompt_GPT_discussion = 
-	"Game Context: '''You are a character " +
-	"with a strong personality and mostly ignorant about LDS." +
-	"You're at home in an apartment.'''" +
-	
-	"Purpose: '''Show interest in your question " +
-	"If the user answers the question and gives an invitation, set the win_condition to true." +
-	"Your responses should be formatted in JSON.'''";
+// Create the Grid
+#macro grid_cell_width 8
+#macro grid_cell_height 8
 
-var _keys =
-	" Json Keys: 'response', 'emotion', " +
-	"'end_conversation', 'win_condition'. " +
-	"'visible_to_player', 'win_condition' & 'end_conversation' are booleans. " +
-	"'emotion' = 0:neutral, 1:postive, 2:negative, 3:curious, 4:learning, 5:confused, 6:weirded out. " +
-	"'end_conversation' if conversation is finished or if the player is rude or weird. " +
-	" Example: '''{ \"response\": \"Who are you? I don't know about religion.\", \"emotion\": 0, \"end_conversation\": false, \"win_condition\": false }'''";
+var hcells = room_width div grid_cell_width;
+var vcells = room_height div grid_cell_width;
 
-//" Json Keys: 'response', 'emotion', 'visible_to_player', " +
-
-global.prompt_GPT_discussion += _keys;
-
-global.questions_of_the_soul = [
-	"Does God exist? Who is God?",
-	"Does God know me and care about me? How can I feel His love? How can I feel closer to Him?",
-	"What is the purpose of life?",
-	"Why is life so hard sometimes? How can I find strength during hard times?",
-	"How can I find peace in times of turmoil?",
-	"How can I be happier?",
-	"How can I be a better person?",
-	"How can I feel God’s forgiveness?",
-	"What happens after I die?",
-	"How can I contribute to the spiritual well-being of my family?",
-	"How can I help my children build strength to resist temptation?",
-	"How can obeying God’s commandments help me have a happier, more abundant life?"
-]
-
-global.prompt_GPT_Points =
-	"Review the input and generate a JSON response." +
-	"Answer each key with the value '0' for No, '1' for Yes, and '-1' for Not Relevant." +
-	"- 'askQuestion' if the player asked a question" +
-	"- 'openEnded' if the question asked was open-ended" +
-	"- 'onTopic' if the player's text touches on the topic of the goal" +
-	"- 'empathetic' if the player's text is empathetic" +
-	"- 'teaching' if the player's text is teaching something" +
-	"- 'inviteAction' if the player's text is inviting the NPC to act" +
-	"- 'inappropriate' if the player's text is inappropriate" +
-	"Example: { askQuestion: 1, openEnded: 1, onTopic: 1, empathetic: 1, teaching: -1, inviteAction: -1, inappropriate: 0 }"
+global.grid = mp_grid_create(0, 0, hcells, vcells, grid_cell_width, grid_cell_width);
 
 #endregion
+
+#region Unit data structures
+
+// Hold all units controlled by the player
+global.unitList = ds_list_create();
+
+// Holds a list for all other players and links it to the their ID
+global.multiInstMap = ds_map_create();
+
+// Create a grid to store held instances
+/*
+Height:
+0		- instances currently selected
+1-11	- instances stored in a number
+*/
+
+var _height = 12; // -1
+global.instGrid	= ds_grid_create(0, _height);
+
+#endregion
+
+// Debug menu
+global.debug = false;
+
+// For when mouse is over UI or world
+global.mouse_on_ui = false;
 
 ///GO TO MAIN ROOM
-room_goto(roomMainFramework);
-
-
-
+room_goto(roomMenuMain);

@@ -1,7 +1,7 @@
 if selected
 	draw_circle_color(x, y, 2, c_yellow, c_yellow, true)
 
-if(global.debugMenu)
+if(global.debug)
 {
 	draw_set_font(ftSmall);
 		draw_text(x+4, y, "Move State: " + string(m_sm.state_name));

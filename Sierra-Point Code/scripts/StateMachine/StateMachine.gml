@@ -10,7 +10,7 @@ function StateMachine() constructor {
     // Swap to a new state
     swap = function(_state = nullState) {
         state.destroy();
-		
+
 		if state != _state
 		{
 			prev_state = state;
@@ -19,7 +19,7 @@ function StateMachine() constructor {
 		}
 		
         time = 0;
-
+		
         state.create();
     }
 

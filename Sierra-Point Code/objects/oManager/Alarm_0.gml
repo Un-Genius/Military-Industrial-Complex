@@ -5,8 +5,8 @@ if state != menu.public
 	exit;
 
 // only fetch lobbies of same game version:
-steam_lobby_list_add_string_filter("game_name",		oManager.game_name,				steam_lobby_list_filter_eq);
-steam_lobby_list_add_string_filter("game_version",	string(oManager.game_version),	steam_lobby_list_filter_eq);
+steam_lobby_list_add_string_filter("game_name",		oNetwork.game_name,				steam_lobby_list_filter_eq);
+steam_lobby_list_add_string_filter("game_version",	string(oNetwork.game_version),	steam_lobby_list_filter_eq);
 steam_lobby_list_request();
 
 // Find size

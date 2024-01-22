@@ -47,7 +47,7 @@ for(var j = 0; j < hp; j++)
 		//ds_grid_resize(global.instGrid, _width + 1, _height);	
 					
 		var _packet = packet_start(packet_t.add_attached_unit);
-		buffer_write(_packet, buffer_u64, oManager.steamUserName);
+		buffer_write(_packet, buffer_u64, oNetwork.steamUserName);
 		buffer_write(_packet, buffer_u16, _pos);
 		buffer_write(_packet, buffer_string, _objectString);
 		buffer_write(_packet, buffer_f32, _goalX);

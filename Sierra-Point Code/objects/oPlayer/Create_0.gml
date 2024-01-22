@@ -1,9 +1,9 @@
 // Move speed
 movementSpeed = 1;
 
-numColor = oManager.numColor;
+numColor = c_white;
 
-hash_color = oManager.hash_color;
+hash_color = findColor(numColor);
 
 // Create and clear list
 contextInstList = ds_list_create();
@@ -39,8 +39,6 @@ buildingIntersect = false;
 
 instance_selected = noone;
 instances_selected_list = ds_grid_width(global.instGrid);
-
-instance_create_layer(0,0,"GUI", objInGameController)
 
 #region Mouse actions
 

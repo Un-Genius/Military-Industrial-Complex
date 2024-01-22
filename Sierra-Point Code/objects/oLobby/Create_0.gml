@@ -4,7 +4,7 @@ maxHeight	= sprite_get_height(spr_lobbybox);
 sprite_size = sprite_get_height(spr_lobbybox);
 
 // Get data
-with(oManager)
+with(oNetwork)
 {
 	var _username	= steam_get_user_persona_name_w(steamUserName);
 	var _team		= team;

@@ -11,7 +11,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Infantry Squad",
-    "path": "folders/Objects/Units/Infantry Squad.yy",
+    "path": "folders/Old Code/Infantry Squad.yy",
   },
   "parentObjectId": {
     "name": "oObject",

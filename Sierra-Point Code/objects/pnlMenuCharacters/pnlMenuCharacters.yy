@@ -8,8 +8,8 @@
   "managed": true,
   "overriddenProperties": [],
   "parent": {
-    "name": "PlayMenu",
-    "path": "folders/MonasteryFramework/00-UI/PlayMenu.yy",
+    "name": "MenuPlay[OLD]",
+    "path": "folders/MonasteryFramework/00-UI/MenuPlay[OLD].yy",
   },
   "parentObjectId": {
     "name": "objGUIPanel",

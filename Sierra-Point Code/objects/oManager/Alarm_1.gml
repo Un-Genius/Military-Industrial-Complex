@@ -1,18 +1,5 @@
 /// @description Spawn first instances
 
-if lobby_is_owner
-{
-	// Find player 1 spawn location
-	var _x = ds_grid_get(spawnPointGrid, 0, 0);
-	var _y = ds_grid_get(spawnPointGrid, 1, 0);
-}
-else
-{
-	// Find player 2 spawn location
-	var _x = ds_grid_get(spawnPointGrid, 0, 1);
-	var _y = ds_grid_get(spawnPointGrid, 1, 1);
-}
-
 
 // Create HQ
 spawn_unit(objectType.oPlayer, _x, _y);

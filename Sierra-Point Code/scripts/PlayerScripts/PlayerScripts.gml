@@ -18,23 +18,23 @@ function zoning_switch()
 
 	switch(keyboard_lastkey)
 	{
-	    case ord("1"):
+	    case ord("E"):
 	        zoning = (zoning == objectType.oZoneCamp) ? -1 : objectType.oZoneCamp;
 	        break;
 
-	    case ord("2"):
+	    case ord("T"):
 	        zoning = (zoning == objectType.oZoneMoney) ? -1 : objectType.oZoneMoney;
 	        break;
 
-	    case ord("3"):
+	    case ord("R"):
 	        zoning = (zoning == objectType.oZoneSupplies) ? -1 : objectType.oZoneSupplies;
 	        break;
 
-	    case ord("4"):
+	    case ord("Y"):
 	        zoning = (zoning == objectType.oZoneBootCamp) ? -1 : objectType.oZoneBootCamp;
 	        break;
 
-	    case ord("5"):
+	    case ord("Q"):
 	        zoning = (zoning == objectType.oInfantry) ? -1 : objectType.oInfantry;
 	        break;
 
@@ -71,7 +71,7 @@ function zoning_display()
 	if global.mouse_on_ui
 		return;
 
-	//var _cost = oManager.unitCost[zoning];;
+	//var _cost = oFaction.unitCost[zoning];;
 
 	if buildingPlaceholder != noone
 		return;
@@ -371,7 +371,7 @@ function context_menu_unit_actions(_instSel)
 }
 function context_menu_debug()
 {
-	if(!global.debugMenu)
+	if(!global.debug)
 		return;
 	with(instance_find(oContextMenu, 0)) {
 		//add_context("break", on_click, false);
@@ -627,5 +627,68 @@ function select_squad_instances(squad_instance) {
 			add_Inst(global.instGrid, 0, id);
 			selected = true;
 		}
+	}
+}
+	
+function get_hot_key() {
+    for (var i = 0; i <= 9; i++) {
+        var key = ord(string(i));
+        if (keyboard_check_released(key))
+            return i;
+    }
+    return -1;
+}
+
+function store_hand() {
+	var _hot_key = get_hot_key()
+	var _key_shift	= keyboard_check(vk_shift);
+	//keyboard_lastchar = "";
+
+	if (_hot_key == -1)
+		exit;
+		
+	if !_key_shift
+		exit;
+	
+	var _ds_grid = global.instGrid;
+	wipe_Hand(_ds_grid, _hot_key)
+	
+	var _width	= ds_grid_width(_ds_grid);
+	for(var i = 0; i < _width; i++)
+	{
+		var _hand = ds_grid_get(_ds_grid, i, 0);
+		
+		if !instance_exists(_hand)
+			continue
+		
+		add_Inst(_ds_grid, _hot_key, _hand)
+	}
+}
+
+function retrieve_hand() {
+	
+	var _hot_key = get_hot_key()
+	var _key_shift	= keyboard_check(vk_shift);
+	//keyboard_lastchar = "";
+
+	if (_hot_key == -1)
+		exit;
+		
+	if _key_shift
+		exit;
+	
+	var _ds_grid = global.instGrid;
+	var _width	= ds_grid_width(_ds_grid);
+	
+	wipe_Hand(_ds_grid, 0)
+	
+	for(var i = 0; i < _width; i++)
+	{
+		var _hand = ds_grid_get(_ds_grid, i, _hot_key);
+		if !instance_exists(_hand)
+			continue
+		
+		_hand.selected = true;
+		add_Inst(_ds_grid, 0, _hand)
 	}
 }

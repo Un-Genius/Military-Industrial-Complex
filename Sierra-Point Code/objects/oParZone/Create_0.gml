@@ -1,7 +1,7 @@
 // Update pathfinding
 path_grid_update();
 
-cost = oManager.unitCost[obj_to_enum(id.object_index)];
+cost = oFaction.unitCost[obj_to_enum(id.object_index)];
 
 event_user(0);
 
@@ -45,9 +45,9 @@ squadObjectID = noone;
 
 #endregion
 
-team		= oManager.team;		// Which team its on
-numColor	= oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
-hash_color	= oManager.hash_color;	// "red" or "blue"
+team		= 0//oManager.team;		// Which team its on
+numColor	= color.white //oManager.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
+hash_color	= "white" //oManager.hash_color;	// "red" or "blue"
 
 // Parent ID
 squadID = noone;

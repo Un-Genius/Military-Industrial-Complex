@@ -1,4 +1,4 @@
-if global.debugMenu
+if global.debug
 {
 	//draw_circle(x, y, range, true);
 	draw_path(path, x, y, true);

@@ -1,8 +1,12 @@
+hovering = gui_is_mouse_over();
+
+if hovering
+	exit;
+
 x = mouse_x div 2 * 2;
 y = mouse_y div 2 * 2;
 
-var _cost = oManager.unitCost[buildingType];
-
+var _cost = oFaction.unitCost[buildingType];
 var _click_left_released	= device_mouse_check_button_released(0, mb_left);
 var _click_right_released	= device_mouse_check_button_released(0, mb_right);
 

@@ -1,5 +1,5 @@
 function scr_GUI_Save() {
-	with(oManager)
+	with(oNetwork)
 	{
 		#region Save options
 			

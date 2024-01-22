@@ -6,12 +6,6 @@ var _key_down	= keyboard_check(ord("S"));
 var _key_left	= keyboard_check(ord("A"));
 var _key_right	= keyboard_check(ord("D"));
 
-// Raw Input
-var _key_rawInput = keyboard_key;
-
-// Additional button
-var _key_ctrl	= keyboard_check(vk_control);
-
 // Get mouse button states
 var _click_left_pressed = device_mouse_check_button_pressed(0, mb_left);
 var _click_left_released = device_mouse_check_button_released(0, mb_left);
@@ -71,24 +65,6 @@ else
 		if right_mouse_state == mouse_type.released || right_mouse_state == mouse_type.released_twice
 			right_mouse_state = mouse_type.noone;
 }
-
-/* ============================== Alternative Code
-if (_click_right_pressed) {
-    if (current_time - last_click_time <= double_click_threshold) {
-        // Double click detected
-        right_press_type = press_type.twice;
-        // Handle the double click event
-        //handle_double_click();
-    } else {
-        right_press_type = press_type.once;
-    }
-
-    last_click_time = current_time;
-}
-else {
-	right_press_type = press_type.noone;
-}
-*/
 
 #endregion
 
@@ -170,45 +146,5 @@ if left_mouse_state == mouse_type.released_twice && instance_selected != noone
 
 #endregion
 
-#region Store hand in keys
-
-// Check for input
-if _key_rawInput
-{
-	var _height		= ds_grid_height(global.instGrid);
-
-	// Find correct number
-	for(var i = 0; i < _height - 2; i++)
-	{
-		if _key_rawInput == ord(string(i))
-		{
-			for(var o = 0; o < instances_selected_list; o++)
-			{
-				var _hand = ds_grid_get(global.instGrid, o, 0);
-				if (!instance_exists(_hand)) continue;
-
-				if _key_ctrl
-				{
-					// Replace key with hand
-					ds_grid_set(global.instGrid, o, i, _hand);
-				}
-				else
-				{
-					// Replace hand with key
-					var _key = ds_grid_get(global.instGrid, o, i);
-
-					if _hand != 0
-						_hand.selected = false;
-
-					if _key != 0
-						_key.selected = true;
-
-					ds_grid_set(global.instGrid, o, 0, _key);
-				}
-			}
-			break;
-		}
-	}
-}
-
-#endregion
+store_hand()
+retrieve_hand()

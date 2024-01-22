@@ -10,7 +10,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Dummy Squad",
-    "path": "folders/Objects/Units/Dummy Squad.yy",
+    "path": "folders/Old Code/Dummy Squad.yy",
   },
   "parentObjectId": {
     "name": "oParUnit",
