@@ -7,7 +7,7 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Clients",
-    "path": "folders/Objects/Zones/Clients.yy",
+    "path": "folders/Objects/Sites/Clients.yy",
   },
   "parentObjectId": {
     "name": "oParZoneNet",

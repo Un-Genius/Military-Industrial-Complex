@@ -1,7 +1,7 @@
 /// @description Interface/Unit Display
 
 // Draw Titel
-//draw_text(30, 40, "Resources: " + string(global.supplies) + " / " + string(global.maxSupplies));
+//draw_text(30, 40, "Resources: " + string(global.resources) + " / " + string(global.resources_max));
 
 var i = 0;
 var _value = ds_grid_get(global.instGrid, i, 0);

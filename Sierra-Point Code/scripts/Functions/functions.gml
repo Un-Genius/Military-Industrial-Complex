@@ -710,8 +710,8 @@ function steam_reset_state() {
 		inGame			= false;
 		menuOpen		= false;
 
-		global.supplies		= 0;
-		global.maxSupplies	= global.supplies;
+		global.resources		= 0;
+		global.resources_max	= global.resources;
 
 	    state = menu.home;
 
@@ -1327,7 +1327,7 @@ function packet_handle_client(from) {
 
 			buffer_write(_buffer, buffer_s16, team);
 
-			buffer_write(_buffer, buffer_s16, global.supplies);
+			buffer_write(_buffer, buffer_s16, global.resources);
 
 			var _gameMode = ds_grid_get(global.savedSettings, 1, setting.game_mode);
 			buffer_write(_buffer, buffer_s16, _gameMode);
@@ -1354,7 +1354,7 @@ function packet_handle_client(from) {
 
 			var _mode		= buffer_read(_buffer, buffer_s16);
 
-			global.supplies	= buffer_read(_buffer, buffer_s16);
+			global.resources	= buffer_read(_buffer, buffer_s16);
 
 			// Get color
 			var _colorHash = findColor(_numColor);
@@ -1850,7 +1850,7 @@ function packet_handle_server(from) {
 
 			buffer_write(_buffer, buffer_s16, team);
 
-			buffer_write(_buffer, buffer_s16, global.supplies);
+			buffer_write(_buffer, buffer_s16, global.resources);
 
 			var _gameMode = ds_grid_get(global.savedSettings, 1, setting.game_mode);
 			buffer_write(_buffer, buffer_s16, _gameMode);
@@ -2593,7 +2593,7 @@ function scr_context_select_all() {
 		if !instance_exists(_inst)
 			break;
 
-		if _inst.object_index == oParZone
+		if _inst.object_index == oParSite
 			break;
 
 		// Check if not a building
@@ -2632,7 +2632,7 @@ function scr_context_select_onScreen() {
 		if !instance_exists(_inst)
 			break;
 
-		if _inst.object_index == oParZone
+		if _inst.object_index == oParSite
 			break;
 
 		if _inst.object_index == oPlayer
@@ -2748,7 +2748,7 @@ function scr_context_spawn_inf() {
 	_instFind.resCarry -= unitResCost.inf;
 
 	// Create instance
-	spawn_unit(objectType.oInfantry, _mouseX, _mouseY);
+	spawn_unit(infantry, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2768,7 +2768,7 @@ function scr_context_spawn_trans() {
 	_instFind.resCarry -= unitResCost.trans;
 
 	// Create instance
-	spawn_unit(objectType.oTransport, _mouseX, _mouseY);
+	spawn_unit(OBJ_NAME.oTransport, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2784,7 +2784,7 @@ function scr_context_spawn_dummy() {
 	}
 
 	// Create instance
-	spawn_unit(objectType.oDummy, _mouseX, _mouseY);
+	spawn_unit(OBJ_NAME.oDummy, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -2800,7 +2800,7 @@ function scr_context_spawn_dummyStronk() {
 	}
 
 	// Create instance
-	spawn_unit(objectType.oDummyStronk, _mouseX, _mouseY);
+	spawn_unit(OBJ_NAME.oDummyStronk, _mouseX, _mouseY);
 
 	// Reset hand
 	wipe_Hand(global.instGrid, 0);
@@ -3010,7 +3010,7 @@ function scr_GUI_list0() {
 // Spawn Points
 function scr_GUI_list3() {
 	// Update resources
-	global.supplies = ds_grid_get(global.savedSettings, 1, setting.spawn_points);
+	global.resources = ds_grid_get(global.savedSettings, 1, setting.spawn_points);
 
 	with(oNetwork)
 	{
@@ -3018,7 +3018,7 @@ function scr_GUI_list3() {
 		var _buffer = packet_start(packet_t.data_map);
 		buffer_write(_buffer, buffer_u64, steamUserName);
 		buffer_write(_buffer, buffer_string, "resources");
-		buffer_write(_buffer, buffer_s16, global.supplies);
+		buffer_write(_buffer, buffer_s16, global.resources);
 		packet_send_all(_buffer);
 	}
 }

@@ -12,8 +12,8 @@ else
 }
 
 
-spawn_unit(objectType.oPlayer, _map_x, _map_y);
-spawn_unit(objectType.oZoneHQ, _map_x, _map_y);
+spawn_unit(OBJ_NAME.UNIT_PLAYER, _map_x, _map_y);
+spawn_unit(OBJ_NAME.SITE_HQ, _map_x, _map_y);
 
 escape_menu = false;
 soundClick = sndClick;

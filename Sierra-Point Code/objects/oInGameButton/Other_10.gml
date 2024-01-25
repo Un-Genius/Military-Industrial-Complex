@@ -6,7 +6,7 @@ call this parent event with event_inherited();
 to get the sounds and other behaviors
 */
 
-if object_type == noone
+if site_type == noone
 {
 	dbg("Error with figuring out the object type")
 	exit;
@@ -19,7 +19,7 @@ audio_sound_pitch(snd, random_range(0.9, 1.1));
 
 #endregion
 
-var _new_zone = object_type;
+var _new_zone = site_type;
 
 with(oPlayer)
 {

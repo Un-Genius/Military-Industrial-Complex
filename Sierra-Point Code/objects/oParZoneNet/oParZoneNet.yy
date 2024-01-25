@@ -7,11 +7,11 @@
   "overriddenProperties": [],
   "parent": {
     "name": "Clients",
-    "path": "folders/Objects/Zones/Clients.yy",
+    "path": "folders/Objects/Sites/Clients.yy",
   },
   "parentObjectId": {
-    "name": "oParZone",
-    "path": "objects/oParZone/oParZone.yy",
+    "name": "oParSite",
+    "path": "objects/oParSite/oParSite.yy",
   },
   "persistent": false,
   "physicsAngularDamping": 0.1,

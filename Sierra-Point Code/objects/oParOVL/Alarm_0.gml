@@ -1,5 +1,5 @@
 /// @description Spawn Units & Update Budget
-global.supplies -= cost;
+global.resources -= cost;
 
 // Formation
 var i = 0;

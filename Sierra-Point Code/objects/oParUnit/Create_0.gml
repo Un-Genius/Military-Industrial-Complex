@@ -4,7 +4,7 @@ object_name	= "noone";
 
 movementSpeed	= 1;		// pixel per frame
 
-unit	= unitType.inf; // Type of unit for health
+unit	= OBJ_TYPE.inf; // Type of unit for health
 armor	= 0;
 
 maxHp	= 1;		// How much health points they can have

@@ -21,11 +21,11 @@ image_blend = hash_color;
 
 if(zoning > 0 && !global.mouse_on_ui)
 {	
-	var _buildingsAmount = instance_number(oParZone);
+	var _buildingsAmount = instance_number(oParSite);
 	
 	for(var i = 0; i < _buildingsAmount; i++)
 	{
-		var _inst = instance_find(oParZone, i);
+		var _inst = instance_find(oParSite, i);
 		
 		with(_inst)
 		{

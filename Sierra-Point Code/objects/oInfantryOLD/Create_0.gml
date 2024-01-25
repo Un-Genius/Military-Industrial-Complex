@@ -7,13 +7,13 @@ object_name	= "sInf_USA_basic";
 
 movementSpeed	= 2;		// pixel per frame
 
-unit	= unitType.inf; // Type of unit for health
+unit	= OBJ_TYPE.inf; // Type of unit for health
 armor	= 1;
 
 maxHp	= 1;		// How much health points they can have
 hp		= maxHp;	// How much health points they have
 
-gun		= gunType.rifle;	// Type of gun
+gun		= GUN_TYPE.rifle;	// Type of gun
 range	= 800;				// How far they can shoot in pixels
 cover	= 30;				// Default cover
 

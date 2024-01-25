@@ -87,11 +87,11 @@ pushTimer++;
 
 if pushTimer > 0.2 * room_speed
 {
-	if unit != unitType.air || unit != unitType.building
+	if unit != OBJ_TYPE.air || unit != OBJ_TYPE.building
 	{
 		var _collision = collision_circle(x, y, 10, oOVLInf, false, true);
 	
-		if _collision && (_collision.unit == unit || _collision.unit = unitType.gnd)
+		if _collision && (_collision.unit == unit || _collision.unit = OBJ_TYPE.gnd)
 		{		
 			var _dir = -point_direction(x, y, _collision.x, _collision.y);
 		
@@ -258,14 +258,14 @@ if gun != noone && state != action.reloading && (burstMax > burstAmount && burst
 						// Find default accuracy
 						switch _gun
 						{
-							case gunType.lightCan:	_accuracy = 160	break;
-							case gunType.mediumCan:	_accuracy = 180	break;
-							case gunType.heavyCan:	_accuracy = 60	break;
-							case gunType.rifle:		_accuracy = 120	break;
-							case gunType.lightMG:	_accuracy = 100	break;
-							case gunType.mediumMG:	_accuracy = 90	break;
-							case gunType.heavyMG:	_accuracy = 80	break;
-							case gunType.ATGM:		_accuracy = 200	break;
+							case GUN_TYPE.lightCan:	_accuracy = 160	break;
+							case GUN_TYPE.mediumCan:	_accuracy = 180	break;
+							case GUN_TYPE.heavyCan:	_accuracy = 60	break;
+							case GUN_TYPE.rifle:		_accuracy = 120	break;
+							case GUN_TYPE.lightMG:	_accuracy = 100	break;
+							case GUN_TYPE.mediumMG:	_accuracy = 90	break;
+							case GUN_TYPE.heavyMG:	_accuracy = 80	break;
+							case GUN_TYPE.ATGM:		_accuracy = 200	break;
 						}
 				
 						_accuracy *= _adjustment * 3;

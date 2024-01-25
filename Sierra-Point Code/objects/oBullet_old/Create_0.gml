@@ -24,7 +24,7 @@ Goals for bullet mechanic
 accuracy = 100;
 
 // Set bullet type for damage
-bulletType = gunType.rifle;
+bulletType = GUN_TYPE.rifle;
 
 // Set default team
 team = 0;

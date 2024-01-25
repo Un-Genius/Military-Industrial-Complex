@@ -19,23 +19,23 @@ function zoning_switch()
 	switch(keyboard_lastkey)
 	{
 	    case ord("E"):
-	        zoning = (zoning == objectType.oZoneCamp) ? -1 : objectType.oZoneCamp;
+	        zoning = (zoning == SITE_PRO_SUPPLIES) ? -1 : SITE_PRO_SUPPLIES;
 	        break;
 
 	    case ord("T"):
-	        zoning = (zoning == objectType.oZoneMoney) ? -1 : objectType.oZoneMoney;
+	        zoning = (zoning == SITE_PRO_WEAPONS) ? -1 : SITE_PRO_WEAPONS;
 	        break;
 
 	    case ord("R"):
-	        zoning = (zoning == objectType.oZoneSupplies) ? -1 : objectType.oZoneSupplies;
+	        zoning = (zoning == SITE_CAP_SUPPLIES) ? -1 : SITE_CAP_SUPPLIES;
 	        break;
 
 	    case ord("Y"):
-	        zoning = (zoning == objectType.oZoneBootCamp) ? -1 : objectType.oZoneBootCamp;
+	        zoning = (zoning == SITE_PRO_INF) ? -1 : SITE_PRO_INF;
 	        break;
 
 	    case ord("Q"):
-	        zoning = (zoning == objectType.oInfantry) ? -1 : objectType.oInfantry;
+	        zoning = (zoning == infantry) ? -1 : infantry;
 	        break;
 
 	    default: break;
@@ -71,7 +71,7 @@ function zoning_display()
 	if global.mouse_on_ui
 		return;
 
-	//var _cost = oFaction.unitCost[zoning];;
+	//var _cost = oFaction.obj_info[zoning];;
 
 	if buildingPlaceholder != noone
 		return;
@@ -123,8 +123,8 @@ function select_instance()
 	if instance_selected == noone && instance_exists(oInfantryNew)
 		instance_selected = find_top_Inst(mouse_x, mouse_y, oInfantryNew);
 
-	if instance_selected == noone && instance_exists(oParZoneLocal)
-		instance_selected = find_top_Inst(mouse_x, mouse_y, oParZoneLocal);
+	if instance_selected == noone && instance_exists(oParSiteLocal)
+		instance_selected = find_top_Inst(mouse_x, mouse_y, oParSiteLocal);
 
 	// Check if already selected
 	if find_Inst(global.instGrid, 0, instance_selected) > -1
@@ -202,7 +202,7 @@ function context_menu_open()
 	instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParUnit);
 
 	if instRightSelected == noone
-		instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParZoneLocal);
+		instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParSiteLocal);
 
 	if instance_exists(instRightSelected)
 	{
@@ -273,7 +273,7 @@ function context_menu_select_all(_instSel)
 		add_context("Select all",			scr_context_select_all,			false);
 		add_context("Select all on screen", scr_context_select_onScreen,	false);
 		add_context("break", on_click, false);
-		add_context("Spawn AI",				scr_create_squad,		false, [mouse_x, mouse_y, objectType.oInfantryAI, 3]);
+		add_context("Spawn AI",				scr_create_squad,		false, [mouse_x, mouse_y, infantryAI, 3]);
 		add_context("break", on_click, false);
 	}
 }
@@ -298,10 +298,10 @@ function context_menu_unit_actions(_instSel)
 		{
 			case oInfantry:
 				add_context("Change Behavior", scr_context_folder_behavior, true)
-			case oZoneBootCamp:
+			case oSiteProducePeople:
 				// Spawn units
 				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
-				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, objectType.oInfantry, 7]);
+				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, infantry, 7]);
 				break;
 
 			case oHQ:

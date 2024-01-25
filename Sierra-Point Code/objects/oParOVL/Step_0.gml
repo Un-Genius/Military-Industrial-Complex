@@ -168,7 +168,7 @@ if resCarry != maxResCarry
 
 #region Enter/Chase Vehicle - DISABLED
 /*
-if enterVeh != noone && type == unitType.inf
+if enterVeh != noone && type == OBJ_TYPE.inf
 {	
 	with enterVeh
 	{

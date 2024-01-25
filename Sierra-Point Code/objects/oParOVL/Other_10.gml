@@ -1,2 +1,2 @@
 /// @description Update Budget & Spawn Child
-global.supplies -= cost;
+global.resources -= cost;

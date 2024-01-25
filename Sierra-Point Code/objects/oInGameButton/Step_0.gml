@@ -12,5 +12,5 @@ event_inherited();
 
 image_blend = c_white;
 
-if cost > global.supplies
+if cost > global.resources
 	image_blend = c_red;

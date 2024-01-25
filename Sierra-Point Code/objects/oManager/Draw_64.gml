@@ -75,22 +75,22 @@ if(global.debug > 0)
 					
 					switch(oPlayer.zoning)
 					{
-						case objectType.oZoneCamp:
+						case OBJ_NAME.SITE_PRO_SUPPLIES:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning Camps");
 							_LIncStep++;
 						break;
 						
-						case objectType.oZoneMoney:
+						case OBJ_NAME.SITE_PRO_WEAPONS:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning Money");
 							_LIncStep++;
 						break;
 						
-						case objectType.oZoneSupplies:
+						case OBJ_NAME.SITE_CAP_SUPPLIES:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning Supplies");
 							_LIncStep++;
 						break;
 				
-						case objectType.oZoneBootCamp:
+						case OBJ_NAME.SITE_PRO_INF:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning BootCamp");
 							_LIncStep++;
 						break;
@@ -115,9 +115,9 @@ if(global.debug > 0)
 		
 			#region Instances
 	
-			if(instance_exists(oParZoneLocal))
+			if(instance_exists(oParSiteLocal))
 			{
-				draw_text(_Rx, _Ry + (_RInc * _RIncStep), "Local Instances: " + string(instance_number(oParZoneLocal)));
+				draw_text(_Rx, _Ry + (_RInc * _RIncStep), "Local Instances: " + string(instance_number(oParSiteLocal)));
 				_RIncStep++;
 			}
 	
@@ -135,14 +135,14 @@ if(global.debug > 0)
 		case 2:						
 			#region Instances that Exist
 	
-			if(instance_exists(oParZoneLocal))
+			if(instance_exists(oParSiteLocal))
 			{
-				draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Local: " + string(instance_number(oParZoneLocal)));
+				draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Local: " + string(instance_number(oParSiteLocal)));
 				_LIncStep++;
 				
-				for(var i = 0; i < instance_number(oParZoneLocal); i++)
+				for(var i = 0; i < instance_number(oParSiteLocal); i++)
 				{
-					var _inst = instance_find(oParZoneLocal, i);
+					var _inst = instance_find(oParSiteLocal, i);
 					draw_text(_Lx, _Ly + (_LInc * _LIncStep), string(i) + ": " + string(object_get_name(_inst.object_index)) + " - " + string(_inst));
 					_LIncStep++;
 				}

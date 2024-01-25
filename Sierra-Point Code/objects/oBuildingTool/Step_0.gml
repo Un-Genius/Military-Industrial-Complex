@@ -6,12 +6,12 @@ if hovering
 x = mouse_x div 2 * 2;
 y = mouse_y div 2 * 2;
 
-var _cost = oFaction.unitCost[buildingType];
+var _cost = oFaction.obj_info[buildingType];
 var _click_left_released	= device_mouse_check_button_released(0, mb_left);
 var _click_right_released	= device_mouse_check_button_released(0, mb_right);
 
 // Change color if not enough money
-if(global.supplies - _cost < 0)
+if(global.resources - _cost < 0)
 {
 	image_blend = c_orange;
 	

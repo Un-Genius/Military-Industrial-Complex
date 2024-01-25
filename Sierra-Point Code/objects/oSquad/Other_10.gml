@@ -10,14 +10,14 @@ switch(_inst.object_index)
 		sprite_index = sOVLInf;
 		break;
 	case oHQ:
-	case oZoneHQ:
+	case oSiteHQ:
 		sprite_index = sOVLHQ;
 		break;
 	case oHAB:
-	case oZoneBootCamp:
-	case oZoneCamp:
-	case oZoneMoney:
-	case oZoneSupplies:
+	case oSiteProducePeople:
+	case oSiteCapacityPeople:
+	case oSiteProduceSupplies:
+	case oSiteCapacitySupplies:
 	default:
 		sprite_index = sOVLHAB;
 }

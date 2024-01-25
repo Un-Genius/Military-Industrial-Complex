@@ -40,7 +40,7 @@ soundClick = sndClick;
 targetScript = noone;
 targetScriptArgs[0] = noone;
 
-object_type = noone;
+site_type = noone;
 cost = 0;
 
 #endregion

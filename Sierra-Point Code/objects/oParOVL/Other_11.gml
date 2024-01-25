@@ -5,7 +5,7 @@
 enterVeh = noone;
 
 // Only for infantry
-if(type	== unitType.inf)
+if(type	== OBJ_TYPE.inf)
 {
 	var _veh = collision_point(goal_x, goal_y, oOVLTV, false, true);
 

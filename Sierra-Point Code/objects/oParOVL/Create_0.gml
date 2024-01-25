@@ -7,7 +7,7 @@ object_name	= "noone";
 amount	= 0;			// Amount of units per squad
 range	= 0;			// How far apart each unit can be
 unit	= "noone";		// What type of unit to control
-type	= unitType.inf;
+type	= OBJ_TYPE.inf;
 
 hp = amount;
 
