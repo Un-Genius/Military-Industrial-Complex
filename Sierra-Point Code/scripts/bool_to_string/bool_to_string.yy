@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "bool_to_string",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "00-Util",
-    "path": "folders/MonasteryFramework/04-Scripts/00-Util.yy",
+  "$GMScript":"",
+  "%Name":"bool_to_string",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"bool_to_string",
+  "parent":{
+    "name":"00-Util",
+    "path":"folders/MonasteryFramework/04-Scripts/00-Util.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

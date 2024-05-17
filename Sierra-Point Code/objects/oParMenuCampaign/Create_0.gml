@@ -1,8 +1,8 @@
 event_inherited();
 
 ///CREATE BUTTONS & PANEL
-var _ww = display_get_width();
-var _hh = display_get_height();
+var _ww = global.RES_W;
+var _hh = global.RES_H;
 
 //surface_get_width(application_surface);
 

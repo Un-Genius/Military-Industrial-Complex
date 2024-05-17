@@ -32,16 +32,16 @@ with(oPlayer)
 
 	if zoning == -1
 	{
-		if instance_exists(buildingPlaceholder)
-			instance_destroy(buildingPlaceholder);
+		if instance_exists(buildingToolReference)
+			instance_destroy(buildingToolReference);
 
-		buildingPlaceholder = noone;
+		buildingToolReference = noone;
 		exit;
 	}
 
 	_prev_zoning = zoning;
 
-	with(buildingPlaceholder)
+	with(buildingToolReference)
 	{
 		buildingType = _prev_zoning;
 		event_user(0);

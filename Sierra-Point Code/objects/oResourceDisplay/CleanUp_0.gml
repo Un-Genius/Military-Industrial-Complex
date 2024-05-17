@@ -1,0 +1,3 @@
+ds_map_destroy(average_trends)
+ds_map_destroy(last_resources)
+instance_destroy(panel)

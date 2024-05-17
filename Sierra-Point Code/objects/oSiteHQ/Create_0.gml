@@ -4,8 +4,8 @@ event_inherited();
 resupplyTime = 5;
 resupplyAmount = 5;
 
-global.resources_max += 100;
-global.resources = global.resources_max;
+global.resources_max.supplies += 100;
+global.resources.supplies = global.resources_max.supplies;
 
 // Add supplies recurrently
 alarm[1] = resupplyTime * room_speed;

@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "lang_font_load",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "02-Language",
-    "path": "folders/MonasteryFramework/04-Scripts/02-Language.yy",
+  "$GMScript":"",
+  "%Name":"lang_font_load",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"lang_font_load",
+  "parent":{
+    "name":"02-Language",
+    "path":"folders/MonasteryFramework/04-Scripts/02-Language.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

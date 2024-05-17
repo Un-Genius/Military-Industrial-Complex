@@ -1,4 +1,4 @@
-buildingType = OBJ_NAME.SITE_PRO_SUPPLIES;
-sprite_index = enum_to_spr(buildingType);
+buildingType = oSiteProduceSupplies;
+sprite_index = object_to_sprite(buildingType);
 
 hovering = false;

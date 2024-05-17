@@ -3,17 +3,6 @@
 // Draw Box
 if left_mouse_state == mouse_type.box
 	draw_rectangle(mouseLeftPress_x, mouseLeftPress_y, mouse_x, mouse_y, true);
-	
-// Display placement of new building
-if buildingPlacement != noone
-{
-	var _sprite = buildingPlacement.sprite_index;
-	
-	if buildingIntersect
-		draw_sprite_ext(_sprite, 0, mouse_x, mouse_y, image_xscale, image_yscale, 0, c_red, 0.1);
-	else
-		draw_sprite_ext(_sprite, 0, mouse_x, mouse_y, image_xscale, image_yscale, 0, c_white, 0.1);
-}
 
 image_blend = hash_color;
 

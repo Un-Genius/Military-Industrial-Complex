@@ -12,8 +12,8 @@ window_set_fullscreen(_fullscreen);
 if !_fullscreen
 {
 	// Resolution
-	global.RES_W = 1920;
-	global.RES_H = 1080;
+	global.RES_W *= 0.5;
+	global.RES_H *= 0.5;
 }
 
 // Find aspect_ration

@@ -1,19 +1,47 @@
-/// @description Update Cost
-var _zone = 0;
+/// @description Update Stats
 
-obj_info[OBJ_NAME.SITE_HQ] = 0;
+if site_type < 0
+	exit
 
-if string_count("Camp", text)
-	_zone = OBJ_NAME.SITE_PRO_SUPPLIES
+switch(site_type)
+{
+	case oSiteProduceCM:
+		text = "Construction\nMaterial Pro"
+		icon = sZoneMoney
+		break
+	case oSiteProduceFood:
+		text = "Food Pro"
+		icon = sZoneMoney
+		break
+	case oSiteProduceInfantry:
+		text = "People Pro";
+		icon = sZoneBootCamp
+		break
+	case oSiteProduceRT:
+		text = "Research\nTokens Pro"
+		icon = sZoneMoney
+		break
+	case oSiteProduceSupplies:
+		text = "Supplies Pro"
+		icon = sZoneMoney
+		break
+	case oSiteProduceWeapons:
+		text = "Weapons Pro"
+		icon = sZoneMoney
+		break
+	case oSiteHQ:
+		text = "HQ"
+		icon = sZoneHQ
+		break
+	case oSiteCapacityInfantry:
+		text = "People Cap"
+		icon = sZoneCamp
+		break
+	case oSiteCapacitySupplies:
+		text = "Supplies Cap"
+		icon = sZoneSupplies
+		break
+}
 
-if string_count("Supplies", text)
-	_zone = OBJ_NAME.SITE_CAP_SUPPLIES
-
-if string_count("Money", text)
-	_zone = OBJ_NAME.SITE_PRO_WEAPONS
-
-if string_count("Boot", text)
-	_zone = OBJ_NAME.SITE_PRO_INF
-
-site_type = _zone
-cost = oFaction.obj_info[_zone];
+var _enum_value = obj_to_enum(site_type)
+cost = oFaction.obj_info[_enum_value];

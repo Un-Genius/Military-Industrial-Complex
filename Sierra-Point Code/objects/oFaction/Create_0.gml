@@ -50,7 +50,9 @@ enum OBJ_NAME
 	UNIT_INF,
 	UNIT_ENEMY_INF,
 	UNIT_WORKER,
+	
 	SITE_HQ,
+	
 	SITE_PRO_SUPPLIES,
 	SITE_PRO_WORKERS,
 	SITE_PRO_INF,
@@ -58,15 +60,10 @@ enum OBJ_NAME
 	SITE_PRO_FOOD,
 	SITE_PRO_CM,
 	SITE_PRO_RT,
+	
 	SITE_CAP_SUPPLIES,
 	SITE_CAP_INF,
-	SITE_CAP_WORKERS,
-	
-	// These are outdated
-	oDummy,
-	oDummyStronk,
-	oTransport,
-	oHAB,
+	SITE_CAP_WORKERS
 }
 
 resource_struct = {
@@ -80,19 +77,22 @@ resource_struct = {
 
 var _info_struct = {
 	// One Time Cost
-	cost : resource_struct,
+	cost : variable_clone(resource_struct),
 	
 	// Per Minute
-	overhead : resource_struct,
+	overhead : variable_clone(resource_struct),
 	
 	// Per Minute
-	produce : resource_struct
+	produce : variable_clone(resource_struct)
 }
 
-global.resources = _info_struct.cost;
-global.resources_max = global.resources;
+global.resources = variable_clone(_info_struct.cost);
+global.resources_max = variable_clone(global.resources);
 
-obj_info = array_create(20, _info_struct)
+obj_info = array_create(20, 0)
+
+for(var i = 0; i < 20; i++)
+	obj_info[i] = variable_clone(_info_struct);
 
 obj_info[OBJ_NAME.UNIT_INF].cost.food			= 5;
 obj_info[OBJ_NAME.UNIT_INF].cost.supplies		= 3;

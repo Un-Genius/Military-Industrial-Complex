@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "particles_create_below",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "00-Util",
-    "path": "folders/MonasteryFramework/04-Scripts/00-Util.yy",
+  "$GMScript":"",
+  "%Name":"particles_create_below",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"particles_create_below",
+  "parent":{
+    "name":"00-Util",
+    "path":"folders/MonasteryFramework/04-Scripts/00-Util.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

@@ -2,8 +2,8 @@
 var layerAbove = layer_create(-10000, "particle_Above");
 var layerBelow = layer_create(10000, "particle_Below");
 
-partSysAbove = part_system_create_layer(layerAbove, true);
-partSysBelow = part_system_create_layer(layerBelow, true);
+partSysAbove = part_system_create_layer("particle_Above", true);
+partSysBelow = part_system_create_layer("particle_Below", true);
 #endregion
 
 //CREATE EVERY PARTICLE HERE AND ASSIGN A VARIABLE TO IT

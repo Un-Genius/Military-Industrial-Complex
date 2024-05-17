@@ -31,9 +31,8 @@ zoom_smooth	= 0.1;
 // Follow target
 camera_target = oPlayer;
 
-buildingPlaceholder = noone;
+buildingToolReference = noone;
 
-buildingName = "";
 buildingPlacement = noone;
 buildingIntersect = false;
 

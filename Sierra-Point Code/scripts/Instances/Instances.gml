@@ -68,21 +68,32 @@ function nearby_select(_list, _x, _y, _obj)
 	}
 }
 
-/// @function display_money(resources);
+/// @function display_resource(resources);
 /// @param {resources} resources of money to display
-function display_money(_x, _y, _resources)
+function display_resource(_x, _y, _resources)
 {
 	var _inst = instance_create_layer(_x, _y, "UI", oResourceSign);
 	_inst.suppliesAmount = _resources;
 }
 
-/// @function add_resource(x, y, resources, display_money);
+/// @function add_resource(x, y, resources, display_resource);
 /// @param {resources} resources of money to add
-/// @param {display_money} Display_Money_bool
+/// @param {display_resource} display_resource_bool
 function add_resource(_x, _y, _resources, _display=false)
 {
 	if(global.resources >= global.resources_max)
 		exit;
+		
+	if !is_struct(_resources)
+	{
+		global.resources.supplies	+= min(global.resources_max.supplies,	_resources.supplies);
+		global.resources.food		+= min(global.resources_max.food,		_resources.food);
+		global.resources.weapons	+= min(global.resources_max.weapons,	_resources.weapons);
+		global.resources.people		+= min(global.resources_max.people,		_resources.people);
+		global.resources.cm			+= min(global.resources_max.cm,			_resources.cm);
+		global.resources.rt			+= min(global.resources_max.rt,			_resources.rt);
+	}
+	
 		
 	// Add supplies
 	global.resources.supplies	+= min(global.resources_max.supplies,	_resources.supplies);
@@ -93,8 +104,45 @@ function add_resource(_x, _y, _resources, _display=false)
 	global.resources.rt			+= min(global.resources_max.rt,			_resources.rt);
 	
 	if _display
-		display_money(_x, _y, _resources);
+		display_resource(_x, _y, _resources);
 }
+
+/// @function remove_resource(x, y, resources, display_resource);
+/// @param {resources} resources of money to add
+/// @param {display_resource} display_resource_bool
+function remove_resource(_x, _y, _resources, _display=false)
+{
+	if(global.resources >= oFaction.resource_struct)
+		exit;
+		
+	// Add supplies
+	global.resources.supplies	= max(0, global.resources.supplies - _resources.supplies);
+	global.resources.food		= max(0, global.resources.food - _resources.food);
+	global.resources.weapons	= max(0, global.resources.weapons - _resources.weapons);
+	global.resources.people	    = max(0, global.resources.people - _resources.people);
+	global.resources.cm		    = max(0, global.resources.cm - _resources.cm);
+	global.resources.rt			= max(0, global.resources.rt - _resources.rt);
+	
+	if _display
+		display_resource(_x, _y, _resources);
+}
+
+function compare_resources(base_resource, cost) {
+    // Get the list of keys in the cost struct
+    var _key_list = variable_struct_get_names(cost);
+    
+    // Iterate through each key in the list
+    for (var i = 0; i < array_length(_key_list); i++) {
+        var key = _key_list[i];
+        
+        // Check if the base resources have enough of each key
+        if (base_resource[$ key] < cost[$ key]) {
+            return false; // Not enough resources
+        }
+    }
+    return true; // Enough resources
+}
+
 
 /// @function enum_to_obj(number);
 /// @param {number} Enumerator_Number to exchange to object
@@ -102,19 +150,23 @@ function enum_to_obj(_num)
 {
 	var _obj = noone;
 	
-	switch _num
+	switch (_num)
 	{
-		case OBJ_NAME.UNIT_PLAYER:			_obj	= oPlayer;				break;
-		case OBJ_NAME.SITE_HQ:				_obj	= oSiteHQ;				break;
-		case OBJ_NAME.SITE_PRO_SUPPLIES:	_obj	= oSiteCapacityPeople;	break;
-		case OBJ_NAME.SITE_PRO_WEAPONS:		_obj	= oSiteProduceSupplies;	break;
-		case OBJ_NAME.SITE_CAP_SUPPLIES:	_obj	= oSiteCapacitySupplies;break;
-		case OBJ_NAME.SITE_PRO_INF:			_obj	= oSiteProducePeople;	break;
-		case OBJ_NAME.UNIT_INF:				_obj	= oInfantry;			break;
-		case OBJ_NAME.oTransport:			_obj	= OBJ_NAME.oTransport;	break;
-		case OBJ_NAME.oDummy:				_obj	= oDummy;				break;
-		case OBJ_NAME.oDummyStronk:			_obj	= oDummyStronk;			break;
-		case OBJ_NAME.UNIT_ENEMY_INF:		_obj	= oInfantryAI;			break;
+		case OBJ_NAME.UNIT_PLAYER:		_obj = oPlayer;				break;
+		case OBJ_NAME.UNIT_INF:			_obj = oInfantry;			break;
+		case OBJ_NAME.UNIT_ENEMY_INF:	_obj = oInfantryAI;			break;
+		case OBJ_NAME.UNIT_WORKER:		_obj = oWorker;				break;
+		case OBJ_NAME.SITE_HQ:			_obj = oSiteHQ;				break;
+		case OBJ_NAME.SITE_PRO_SUPPLIES:_obj = oSiteProduceSupplies;	break;
+		case OBJ_NAME.SITE_PRO_WORKERS:	_obj = oSiteProduceWorkers;	break;
+		case OBJ_NAME.SITE_PRO_INF:		_obj = oSiteProduceWorkers;break;
+		case OBJ_NAME.SITE_PRO_WEAPONS:	_obj = oSiteProduceWeapons;	break;
+		case OBJ_NAME.SITE_PRO_FOOD:	_obj = oSiteProduceFood;	break;
+		case OBJ_NAME.SITE_PRO_CM:		_obj = oSiteProduceCM;		break;
+		case OBJ_NAME.SITE_PRO_RT:		_obj = oSiteProduceRT;		break;
+		case OBJ_NAME.SITE_CAP_SUPPLIES:_obj = oSiteCapacitySupplies;break;
+		case OBJ_NAME.SITE_CAP_INF:		_obj = oSiteCapacityInfantry;break;
+		case OBJ_NAME.SITE_CAP_WORKERS:	_obj = oSiteCapacityWorkers;break;
 	}
 	
 	return _obj;
@@ -126,18 +178,23 @@ function obj_to_enum(_obj)
 {
 	var _num = -1;
 	
-	switch _obj
+	switch (_obj)
 	{
-		case oPlayer:				_num	= OBJ_NAME.UNIT_PLAYER;			break;
-		case oSiteHQ:				_num	= OBJ_NAME.SITE_HQ;				break;
-		case oSiteCapacityPeople:	_num	= OBJ_NAME.SITE_PRO_SUPPLIES;	break;
-		case oSiteProduceSupplies:	_num	= OBJ_NAME.SITE_PRO_WEAPONS;	break;
-		case oSiteCapacitySupplies: _num	= OBJ_NAME.SITE_CAP_SUPPLIES;	break;
-		case oSiteProducePeople:	_num	= OBJ_NAME.SITE_PRO_INF;		break;
-		case oInfantry:				_num	= OBJ_NAME.UNIT_INF;			break;
-		case oDummy:				_num	= OBJ_NAME.oDummy;				break;
-		case oDummyStronk:			_num	= OBJ_NAME.oDummyStronk;		break;
-		case oInfantryAI:			_num	= OBJ_NAME.UNIT_ENEMY_INF;		break;
+		case oPlayer:				_num = OBJ_NAME.UNIT_PLAYER;			break;
+		case oInfantry:				_num = OBJ_NAME.UNIT_INF;				break;
+		case oInfantryAI:			_num = OBJ_NAME.UNIT_ENEMY_INF;			break;
+		case oWorker:				_num = OBJ_NAME.UNIT_WORKER;			break;
+		case oSiteHQ:				_num = OBJ_NAME.SITE_HQ;				break;
+		case oSiteProduceSupplies:	_num = OBJ_NAME.SITE_PRO_SUPPLIES;		break;
+		case oSiteProduceWorkers:	_num = OBJ_NAME.SITE_PRO_WORKERS;		break;
+		case oSiteProduceInfantry:	_num = OBJ_NAME.SITE_PRO_INF;			break;
+		case oSiteProduceWeapons:	_num = OBJ_NAME.SITE_PRO_WEAPONS;		break;
+		case oSiteProduceFood:		_num = OBJ_NAME.SITE_PRO_FOOD;			break;
+		case oSiteProduceCM:		_num = OBJ_NAME.SITE_PRO_CM;			break;
+		case oSiteProduceRT:		_num = OBJ_NAME.SITE_PRO_RT;			break;
+		case oSiteCapacitySupplies:	_num = OBJ_NAME.SITE_CAP_SUPPLIES;		break;
+		case oSiteCapacityInfantry:	_num = OBJ_NAME.SITE_CAP_INF;			break;
+		case oSiteCapacityWorkers:	_num = OBJ_NAME.SITE_CAP_WORKERS;		break;
 	}
 	
 	return _num;
@@ -152,8 +209,8 @@ function localObj_to_netObj(_localObj)
 		case oPlayer:		_netObj = oPlayerClient;	break;
 		case oParSiteLocal:	_netObj = oParZoneNet;		break;
 		case oSiteHQ:		_netObj = oZoneNetHQ;		break;
-		case oSiteCapacityPeople:		_netObj = oZoneNetCamp;		break;
-		case oSiteProducePeople:	_netObj = oZoneNetBootCamp;	break;
+		case oSiteCapacityInfantry:		_netObj = oZoneNetCamp;		break;
+		case oSiteProduceInfantry:	_netObj = oZoneNetBootCamp;	break;
 		case oSiteProduceSupplies:	_netObj = oZoneNetMoney;	break;
 		case oSiteCapacitySupplies:	_netObj = oZoneNetSupplies;	break;
 		case oInfantry:		_netObj = oInfantryClient;	break;
@@ -167,19 +224,55 @@ function localObj_to_netObj(_localObj)
 
 /// @function enum_to_spr(number);
 /// @param {number} Enumerator_Number to exchange to sprite
-function enum_to_spr(_num)
+function enum_to_sprite(_num)
 {
 	var _spr = noone;
 	
-	switch _num
+	switch (_num)
 	{
-		case OBJ_NAME.SITE_HQ:				_spr = sZoneHQ;			break;
-		case OBJ_NAME.UNIT_INF:				_spr = sZoneInfantry;	break;
-		case OBJ_NAME.SITE_PRO_SUPPLIES:	_spr = sZoneCamp;		break;
-		case OBJ_NAME.SITE_PRO_WEAPONS:		_spr = sZoneMoney;		break;
-		case OBJ_NAME.SITE_CAP_SUPPLIES:	_spr = sZoneSupplies;	break;
+		case OBJ_NAME.UNIT_PLAYER:			_spr = sPlayer;			break;
+		case OBJ_NAME.UNIT_INF:				_spr = sZoneInfantry;		break;
+		case OBJ_NAME.UNIT_ENEMY_INF:		_spr = sInfantry;	break;
+		case OBJ_NAME.UNIT_WORKER:			_spr = sInfantry;			break;
+		case OBJ_NAME.SITE_HQ:				_spr = sZoneHQ;				break;
+		case OBJ_NAME.SITE_PRO_SUPPLIES:	_spr = sZoneMoney;	break;
+		case OBJ_NAME.SITE_PRO_WORKERS:		_spr = sZoneBootCamp;	break;
 		case OBJ_NAME.SITE_PRO_INF:			_spr = sZoneBootCamp;	break;
-		
+		case OBJ_NAME.SITE_PRO_WEAPONS:		_spr = sZoneMoney;	break;
+		case OBJ_NAME.SITE_PRO_FOOD:		_spr = sZoneMoney;	break;
+		case OBJ_NAME.SITE_PRO_CM:			_spr = sZoneMoney;		break;
+		case OBJ_NAME.SITE_PRO_RT:			_spr = sZoneMoney;		break;
+		case OBJ_NAME.SITE_CAP_SUPPLIES:	_spr = sZoneSupplies;	break;
+		case OBJ_NAME.SITE_CAP_INF:			_spr = sZoneCamp;	break;
+		case OBJ_NAME.SITE_CAP_WORKERS:		_spr = sZoneCamp;	break;
+	}
+	
+	return _spr;
+}
+
+/// @function object_to_sprite(object);
+/// @param {object} Object to exchange to sprite
+function object_to_sprite(_obj)
+{
+	var _spr = noone;
+	
+	switch (_obj)
+	{
+		case oPlayer:				_spr = sPlayer;			break;
+		case oInfantry:				_spr = sZoneInfantry;	break;
+		case oInfantryAI:			_spr = sInfantry;		break;
+		case oWorker:				_spr = sInfantry;		break;
+		case oSiteHQ:				_spr = sZoneHQ;			break;
+		case oSiteProduceSupplies:	_spr = sZoneMoney;		break;
+		case oSiteProduceWorkers:	_spr = sZoneBootCamp;	break;
+		case oSiteProduceInfantry:	_spr = sZoneBootCamp;	break;
+		case oSiteProduceWeapons:	_spr = sZoneMoney;		break;
+		case oSiteProduceFood:		_spr = sZoneMoney;		break;
+		case oSiteProduceCM:		_spr = sZoneMoney;		break;
+		case oSiteProduceRT:		_spr = sZoneMoney;		break;
+		case oSiteCapacitySupplies:	_spr = sZoneSupplies;	break;
+		case oSiteCapacityInfantry:	_spr = sZoneCamp;		break;
+		case oSiteCapacityWorkers:	_spr = sZoneCamp;		break;
 	}
 	
 	return _spr;

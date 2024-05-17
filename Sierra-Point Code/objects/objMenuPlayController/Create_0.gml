@@ -1,6 +1,6 @@
 /// @description CREATE PANELS
 
-var _ww = display_get_width();
+var _ww = global.RES_W;
 
 var _offset = 20;
 var _btn_width = 300;

@@ -74,9 +74,6 @@ function create_building(_object) {
 		// Create empty ghost to find sprite
 		buildingPlacement = instance_create_layer(0, 0, "AboveAll", _object);
 
-		// Remember name
-		buildingName = buildingPlacement.unit;
-
 		// Deactivate it to prevent it causing issues in game
 		instance_deactivate_object(buildingPlacement);
 	}
@@ -2015,9 +2012,7 @@ function buffer_write_int64(_buffer, _client) {
 
 #region Shortcuts
 
-function spawn_unit(_object_enum, posX, posY) {
-
-	var _object = enum_to_obj(_object_enum);
+function spawn_unit(_object, posX, posY) {
 
 	// Create instance
 	var _inst = instance_create_layer(posX, posY, "Instances", _object);
@@ -2037,7 +2032,7 @@ function spawn_unit(_object_enum, posX, posY) {
 	var _packet = packet_start(packet_t.add_unit);
 	buffer_write(_packet, buffer_u64, oNetwork.steamUserName);
 	buffer_write(_packet, buffer_u16, _pos);
-	buffer_write(_packet, buffer_u8, _object_enum);
+	buffer_write(_packet, buffer_u8, _object);
 	buffer_write(_packet, buffer_f32, posX);
 	buffer_write(_packet, buffer_f32, posY);
 	packet_send_all(_packet);
@@ -2656,193 +2651,17 @@ function scr_context_select_onScreen() {
 	close_context(-1);
 }
 
-function scr_context_drop_res() {
-	// drop resources from transport to HAB
-	with(oPlayer)
-	{
-		var _instFind = instRightSelected;
-	}
-
-	var _HAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
-
-	if _HAB
-	{
-		// Add to HAB
-		_HAB.resCarry += _instFind.resCarry;
-
-		// Take away from vehicle
-		_instFind.resCarry = 0;
-	}
-
-	// Update context menu
-	close_context(-1);
-}
-
-function scr_context_grab_res() {
-	// Grab resources from HAB or HQ
-	with(oPlayer)
-	{
-		var _instFind = instRightSelected;
-	}
-
-	if _instFind.object_index != oHAB
-	{
-		var _HAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
-
-		if _HAB.resCarry > 0
-		{
-			// Find needed resources
-			var _reqRes = _instFind.maxResCarry - _instFind.resCarry;
-
-			// Find how much resources other can supply
-			_reqRes -= _HAB.resCarry;
-
-			// Fill request
-			if _reqRes - _HAB.resCarry < 0
-			{
-				_instFind.resCarry = _instFind.maxResCarry;
-				_HAB.resCarry -= _instFind.maxResCarry;
-			}
-			else
-			{
-				_instFind.resCarry = _reqRes - _HAB.resCarry;
-				_HAB.resCarry -= _HAB.resCarry;
-
-			}
-		}
-	}
-	else
-	{
-		// Find all transport vehicles in the area
-		var _list = ds_list_create();
-
-		var _amount = collision_circle_list(_instFind.x, _instFind.y, _instFind.resRange, oTransport, false, true, _list, false);
-
-		for(var i = 0; i < _amount; i++)
-		{
-			var _veh = ds_list_find_value(_list, i);
-
-			// Add to HAB
-			_instFind.resCarry += _veh.resCarry;
-
-			// Take away from vehicle
-			_veh.resCarry = 0;
-		}
-
-		ds_list_destroy(_list);
-	}
-
-	// Update context menu
-	close_context(-1);
-}
-
-function scr_context_spawn_inf() {
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-
-		var _instFind = instRightSelected;
-	}
-
-	_instFind.resCarry -= unitResCost.inf;
-
-	// Create instance
-	spawn_unit(infantry, _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-
-	close_context(-1);
-}
-
-function scr_context_spawn_trans() {
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-
-		var _instFind = instRightSelected;
-	}
-
-	_instFind.resCarry -= unitResCost.trans;
-
-	// Create instance
-	spawn_unit(OBJ_NAME.oTransport, _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-
-	close_context(-1);
-}
-
-function scr_context_spawn_dummy() {
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-	}
-
-	// Create instance
-	spawn_unit(OBJ_NAME.oDummy, _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-
-	close_context(-1);
-}
-
-function scr_context_spawn_dummyStronk() {
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-	}
-
-	// Create instance
-	spawn_unit(OBJ_NAME.oDummyStronk, _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-
-	close_context(-1);
-}
-
-function scr_context_spawn_HAB() { // BROKEN
-	/*
-	with(oPlayer)
-	{
-		var _mouseX = mouseRightPress_x;
-		var _mouseY = mouseRightPress_y;
-
-		var _instFind = instRightSelected;
-	}
-
-	_instFind.resCarry -= unitResCost.HAB;
-
-	// Create instance
-	spawn_unit("oHAB", _mouseX, _mouseY);
-
-	// Reset hand
-	wipe_Hand(global.instGrid, 0);
-	*/
-
-	// Create instance
-	create_building(oOVLHAB);
-
-	close_context(-1);
-}
 
 function scr_context_spawn_object() {
 	var _amount = 1;
-	var _objectTypeEnum = noone;
+	var _object = noone;
 
 	switch(argument_count)
 	{
 		case 2:
 			_amount = argument[1];
 		case 1:
-			var _objectTypeEnum = argument[0];
+			var _object = argument[0];
 	}
 
 	var right_selected = oPlayer.instRightSelected;
@@ -2856,18 +2675,18 @@ function scr_context_spawn_object() {
 	}
 
 	repeat(_amount)
-		spawn_unit(_objectTypeEnum, _x, _y);
+		spawn_unit(_object, _x, _y);
 
 	close_context(-1);
 }
 
-function scr_create_squad(_x, _y, _objectTypeEnum, _amount) {
+function scr_create_squad(_x, _y, _object, _amount) {
 	var _squad_inst = instance_create_layer(_x, _y, "UI", oSquad);
 	var _inst;
 
 	repeat(_amount)
 	{
-		_inst = spawn_unit(_objectTypeEnum, _x, _y);
+		_inst = spawn_unit(_object, _x, _y);
 		ds_list_add(_squad_inst.squad, _inst);
 	}
 
@@ -3116,8 +2935,8 @@ function scr_GUI_list8() {
 		if !_windowType
 		{
 			// Resolution
-			global.RES_W = 1920;
-			global.RES_H = 1080;
+			global.RES_W *= 0.5;
+			global.RES_H *= 0.5;
 
 			aspect_ratio = global.RES_W / global.RES_H;
 		}

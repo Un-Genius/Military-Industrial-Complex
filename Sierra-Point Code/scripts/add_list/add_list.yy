@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "add_list",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "Create",
-    "path": "folders/Scripts/GUI/Create.yy",
+  "$GMScript":"",
+  "%Name":"add_list",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"add_list",
+  "parent":{
+    "name":"Create",
+    "path":"folders/Scripts/GUI/Create.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }

@@ -7,7 +7,7 @@ function func_in_game_menu(){
 		func_reset_menu();
 		
 		///CREATE BUTTONS & PANEL
-		var _ww = display_get_width();
+		var _ww = global.RES_W;
 
 		//surface_get_width(application_surface);
 

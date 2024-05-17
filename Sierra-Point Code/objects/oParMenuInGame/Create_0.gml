@@ -12,8 +12,10 @@ else
 }
 
 
-spawn_unit(OBJ_NAME.UNIT_PLAYER, _map_x, _map_y);
-spawn_unit(OBJ_NAME.SITE_HQ, _map_x, _map_y);
+spawn_unit(oPlayer, _map_x, _map_y);
+spawn_unit(oSiteHQ, _map_x, _map_y);
+
+instance_create(0, 0, oResourceDisplay)
 
 escape_menu = false;
 soundClick = sndClick;
@@ -21,8 +23,8 @@ soundClick = sndClick;
 button_instances = ds_list_create();
 
 ///CREATE BUTTONS & PANEL
-var _ww = display_get_width();
-var _hh = display_get_height();
+var _ww = global.RES_W;
+var _hh = global.RES_H;
 
 //surface_get_width(application_surface);
 
@@ -32,32 +34,55 @@ var _btn_height = 75;
 var _btn_offset = 5;
 
 var _wx = (_ww/2) - ((_btn_width + _btn_offset)*2);
-var _wy = _hh - _btn_height - (_offset*2);
+var _wy = _hh - _btn_height - _offset;
 
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.text = "E: Camp";
-_inst.icon = sZoneCamp;
+_inst.site_type = oSiteHQ
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.text = "R: Supplies";
-_inst.icon = sZoneSupplies;
+_inst.site_type = oSiteCapacitySupplies
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.text = "T: Money";
-_inst.icon = sZoneMoney;
+_inst.site_type = oSiteCapacityInfantry
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.text = "Y: Boot\n   Camp";
-_inst.icon = sZoneBootCamp;
+
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+// ------------------------------------------ SECOND LINE 
+_wy -= _btn_height + (_offset);
+_wx = (_ww/2) - ((_btn_width + _btn_offset)*2);
+
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceSupplies
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceFood
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceInfantry
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceCM
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 

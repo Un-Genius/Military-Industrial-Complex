@@ -19,19 +19,19 @@ function zoning_switch()
 	switch(keyboard_lastkey)
 	{
 	    case ord("E"):
-	        zoning = (zoning == SITE_PRO_SUPPLIES) ? -1 : SITE_PRO_SUPPLIES;
+	        zoning = (zoning == OBJ_NAME.SITE_PRO_SUPPLIES) ? -1 : OBJ_NAME.SITE_PRO_SUPPLIES;
 	        break;
 
 	    case ord("T"):
-	        zoning = (zoning == SITE_PRO_WEAPONS) ? -1 : SITE_PRO_WEAPONS;
+	        zoning = (zoning == OBJ_NAME.SITE_PRO_WEAPONS) ? -1 : OBJ_NAME.SITE_PRO_WEAPONS;
 	        break;
 
 	    case ord("R"):
-	        zoning = (zoning == SITE_CAP_SUPPLIES) ? -1 : SITE_CAP_SUPPLIES;
+	        zoning = (zoning == OBJ_NAME.SITE_CAP_SUPPLIES) ? -1 : OBJ_NAME.SITE_CAP_SUPPLIES;
 	        break;
 
 	    case ord("Y"):
-	        zoning = (zoning == SITE_PRO_INF) ? -1 : SITE_PRO_INF;
+	        zoning = (zoning == OBJ_NAME.SITE_PRO_INF) ? -1 : OBJ_NAME.SITE_PRO_INF;
 	        break;
 
 	    case ord("Q"):
@@ -46,16 +46,16 @@ function zoning_switch()
 
 	if zoning == -1
 	{
-		if instance_exists(buildingPlaceholder)
-			instance_destroy(buildingPlaceholder);
+		if instance_exists(buildingToolReference)
+			instance_destroy(buildingToolReference);
 
-		buildingPlaceholder = noone;
+		buildingToolReference = noone;
 		return;
 	}
 
 	_prev_zoning = zoning;
 
-	with(buildingPlaceholder)
+	with(buildingToolReference)
 	{
 		buildingType = _prev_zoning;
 		event_user(0);
@@ -73,13 +73,13 @@ function zoning_display()
 
 	//var _cost = oFaction.obj_info[zoning];;
 
-	if buildingPlaceholder != noone
+	if buildingToolReference != noone
 		return;
 
-	buildingPlaceholder = instance_create_layer(mouse_x, mouse_x, layer, oBuildingTool)
+	buildingToolReference = instance_create_layer(mouse_x, mouse_x, layer, oBuildingTool)
 
 	var _zoning = zoning;
-	with buildingPlaceholder
+	with buildingToolReference
 	{
 		buildingType = _zoning;
 		event_user(0);
@@ -272,9 +272,9 @@ function context_menu_select_all(_instSel)
 	with(_inst) {
 		add_context("Select all",			scr_context_select_all,			false);
 		add_context("Select all on screen", scr_context_select_onScreen,	false);
-		add_context("break", on_click, false);
-		add_context("Spawn AI",				scr_create_squad,		false, [mouse_x, mouse_y, infantryAI, 3]);
-		add_context("break", on_click, false);
+		add_context("break",				on_click,						false);
+		add_context("Spawn AI",				scr_create_squad,				false, [mouse_x, mouse_y, oInfantryAI, 3]);
+		add_context("break",				on_click,						false);
 	}
 }
 function context_menu_unit_actions(_instSel)
@@ -298,7 +298,7 @@ function context_menu_unit_actions(_instSel)
 		{
 			case oInfantry:
 				add_context("Change Behavior", scr_context_folder_behavior, true)
-			case oSiteProducePeople:
+			case oSiteProduceInfantry:
 				// Spawn units
 				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
 				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, infantry, 7]);
@@ -550,22 +550,11 @@ function create_zone()
 		return;
 	}
 
-	// Check transport for resources
-	if instRightSelected.resCarry - unitResCost.HAB <= 0
-	{
-		reset_building()
-		return;
-	}
-
 	// check for mouse click
 	if buildingIntersect
 		return;
 
-	// Take away resources
-	instRightSelected.resCarry -= unitResCost.HAB;
-
-	var _object = asset_get_index(buildingName);
-	spawn_unit(_object, mouse_x, mouse_y);
+	spawn_unit(buildingPlacement, mouse_x, mouse_y);
 
 	reset_building()
 }
@@ -576,7 +565,6 @@ function reset_building()
 	instance_destroy(buildingPlacement);
 
 	// Reset variables
-	buildingName = "";
 	buildingPlacement = noone;
 	buildingIntersect = false;
 }

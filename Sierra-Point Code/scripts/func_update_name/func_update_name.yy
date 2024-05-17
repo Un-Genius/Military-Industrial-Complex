@@ -1,11 +1,13 @@
 {
-  "resourceType": "GMScript",
-  "resourceVersion": "1.0",
-  "name": "func_update_name",
-  "isCompatibility": false,
-  "isDnD": false,
-  "parent": {
-    "name": "PlayMenu",
-    "path": "folders/MonasteryFramework/04-Scripts/05-Menu/PlayMenu.yy",
+  "$GMScript":"",
+  "%Name":"func_update_name",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"func_update_name",
+  "parent":{
+    "name":"PlayMenu",
+    "path":"folders/MonasteryFramework/04-Scripts/05-Menu/PlayMenu.yy",
   },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
 }
