@@ -1,59 +1,77 @@
-// oResourceDisplay Step Event
-time_elapsed++;
-
-if (time_elapsed >= update_interval) {
-    time_elapsed = 0;
-
-    var resource_names = variable_struct_get_names(global.resources);
-    for (var i = 0; i < array_length(resource_names); i++) {
-        var resource_name = resource_names[i];
-        var current_value = struct_get(global.resources, resource_name);
-        var last_value = ds_map_find_value(last_resources, resource_name);
-
-        // Calculate trend
-        if (current_value > last_value) {
-            ds_map_set(average_trends, resource_name, 1); // Going up
-        } else if (current_value < last_value) {
-            ds_map_set(average_trends, resource_name, -1); // Going down
-        } else {
-            ds_map_set(average_trends, resource_name, 0); // No change
-        }
-
-        // Update last resources
-        ds_map_set(last_resources, resource_name, current_value);
-    }
-}
+// Call to manage building panels
+dynamic_panels();
 
 
-if (instance_exists(oBuildingTool))
+
+if(instance_exists(oBuildingTool))
 {
-	if panel_cost == noone
-	{
-		panel_cost = instance_create(panel.width + 30, 25, objGUIPanel);
-		panel_cost.depth = depth+2;
-		panel_cost.width = 55;
-		panel_cost.height = 200;
-	}
+	var _object_enum = obj_to_enum(oBuildingTool.buildingType);
+	var _object_info = oFaction.obj_info[_object_enum];
+	var _object_cost = _object_info.cost;
+	var _object_upkeep = _object_info.resource_per_minute;
 	
-	if panel_overhead == noone
+	struct_foreach(_object_cost, function(_name, _value){
+		var _data = ds_map_find_value(info_map, _name);
+		_data[INFO_TABLE.COST] = _value;
+		if _value != 0
+			_data[INFO_TABLE.VISIBILITY] = true;
+		else
+			_data[INFO_TABLE.VISIBILITY] = false;
+		ds_map_set(info_map, _name, _data);
+	})
+	
+	struct_foreach(_object_upkeep, function(_name, _value){
+		var _data = ds_map_find_value(info_map, _name);
+		_data[INFO_TABLE.UPKEEP] = _value;
+		if _value != 0
+			_data[INFO_TABLE.VISIBILITY] = true;
+		else
+			_data[INFO_TABLE.VISIBILITY] = false;
+		ds_map_set(info_map, _name, _data);
+	})
+}
+
+struct_foreach(global.resources, function(_name, _value){	
+	var _data = ds_map_find_value(info_map, _name);
+	
+	// Check if info has been previously provided or if theres a value in it
+	if _data[INFO_TABLE.COST] != 0 || _data[INFO_TABLE.UPKEEP] != 0 || _value > 0
 	{
-		panel_overhead = instance_create(panel.width + panel_cost.width + 25 + 10, 25, objGUIPanel);
-		panel_overhead.depth = depth+2;
-		panel_overhead.width = 55;
-		panel_overhead.height = 200;
+		var _stored = struct_get(global.resources, _name);
+		var _max_stored = struct_get(global.resources_max, _name);
+		
+		_data[INFO_TABLE.VISIBILITY] = true;
+		_data[INFO_TABLE.AMOUNT] = _stored;
+		_data[INFO_TABLE.MAX] = _max_stored;
+		ds_map_set(info_map, _name, _data);
+	}
+});
+
+
+// Fist oragnize all the items to be displayed
+var items_to_filter = ds_map_values_to_array(info_map);
+var items_to_sort = [];
+
+var o = 0;
+for(var i = 0; i < array_length(items_to_filter); i++) {
+	if items_to_filter[i][INFO_TABLE.VISIBILITY] == true
+	{
+		items_to_sort[o] = items_to_filter[i];		
+		o++
 	}
 }
-else
-{
+
+items_to_display = sort_based_on_reference(items_to_sort, items_sorted);
+
+// Get their full name
+for(var i = 0; i < array_length(items_to_display); i++) {
+	items_to_display[i][INFO_TABLE.TITLE] = ds_map_find_value(item_names, items_to_display[i][INFO_TABLE.TITLE]);
+	
+	panel.height = 15 + (30 * (i+1))
+	
 	if instance_exists(panel_cost)
-	{
-		instance_destroy(panel_cost)
-		panel_cost = noone
-	}
-	
+		panel_cost.height = 15 + (30 * (i+1))
+		
 	if instance_exists(panel_overhead)
-	{
-		instance_destroy(panel_overhead)
-		panel_overhead = noone
-	}
+		panel_overhead.height = 15 + (30 * (i+1))
 }

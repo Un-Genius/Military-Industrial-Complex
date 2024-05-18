@@ -1,28 +1,51 @@
-// oResourceDisplay Draw Event
+var x_offset = 40;
+var y_offset = 50;
+var _sep = 10;
+var _w = 300;
+var _size = 1;
+var _angle = image_angle;
 
-// Set text color to white and set font
-draw_set_color(c_white);
-draw_set_font(ftDefault);
+draw_set_font_ext(ftDefault, c_white, fa_left, fa_top, 1);
 
-var y_offset = 50;           // Initial vertical offset
-var resource_data = gatherResourceData();
-var cost_data_struct = gatherCostData();
-var cost_data = cost_data_struct.cost;
-var overhead_data = cost_data_struct.overhead;
-var produce_data = cost_data_struct.produce;
-var items_displayed_cost = renderResourcesAndCosts(y_offset, resource_data, cost_data, overhead_data, produce_data);
+for(var i = 0; i < array_length(items_to_display); i++) {
+	
+	var item = items_to_display[i];
+	
+	if item[INFO_TABLE.AMOUNT] > 0
+		draw_set_color(c_white);
+	else
+		draw_set_color(c_orange);
+	
+	draw_text_ext_transformed(x_offset, y_offset, item[INFO_TABLE.TITLE], _sep, _w, _size, _size, _angle);
+	draw_text_ext_transformed(x_offset+110, y_offset, string(item[INFO_TABLE.AMOUNT]) + "/" + string(item[INFO_TABLE.MAX]), _sep, _w, _size, _size, _angle);
+	draw_text_ext_transformed(x_offset+200, y_offset, item[INFO_TABLE.FLUX], _sep, _w, _size, _size, _angle);
+	
+	if instance_exists(oBuildingTool) {
+		if item[INFO_TABLE.COST] != 0
+		{
+			if item[INFO_TABLE.COST] > item[INFO_TABLE.AMOUNT]
+				draw_set_color(make_color_rgb(242, 111, 111)) // Red
+			else
+				draw_set_color(c_white)
+				
+			draw_text_ext_transformed(282, y_offset, "-" + string(item[INFO_TABLE.COST]), _sep, _w, _size, _size, _angle);
+		}
+		
+		if item[INFO_TABLE.UPKEEP] != 0
+		{
+			if item[INFO_TABLE.UPKEEP] > 0
+				draw_set_color(make_color_rgb(135, 242, 111)) // Green
+			else if item[INFO_TABLE.AMOUNT] > item[INFO_TABLE.UPKEEP]
+				draw_set_color(c_orange);
+			else
+				draw_set_color(make_color_rgb(242, 111, 111)) // Red
+			if item[INFO_TABLE.UPKEEP] > 0
+				draw_text_ext_transformed(342, y_offset,  "+" + string(item[INFO_TABLE.UPKEEP]), _sep, _w, _size, _size, _angle);
+			else
+				draw_text_ext_transformed(342, y_offset, item[INFO_TABLE.UPKEEP], _sep, _w, _size, _size, _angle);
+		}
+	}
 
-var str_height = string_height("W");
-
-// Update the panel height dynamically
-if (instance_exists(panel)) {
-    panel.height = (items_displayed_cost * str_height + 20); // Add padding
-}
-
-if (instance_exists(panel_cost)) {
-    panel_cost.height = (items_displayed_cost * str_height + 20); // Add padding
-}
-
-if (instance_exists(panel_overhead)) {
-    panel_overhead.height = (items_displayed_cost * str_height + 20); // Add padding
+    // Move to next line
+    y_offset += 30;
 }

@@ -198,6 +198,7 @@
     {"id":{"name":"oPathfinder","path":"objects/oPathfinder/oPathfinder.yy",},},
     {"id":{"name":"oPlayer","path":"objects/oPlayer/oPlayer.yy",},},
     {"id":{"name":"oPlayerClient","path":"objects/oPlayerClient/oPlayerClient.yy",},},
+    {"id":{"name":"oResourceDisplay_OLD","path":"objects/oResourceDisplay_OLD/oResourceDisplay_OLD.yy",},},
     {"id":{"name":"oResourceDisplay","path":"objects/oResourceDisplay/oResourceDisplay.yy",},},
     {"id":{"name":"oResourceSign","path":"objects/oResourceSign/oResourceSign.yy",},},
     {"id":{"name":"oSaveLoad","path":"objects/oSaveLoad/oSaveLoad.yy",},},

@@ -111,6 +111,7 @@
     {"name":"oParUnit","order":1,"path":"objects/oParUnit/oParUnit.yy",},
     {"name":"oPathfinder","order":5,"path":"objects/oPathfinder/oPathfinder.yy",},
     {"name":"oPlayer","order":9,"path":"objects/oPlayer/oPlayer.yy",},
+    {"name":"oResourceDisplay_OLD","order":4,"path":"objects/oResourceDisplay_OLD/oResourceDisplay_OLD.yy",},
     {"name":"oResourceDisplay","order":1,"path":"objects/oResourceDisplay/oResourceDisplay.yy",},
     {"name":"oResourceSign","order":9,"path":"objects/oResourceSign/oResourceSign.yy",},
     {"name":"oSaveLoad","order":6,"path":"objects/oSaveLoad/oSaveLoad.yy",},
