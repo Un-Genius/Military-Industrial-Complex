@@ -15,6 +15,9 @@ mp_gui_x	= mouse_x;
 mp_gui_y	= mouse_y;
 
 click_left_pressed	= false;
+click_right_pressed = false;
+click_shift = false;
+
 grid_height = 0;
 padding = 5;
 outside_padding = 300;

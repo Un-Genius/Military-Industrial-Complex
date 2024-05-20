@@ -181,7 +181,7 @@ function cm_close_distance()
 		_x1 = mp_gui_x - outside_padding - (width/2);
 	}
 	
-	hovering_proximity = get_hover(_x1, _y1,_x2, _y2)
+	hovering_proximity = get_hover(_x1, _y1,_x2, _y2, false)
 	if hovering_proximity
 		exit;
 
@@ -190,8 +190,10 @@ function cm_close_distance()
 
 function cm_close()
 {
-	if !click_left_pressed
-		exit;
+	if click_left_pressed || (click_right_pressed && click_shift)
+		{ } // I do this to get the opposite. I don't know how to do it properly
+ 	else
+		return false;
 	
 	// Check if not hovering over other menus
 	var _list = oPlayer.contextInstList
@@ -208,7 +210,9 @@ function cm_close()
 	}
 	
 	if hovering
-		exit;
+		return false;
 	
 	close_context(-1);
+	
+	return true;
 }

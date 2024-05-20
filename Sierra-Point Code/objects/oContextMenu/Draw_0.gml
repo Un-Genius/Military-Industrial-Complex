@@ -30,7 +30,7 @@ for(var i = 0; i < grid_height; i++)
 		
 	hovering = false;
 	
-	if get_hover(mp_gui_x, height_level, mp_gui_x + width, height_level + height)
+	if get_hover(mp_gui_x, height_level, mp_gui_x + width, height_level + height, false)
 		hovering = true;
 		
 	// Check for mouse hover

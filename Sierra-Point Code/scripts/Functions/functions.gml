@@ -276,85 +276,6 @@ function update_state(_newState, _newMoveState) {
 	#endregion
 }
 
-function enter_Vehicle_One(_inst) {
-	// Use inf _id to enter veh _inst
-	var _id = id;
-
-	with(_inst)
-	{
-		// Add self instance ID to veh list
-		ds_list_add(riderList, _id);
-
-		var _buffer = packet_start(packet_t.veh_interact);
-		buffer_write(_buffer, buffer_u64, oNetwork.steamUserName);
-		buffer_write(_buffer, buffer_u16, _id);
-		buffer_write(_buffer, buffer_u8, action.enter);
-		packet_send_all(_buffer);
-	}
-
-	// Reset variable
-	selected = false;
-
-	// De-activate instance
-	instance_deactivate_object(_id);
-}
-
-function exit_Vehicle_All() {
-	with(oPlayer)
-	{
-		// Get selected transport
-		var _veh = instRightSelected;
-	}
-
-	var _riderList = _veh.riderList;
-
-	// Get size
-	var _size = ds_list_size(_riderList);
-
-	// Remove self infantry from list and activate them
-	for(var i = 0; i < _size; i++)
-	{
-		// Find inf
-		var _inst = ds_list_find_value(_riderList, i);
-
-		// Activate inf
-		instance_activate_object(_inst);
-
-		// Set riding
-		_inst.riding = true;
-
-		// Update doppelganger
-		var _buffer = packet_start(packet_t.veh_interact);
-		buffer_write(_buffer, buffer_u64, oNetwork.steamUserName);
-		buffer_write(_buffer, buffer_u16, _inst);
-		buffer_write(_buffer, buffer_u8, action.leave);
-		packet_send_all(_buffer);
-	}
-
-	close_context(-1);
-}
-
-function kill_Vehicle_Riders() {
-	// Find all inf
-	var _size = ds_list_size(riderList);
-
-	// Find all inf and destroy them
-	for(var i = 0; i <= _size; i++)
-	{
-		// Find inf
-		var _inst = ds_list_find_value(riderList, i);
-
-		// Activate inf
-		instance_activate_object(_inst);
-
-		// Destroy
-		instance_destroy(_inst);
-
-		// Remove from list
-		ds_list_delete(riderList, i);
-	}
-}
-
 #endregion
 
 #endregion
@@ -2970,14 +2891,20 @@ function scr_GUI_list14() {
 
 #endregion
 
-function get_hover(_x1, _y1, _x2, _y2) {
-
-	var _mouseX = device_mouse_x_to_gui(0);
-	var _mouseY = device_mouse_y_to_gui(0);
-
+function get_hover(_x1, _y1, _x2, _y2, gui=true) {
+	
+	var _mouseX, _mouseY
+	
+	if gui {
+		_mouseX = device_mouse_x_to_gui(0);
+		_mouseY = device_mouse_y_to_gui(0);
+	}
+	else {
+		_mouseX = mouse_x;
+		_mouseY = mouse_y;
+	}
+	
 	return point_in_rectangle(_mouseX, _mouseY, _x1, _y1, _x2, _y2);
-
-
 }
 
 function on_click() {
