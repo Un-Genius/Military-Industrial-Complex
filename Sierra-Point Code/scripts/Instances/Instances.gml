@@ -68,63 +68,45 @@ function nearby_select(_list, _x, _y, _obj)
 	}
 }
 
-/// @function display_resource(resources);
-/// @param {resources} resources of money to display
-function display_resource(_x, _y, _resources)
+
+/// @function display_resource(object, resources);
+function display_resource(_display_coord, _resource_struct)
 {
-	var _inst = instance_create_layer(_x, _y, "UI", oResourceSign);
-	_inst.suppliesAmount = _resources;
+	var _inst = instance_create_layer(_display_coord[0], _display_coord[1], "UI", oResourceSign);
+	_inst.resources = variable_clone(_resource_struct);
 }
 
-/// @function add_resource(x, y, resources, display_resource);
-/// @param {resources} resources of money to add
-/// @param {display_resource} display_resource_bool
-function add_resource(_x, _y, _resources, _display=false)
-{
-	if(global.resources >= global.resources_max)
-		exit;
-		
-	if !is_struct(_resources)
+
+function add_resource(_target_struct, _value_struct, _max_stuct=-1, _min_value=-1, _display_coord=[0,0]){
+	var _value_names = struct_get_names(_value_struct);
+	var _target_names = struct_get_names(_value_struct);
+	
+	if array_length(_target_names) != array_length(_value_names)
+		show_message("Error comparing struct lengths. Values can't align.");
+	
+	for(var i = 0; i < array_length(_target_names); i++)
 	{
-		global.resources.supplies	+= min(global.resources_max.supplies,	_resources.supplies);
-		global.resources.food		+= min(global.resources_max.food,		_resources.food);
-		global.resources.weapons	+= min(global.resources_max.weapons,	_resources.weapons);
-		global.resources.people		+= min(global.resources_max.people,		_resources.people);
-		global.resources.cm			+= min(global.resources_max.cm,			_resources.cm);
-		global.resources.rt			+= min(global.resources_max.rt,			_resources.rt);
+		var _name = _value_names[i];
+		var _value = struct_get(_value_struct, _name);
+		
+		if _value == 0
+			continue
+			
+		var _target_amount = struct_get(_target_struct, _name) + _value;
+		
+		if _max_stuct != -1
+		{
+			var _max = struct_get(_max_stuct, _name);
+			struct_set(_target_struct, _name, min(_target_amount, _max))
+		}
+		else if _min_value != -1
+			struct_set(_target_struct, _name, max(_target_amount, _min_value))
+		else
+			struct_set(_target_struct, _name, _target_amount)
 	}
 	
-		
-	// Add supplies
-	global.resources.supplies	+= min(global.resources_max.supplies,	_resources.supplies);
-	global.resources.food		+= min(global.resources_max.food,		_resources.food);
-	global.resources.weapons	+= min(global.resources_max.weapons,	_resources.weapons);
-	global.resources.people		+= min(global.resources_max.people,		_resources.people);
-	global.resources.cm			+= min(global.resources_max.cm,			_resources.cm);
-	global.resources.rt			+= min(global.resources_max.rt,			_resources.rt);
-	
-	if _display
-		display_resource(_x, _y, _resources);
-}
-
-/// @function remove_resource(x, y, resources, display_resource);
-/// @param {resources} resources of money to add
-/// @param {display_resource} display_resource_bool
-function remove_resource(_x, _y, _resources, _display=false)
-{
-	if(global.resources >= oFaction.resource_struct)
-		exit;
-		
-	// Add supplies
-	global.resources.supplies	= max(0, global.resources.supplies - _resources.supplies);
-	global.resources.food		= max(0, global.resources.food - _resources.food);
-	global.resources.weapons	= max(0, global.resources.weapons - _resources.weapons);
-	global.resources.people	    = max(0, global.resources.people - _resources.people);
-	global.resources.cm		    = max(0, global.resources.cm - _resources.cm);
-	global.resources.rt			= max(0, global.resources.rt - _resources.rt);
-	
-	if _display
-		display_resource(_x, _y, _resources);
+	if _display_coord[0] > 0 || _display_coord[1] > 0
+		display_resource(_display_coord, _value_struct);
 }
 
 function compare_resources(base_resource, cost) {
@@ -136,7 +118,7 @@ function compare_resources(base_resource, cost) {
         var key = _key_list[i];
         
         // Check if the base resources have enough of each key
-        if (base_resource[$ key] < cost[$ key]) {
+        if (base_resource[$ key] < cost[$ key]*-1) {
             return false; // Not enough resources
         }
     }

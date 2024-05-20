@@ -15,11 +15,19 @@ hovering = get_hover(_x1, _y1,_x2, _y2)
 if _click_right_pressed
 {
 	// Update position
-	mp_gui_x	= device_mouse_x_to_gui(0);
-	mp_gui_y	= device_mouse_y_to_gui(0);
+	mp_gui_x	= mouse_x;
+	mp_gui_y	= mouse_y;
 }
 
 grid_height = ds_grid_height(cm_grid);
+
+/*
+scale = 1-oPlayer.zoom;
+
+draw_set_font(ftContextMenu);
+width	= string_width("M")*scale;
+height	= string_height("M")*scale;
+*/
 
 cm_close_distance()
 cm_update_position();

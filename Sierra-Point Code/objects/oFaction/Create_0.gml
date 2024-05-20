@@ -77,6 +77,7 @@ resource_struct = {
 
 var _info_struct = {
 	cost : variable_clone(resource_struct),
+	capacity : variable_clone(resource_struct),
 	resource_per_minute : variable_clone(resource_struct)
 }
 
@@ -88,37 +89,50 @@ obj_info = array_create(20, 0)
 for(var i = 0; i < 20; i++)
 	obj_info[i] = variable_clone(_info_struct);
 
-obj_info[OBJ_NAME.UNIT_INF].cost.food			= 5;
-obj_info[OBJ_NAME.UNIT_INF].cost.supplies		= 3;
-obj_info[OBJ_NAME.UNIT_INF].cost.weapons		= 3;
+obj_info[OBJ_NAME.UNIT_INF].cost.food			= -5;
+obj_info[OBJ_NAME.UNIT_INF].cost.supplies		= -3;
+obj_info[OBJ_NAME.UNIT_INF].cost.weapons		= -3;
 obj_info[OBJ_NAME.UNIT_INF].resource_per_minute.food		= -1;
 obj_info[OBJ_NAME.UNIT_INF].resource_per_minute.supplies	= -1;
 
-obj_info[OBJ_NAME.UNIT_WORKER].cost.supplies		= 3;
+obj_info[OBJ_NAME.UNIT_WORKER].cost.supplies				= -3;
 
-obj_info[OBJ_NAME.SITE_HQ].resource_per_minute.supplies			= 30;
+obj_info[OBJ_NAME.SITE_HQ].capacity.supplies				= 100;
+obj_info[OBJ_NAME.SITE_HQ].capacity.cm						= 20;
+obj_info[OBJ_NAME.SITE_HQ].capacity.food					= 20;
+obj_info[OBJ_NAME.SITE_HQ].capacity.people					= 15;
+obj_info[OBJ_NAME.SITE_HQ].resource_per_minute.supplies		= 30;
 
-obj_info[OBJ_NAME.SITE_CAP_SUPPLIES].cost.supplies	= 15;
+obj_info[OBJ_NAME.SITE_CAP_SUPPLIES].cost.supplies			= -15;
+obj_info[OBJ_NAME.SITE_CAP_SUPPLIES].capacity.supplies		= 200;
+obj_info[OBJ_NAME.SITE_CAP_SUPPLIES].capacity.cm			= 75;
 
-obj_info[OBJ_NAME.SITE_PRO_SUPPLIES].cost.supplies	= 50;
+obj_info[OBJ_NAME.SITE_PRO_SUPPLIES].cost.supplies			= -50;
 obj_info[OBJ_NAME.SITE_PRO_SUPPLIES].resource_per_minute.supplies = 30;
+obj_info[OBJ_NAME.SITE_PRO_SUPPLIES].capacity.supplies		= 50;
 
-obj_info[OBJ_NAME.SITE_PRO_CM].cost.supplies		= 75;
-obj_info[OBJ_NAME.SITE_PRO_CM].resource_per_minute.cm			= 20;
+obj_info[OBJ_NAME.SITE_PRO_CM].cost.supplies				= -75;
+obj_info[OBJ_NAME.SITE_PRO_CM].resource_per_minute.cm		= 20;
+obj_info[OBJ_NAME.SITE_PRO_CM].capacity.cm					= 20;
 
-obj_info[OBJ_NAME.SITE_CAP_INF].cost.supplies	= 15;
-obj_info[OBJ_NAME.SITE_CAP_INF].cost.cm			= 10;
+obj_info[OBJ_NAME.SITE_CAP_INF].cost.supplies				= -15;
+obj_info[OBJ_NAME.SITE_CAP_INF].cost.cm						= -10;
+obj_info[OBJ_NAME.SITE_CAP_INF].capacity.infantry			= 20;
 
-obj_info[OBJ_NAME.SITE_PRO_FOOD].cost.supplies		= 35;
-obj_info[OBJ_NAME.SITE_PRO_FOOD].cost.cm			= 15;
+obj_info[OBJ_NAME.SITE_PRO_FOOD].cost.supplies				= -35;
+obj_info[OBJ_NAME.SITE_PRO_FOOD].cost.cm					= -15;
 obj_info[OBJ_NAME.SITE_PRO_FOOD].resource_per_minute.food		= 15;
 obj_info[OBJ_NAME.SITE_PRO_FOOD].resource_per_minute.supplies	= -6;
+obj_info[OBJ_NAME.SITE_PRO_FOOD].capacity.food				= 75;
 
-obj_info[OBJ_NAME.SITE_PRO_WEAPONS].cost.supplies	= 40;
-obj_info[OBJ_NAME.SITE_PRO_WEAPONS].cost.cm			= 20;
+obj_info[OBJ_NAME.SITE_PRO_WEAPONS].cost.supplies			= -40;
+obj_info[OBJ_NAME.SITE_PRO_WEAPONS].cost.cm					= -20;
 obj_info[OBJ_NAME.SITE_PRO_WEAPONS].resource_per_minute.weapons = 6;
 obj_info[OBJ_NAME.SITE_PRO_WEAPONS].resource_per_minute.supplies = -6;
+obj_info[OBJ_NAME.SITE_PRO_WEAPONS].capacity.weapons		= 30;
 
-obj_info[OBJ_NAME.SITE_PRO_INF].cost.supplies	= 50;
-obj_info[OBJ_NAME.SITE_PRO_INF].cost.cm			= 15;
+obj_info[OBJ_NAME.SITE_PRO_INF].cost.supplies				= -50;
+obj_info[OBJ_NAME.SITE_PRO_INF].cost.cm						= -15;
+obj_info[OBJ_NAME.SITE_PRO_INF].resource_per_minute.infantry = 1;
+obj_info[OBJ_NAME.SITE_PRO_INF].capacity.infantry			= 6;
 

@@ -1,7 +1,10 @@
 // Update pathfinding
 path_grid_update();
 
-cost = oFaction.obj_info[obj_to_enum(id.object_index)].cost;
+site_data = oFaction.obj_info[obj_to_enum(id.object_index)];
+add_resource(global.resources_max, site_data.capacity);
+
+resupplyTime = 5 * room_speed;
 
 event_user(0);
 

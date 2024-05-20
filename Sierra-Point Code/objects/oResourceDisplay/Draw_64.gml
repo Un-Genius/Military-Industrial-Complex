@@ -23,12 +23,12 @@ for(var i = 0; i < array_length(items_to_display); i++) {
 	if instance_exists(oBuildingTool) {
 		if item[INFO_TABLE.COST] != 0
 		{
-			if item[INFO_TABLE.COST] > item[INFO_TABLE.AMOUNT]
+			if (item[INFO_TABLE.COST]*-1) > item[INFO_TABLE.AMOUNT]
 				draw_set_color(make_color_rgb(242, 111, 111)) // Red
 			else
 				draw_set_color(c_white)
 				
-			draw_text_ext_transformed(282, y_offset, "-" + string(item[INFO_TABLE.COST]), _sep, _w, _size, _size, _angle);
+			draw_text_ext_transformed(282, y_offset, item[INFO_TABLE.COST], _sep, _w, _size, _size, _angle);
 		}
 		
 		if item[INFO_TABLE.UPKEEP] != 0

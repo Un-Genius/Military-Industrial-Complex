@@ -2244,7 +2244,7 @@ function create_context(_x, _y) {
 }
 
 function find_context(_string) {
-
+	
 	var _cm_grid = instance_find(oContextMenu, 0).cm_grid;
 
 	var _y		= -1;
@@ -2295,7 +2295,7 @@ function scr_context_folder_HQspawn() {
 		level = _level;
 
 		// Add buttons
-		add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
+		add_context("Spawn Infantry",	scr_create_squad, false, [mouse_x, mouse_y, oInfantry, 5]);
 		//add_context("Spawn Transport",	scr_context_spawn_trans, false);
 
 		// Update size
@@ -2344,62 +2344,6 @@ function scr_context_folder_HABspawn() {
 		else
 		{
 			add_context("Not Enough Resources",	on_click,	 false);
-		}
-
-		// Update size
-		event_user(0);
-	}
-}
-
-function scr_context_folder_LOGspawn() {
-
-	if !instance_exists(oParUnit)
-		exit;
-
-	// Set heirarchy
-	var _level = 1;
-
-	with(oPlayer)
-	{
-		var _size = ds_list_size(contextInstList)
-
-		// Check if not already in list
-		for(var i = 0; i < _size; i++)
-		{
-			var _contextMenu = ds_list_find_value(contextInstList, i);
-			if _contextMenu.level == _level
-				exit;
-		}
-
-		var _instFind = instRightSelected;
-	}
-
-	// Create context menu
-	var _inst = create_context(mp_gui_x, mp_gui_y);
-
-	if _inst == -1
-		exit;
-
-	with(_inst)
-	{
-		// Set heirarchy
-		level = _level;
-
-		// Check if there is enough money for a HAB
-		if _instFind.resCarry >= unitResCost.HAB
-		{
-			var _oHAB = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHAB, false, true);
-			var _oHQ  = collision_circle(_instFind.x, _instFind.y, _instFind.resRange, oHQ, false, true);
-
-			// Check if near a building
-			if _oHAB > 0 || _oHQ > 0
-				add_context("Too close to Building", on_click,	 false);
-			//else
-				//add_context("Spawn HAB", scr_context_spawn_HAB,	 false);
-		}
-		else
-		{
-			add_context("Not Enough Resources", on_click,	 false);
 		}
 
 		// Update size
@@ -2651,6 +2595,9 @@ function scr_context_select_onScreen() {
 	close_context(-1);
 }
 
+function scr_instance_destroy(_objectIndex) {
+	instance_destroy(_objectIndex[0])
+}
 
 function scr_context_spawn_object() {
 	var _amount = 1;
@@ -2681,14 +2628,17 @@ function scr_context_spawn_object() {
 }
 
 function scr_create_squad(_x, _y, _object, _amount) {
-	var _squad_inst = instance_create_layer(_x, _y, "UI", oSquad);
+	var _squad_list = ds_list_create()
 	var _inst;
 
 	repeat(_amount)
 	{
 		_inst = spawn_unit(_object, _x, _y);
-		ds_list_add(_squad_inst.squad, _inst);
+		ds_list_add(_squad_list, _inst);
 	}
+	
+	create_squad(_squad_list)
+	ds_list_destroy(_squad_list)
 
 	close_context(-1);
 }

@@ -1,4 +1,3 @@
 /// @description Charge Cost
-//global.resources -= cost;
 
-remove_resource(0,0,cost)
+add_resource(global.resources, site_data.cost, -1, 0);

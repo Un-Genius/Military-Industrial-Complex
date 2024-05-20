@@ -11,8 +11,8 @@ Height for levels of buttons
 cm_grid = ds_grid_create(10, 1);
 
 // Update position
-mp_gui_x	= device_mouse_x_to_gui(0);
-mp_gui_y	= device_mouse_y_to_gui(0);
+mp_gui_x	= mouse_x;
+mp_gui_y	= mouse_y;
 
 click_left_pressed	= false;
 grid_height = 0;
@@ -25,9 +25,9 @@ cm_background_height = 0;
 height_level = 0;
 
 draw_set_font(ftContextMenu);
-	width	= string_width("M");;
-	height	= string_height("M");
-draw_set_font(ftDefault);
+width	= string_width("M");
+height	= string_height("M");
+scale = 1-oPlayer.zoom;
 
 folder_timer = -1;
 

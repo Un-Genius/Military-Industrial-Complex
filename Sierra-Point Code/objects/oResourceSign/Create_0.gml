@@ -1,5 +1,7 @@
 resources = oFaction.resource_struct;
 
+image_alpha = 0.8
+
 lifeDuration = 3;
 lifeAlpha = 1 / (lifeDuration * room_speed);
 
@@ -11,3 +13,5 @@ amplitude = 5; //pixels of peak oscillation
  
 //clone the y-position (or use x instead if you're doing horizontal oscillation)
 xx = x;
+
+shift = t;

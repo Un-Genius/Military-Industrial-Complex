@@ -1,2 +1,2 @@
 // Return money
-add_resource(x, y, cost, false);
+add_resource(global.resources, site_data.cost, global.resources_max, [x,y]);

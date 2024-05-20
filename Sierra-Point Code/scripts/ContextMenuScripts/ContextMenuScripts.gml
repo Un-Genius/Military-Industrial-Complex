@@ -36,6 +36,7 @@ function cm_folder(i)
 		
 	// Draw data
 	draw_text(mp_gui_x + padding, height_level, _string);
+	//draw_text_ext_transformed(mp_gui_x + padding, height_level, _string, 10, 300, scale, scale, image_angle)
 	
 	cm_triangle();
 				

@@ -301,72 +301,16 @@ function context_menu_unit_actions(_instSel)
 			case oSiteProduceInfantry:
 				// Spawn units
 				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
-				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, infantry, 7]);
+				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, oInfantry, 7]);
 				break;
 
-			case oHQ:
+			case oSiteHQ:
 				// Spawn units
 				add_context("Spawn Units", scr_context_folder_HQspawn, true);
 				break;
-
-			case oHAB:
-				// Spawn troops, Destroy self
-				if _resCarry > 0
-				{
-					add_context("Spawn Units", scr_context_folder_HABspawn, true);
-					add_context("break", on_click, false);
-					add_context("Destroy Self", scr_context_destroy, false);
-				}
-
-				// Search for nearby vehicles
-				var _LOG = collision_circle(_x, _y, _resRange, oTransport, false, true);
-
-				// Transfer supplies
-				if _LOG && _LOG.resCarry > 0
-				{
-					if _resCarry <= 0
-						add_context("break", on_click, false);
-					add_context("Grab Resources", scr_context_grab_res,	 false);
-				}
-				break;
-
-			case oTransport:
-				// Move unit
-				//add_context("Move", scr_context_move, false);
-
-				// Dismount troops
-				if ds_list_size(_instSel.riderList) > 0
-				{
-					add_context("break", on_click, false);
-					add_context("Exit Vehicle", exit_Vehicle_All, false);
-				}
-
-				// Spawn Units
-				if _resCarry > 0
-				{
-					add_context("break", on_click, false);
-					add_context("Spawn Units", scr_context_folder_LOGspawn, true);
-				}
-
-				// Search for nearby building
-				var _HAB = collision_circle(_x, _y, _resRange, oHAB, false, true);
-
-				// Transfer supplies
-				if _HAB
-				{
-					if _resCarry <= 0
-						add_context("break", on_click, false);
-
-					// Check if can give resources
-					if _resCarry > 0
-						add_context("Drop Resources", scr_context_drop_res,	 false);
-
-					// Take resourcess
-					if _resCarry != _maxResCarry && _HAB.resCarry > 0
-						add_context("Grab Resources", scr_context_grab_res,	 false);
-				}
-				break;
 		}
+		
+		add_context("Destroy", scr_instance_destroy, false, [_objectIndex])
 	}
 }
 function context_menu_debug()

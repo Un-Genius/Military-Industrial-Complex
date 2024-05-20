@@ -1,9 +1,9 @@
 {
   "$GMScript":"",
-  "%Name":"ResourceDisplayFunctions",
+  "%Name":"ResourceDisplayScripts",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ResourceDisplayFunctions",
+  "name":"ResourceDisplayScripts",
   "parent":{
     "name":"GUI",
     "path":"folders/Scripts/GUI.yy",
