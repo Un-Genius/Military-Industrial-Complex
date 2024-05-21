@@ -3,9 +3,6 @@ click_right_pressed	= device_mouse_check_button_pressed(0, mb_right);
 click_left_pressed	= device_mouse_check_button_pressed(0, mb_left);
 click_shift = keyboard_check_pressed(vk_shift);
 
-if cm_close()
-	exit;
-
 slot_height = 0;
 
 var _x1 = mp_gui_x;
@@ -35,3 +32,5 @@ height	= string_height("M")*scale;
 
 // cm_close_distance() This closes the contextmenu if the mouse is too far
 cm_update_position();
+
+cm_close()

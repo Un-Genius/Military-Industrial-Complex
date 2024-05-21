@@ -2224,54 +2224,6 @@ function scr_context_folder_HQspawn() {
 	}
 }
 
-function scr_context_folder_HABspawn() {
-
-	if !instance_exists(oParUnit)
-		exit;
-
-	// Set heirarchy
-	var _level = 1;
-
-	with(oPlayer)
-	{
-		var _size = ds_list_size(contextInstList)
-
-		// Check if not already in list
-		for(var i = 0; i < _size; i++)
-		{
-			var _contextMenu = ds_list_find_value(contextInstList, i);
-			if _contextMenu.level == _level
-				exit;
-		}
-
-		var _instFind = instRightSelected;
-	}
-
-	// Create context menu
-	var _inst = create_context(mp_gui_x, mp_gui_y);
-
-	if _inst == -1
-		exit;
-
-	with(_inst)
-	{
-		// Set heirarchy
-		level = _level;
-
-		if _instFind.resCarry >= unitResCost.inf
-		{
-			add_context("Spawn Infantry",	scr_context_spawn_inf,	 false);
-		}
-		else
-		{
-			add_context("Not Enough Resources",	on_click,	 false);
-		}
-
-		// Update size
-		event_user(0);
-	}
-}
-
 function scr_context_folder_behavior() {
 	// Set heirarchy
 	var _level = 1;

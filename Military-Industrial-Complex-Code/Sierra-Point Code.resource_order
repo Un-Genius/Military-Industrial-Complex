@@ -217,7 +217,6 @@
     {"name":"teleport_to","order":13,"path":"scripts/teleport_to/teleport_to.yy",},
     {"name":"to_string","order":14,"path":"scripts/to_string/to_string.yy",},
     {"name":"wave","order":15,"path":"scripts/wave/wave.yy",},
-    {"name":"Sequence1","order":15,"path":"sequences/Sequence1/Sequence1.yy",},
     {"name":"music2","order":1,"path":"sounds/music2/music2.yy",},
     {"name":"snd_bulletFlyingBy","order":5,"path":"sounds/snd_bulletFlyingBy/snd_bulletFlyingBy.yy",},
     {"name":"snd_ButtonClick","order":1,"path":"sounds/snd_ButtonClick/snd_ButtonClick.yy",},

@@ -315,7 +315,6 @@
     {"id":{"name":"teleport_to","path":"scripts/teleport_to/teleport_to.yy",},},
     {"id":{"name":"to_string","path":"scripts/to_string/to_string.yy",},},
     {"id":{"name":"wave","path":"scripts/wave/wave.yy",},},
-    {"id":{"name":"Sequence1","path":"sequences/Sequence1/Sequence1.yy",},},
     {"id":{"name":"music1","path":"sounds/music1/music1.yy",},},
     {"id":{"name":"music2","path":"sounds/music2/music2.yy",},},
     {"id":{"name":"snd_bulletFlyingBy","path":"sounds/snd_bulletFlyingBy/snd_bulletFlyingBy.yy",},},
