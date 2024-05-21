@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"func_change_gender",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"func_change_gender",
+  "parent":{
+    "name":"PlayMenu",
+    "path":"folders/MonasteryFramework/04-Scripts/05-Menu/PlayMenu.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"macros",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"macros",
+  "parent":{
+    "name":"04-Scripts",
+    "path":"folders/MonasteryFramework/04-Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

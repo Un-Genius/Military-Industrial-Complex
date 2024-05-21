@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"key_code_to_string",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"key_code_to_string",
+  "parent":{
+    "name":"03-RebindKeys",
+    "path":"folders/MonasteryFramework/04-Scripts/03-RebindKeys.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

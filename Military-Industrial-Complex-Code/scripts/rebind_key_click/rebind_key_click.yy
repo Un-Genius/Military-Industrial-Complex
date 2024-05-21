@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"rebind_key_click",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"rebind_key_click",
+  "parent":{
+    "name":"03-RebindKeys",
+    "path":"folders/MonasteryFramework/04-Scripts/03-RebindKeys.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"gui_create_button",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"gui_create_button",
+  "parent":{
+    "name":"01-UI",
+    "path":"folders/MonasteryFramework/04-Scripts/01-UI.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

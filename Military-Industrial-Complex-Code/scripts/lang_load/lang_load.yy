@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"lang_load",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"lang_load",
+  "parent":{
+    "name":"02-Language",
+    "path":"folders/MonasteryFramework/04-Scripts/02-Language.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

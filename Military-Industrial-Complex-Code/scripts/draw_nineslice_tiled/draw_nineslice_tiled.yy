@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"draw_nineslice_tiled",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"draw_nineslice_tiled",
+  "parent":{
+    "name":"01-UI",
+    "path":"folders/MonasteryFramework/04-Scripts/01-UI.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"screen_shake",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"screen_shake",
+  "parent":{
+    "name":"00-Util",
+    "path":"folders/MonasteryFramework/04-Scripts/00-Util.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

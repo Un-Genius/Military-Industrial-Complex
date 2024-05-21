@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"draw_text_outline",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"draw_text_outline",
+  "parent":{
+    "name":"00-Util",
+    "path":"folders/MonasteryFramework/04-Scripts/00-Util.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

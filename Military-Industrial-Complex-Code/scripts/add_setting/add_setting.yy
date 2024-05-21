@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"add_setting",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"add_setting",
+  "parent":{
+    "name":"Create",
+    "path":"folders/Scripts/GUI/Create.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

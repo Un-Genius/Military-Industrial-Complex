@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"gui_mouse_y",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"gui_mouse_y",
+  "parent":{
+    "name":"01-UI",
+    "path":"folders/MonasteryFramework/04-Scripts/01-UI.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
