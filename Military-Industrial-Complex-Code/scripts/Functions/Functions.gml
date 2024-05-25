@@ -2141,24 +2141,6 @@ function create_context(_x, _y) {
 	{
 		// Add to list
 		ds_list_add(contextInstList, _inst);
-
-		var _size = ds_list_size(contextInstList)
-
-		if _size > 1
-		{
-			// Find current position
-			var _pos = ds_list_find_index(contextInstList, _inst);
-
-			// Find previous inst
-			var _prevInst = ds_list_find_value(contextInstList, _pos - 1);
-
-			// Find the right of the inst
-			var _start_x	= _prevInst.x;
-			var _width		= _prevInst.width;
-
-			_inst.x = _start_x + _width;
-			_inst.mp_gui_x = _start_x + _width;
-		}
 	}
 
 	return _inst;

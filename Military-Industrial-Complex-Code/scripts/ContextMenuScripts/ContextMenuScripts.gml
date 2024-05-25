@@ -39,36 +39,28 @@ function cm_folder(i)
 	//draw_text_ext_transformed(mp_gui_x + padding, height_level, _string, 10, 300, scale, scale, image_angle)
 	
 	cm_triangle();
-				
-
 }
 
 function cm_triangle()
-{
-	var _folder = ds_grid_get(cm_grid, 2, i);
-	
-	// Draw folder icon
-	if !_folder
-		exit;
-		
+{		
 	// Define the base position and size variables
 	var base_x = mp_gui_x;
-	var base_y = height_level;
+	var base_y = height_level+2;
 	var triangle_width = width;
-	var triangle_height = height;
+	var triangle_height = height-5;
 
 	// Calculate the coordinates for the three points of the triangle
-	var point1_x = base_x + ((triangle_width / 15) * 13.5);
+	var point1_x = base_x + ((triangle_width/15)*13.5);
 	var point1_y = base_y + 4;
 
-	var point2_x = base_x + ((triangle_width / 15) * 13.5);
+	var point2_x = base_x + ((triangle_width/15)*13.5);
 	var point2_y = base_y + triangle_height - 4;
 
 	var point3_x = base_x + triangle_width - 7;
 	var point3_y = base_y + (triangle_height / 2);
 
 	// Now use the variables to draw the triangle
-	draw_triangle(point1_x, point1_y, point2_x, point2_y, point3_x, point3_y, true);
+	draw_triangle(point1_x, point1_y, point2_x, point2_y, point3_x, point3_y, false);
 }
 
 function cm_file_expand(i)
@@ -144,7 +136,7 @@ function cm_highlight()
 	
 	// Draw outline
 	draw_rectangle(mp_gui_x, height_level, _x2, _y2, true);
-	draw_rectangle(mp_gui_x - 1, height_level, _x2 + 1, _y2, true);
+	draw_rectangle(mp_gui_x, height_level, _x2, _y2, true);
 }
 
 function cm_update_position()

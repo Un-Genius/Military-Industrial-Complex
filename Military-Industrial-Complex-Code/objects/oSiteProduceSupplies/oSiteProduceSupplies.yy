@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sZoneMoney",
-    "path":"sprites/sZoneMoney/sZoneMoney.yy",
+    "name":"sFactory",
+    "path":"sprites/sFactory/sFactory.yy",
   },
   "spriteMaskId":null,
   "visible":true,

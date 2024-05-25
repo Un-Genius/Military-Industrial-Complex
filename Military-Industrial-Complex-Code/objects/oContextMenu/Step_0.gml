@@ -31,6 +31,6 @@ height	= string_height("M")*scale;
 */
 
 // cm_close_distance() This closes the contextmenu if the mouse is too far
-cm_update_position();
+//cm_update_position(); This updates the Contextmenu to be in the screen
 
 cm_close()

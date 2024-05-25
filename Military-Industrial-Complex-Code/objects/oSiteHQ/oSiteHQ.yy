@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sZoneHQ",
-    "path":"sprites/sZoneHQ/sZoneHQ.yy",
+    "name":"sHQ",
+    "path":"sprites/sHQ/sHQ.yy",
   },
   "spriteMaskId":null,
   "visible":true,

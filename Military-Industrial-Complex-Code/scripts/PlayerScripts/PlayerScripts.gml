@@ -324,6 +324,17 @@ function context_menu_debug()
 	}
 }
 
+// Function to check if an instance is a child of a specific parent object
+function is_child_of(_instance, _parent) {
+    var _current = _instance;
+    while (_current != noone) {
+        if (_current == _parent) return true;
+		if (_current == -100) return false;
+        _current = object_get_parent(_current);
+    }
+    return false;
+}
+
 function mouse_box_close()
 {
 	if buildingPlacement != noone
@@ -355,7 +366,7 @@ function mouse_box_close()
 	for(var i = 0; i < instances_selected_list; i++)
 	{
 		var _instanceInHand = ds_grid_get(global.instGrid, i, 0);
-		if (_instanceInHand == 0 || !instance_exists(_instanceInHand)) continue;
+		if (_instanceInHand == 0 || !instance_exists(_instanceInHand) || (is_child_of(_instanceInHand.object_index, oParSite))) continue;
 
 		var _instanceObject = _instanceInHand.object_index;
 		if(!ds_map_exists(freq_map, string(_instanceObject)))

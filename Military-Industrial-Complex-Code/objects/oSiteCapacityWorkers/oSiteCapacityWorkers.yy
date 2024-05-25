@@ -34,8 +34,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sZoneCamp",
-    "path":"sprites/sZoneCamp/sZoneCamp.yy",
+    "name":"sHousing",
+    "path":"sprites/sHousing/sHousing.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -244,17 +244,17 @@ function object_to_sprite(_obj)
 		case oInfantry:				_spr = sZoneInfantry;	break;
 		case oInfantryAI:			_spr = sInfantry;		break;
 		case oWorker:				_spr = sInfantry;		break;
-		case oSiteHQ:				_spr = sZoneHQ;			break;
-		case oSiteProduceSupplies:	_spr = sZoneMoney;		break;
-		case oSiteProduceWorkers:	_spr = sZoneBootCamp;	break;
-		case oSiteProduceInfantry:	_spr = sZoneBootCamp;	break;
-		case oSiteProduceWeapons:	_spr = sZoneMoney;		break;
-		case oSiteProduceFood:		_spr = sZoneMoney;		break;
-		case oSiteProduceCM:		_spr = sZoneMoney;		break;
-		case oSiteProduceRT:		_spr = sZoneMoney;		break;
-		case oSiteCapacitySupplies:	_spr = sZoneSupplies;	break;
-		case oSiteCapacityInfantry:	_spr = sZoneCamp;		break;
-		case oSiteCapacityWorkers:	_spr = sZoneCamp;		break;
+		case oSiteHQ:				_spr = sHQ;			break;
+		case oSiteProduceSupplies:	_spr = sFactory;		break;
+		case oSiteProduceWorkers:	_spr = sHAB;	break;
+		case oSiteProduceInfantry:	_spr = sHAB;	break;
+		case oSiteProduceWeapons:	_spr = sFactory;		break;
+		case oSiteProduceFood:		_spr = sFactory;		break;
+		case oSiteProduceCM:		_spr = sFactory;		break;
+		case oSiteProduceRT:		_spr = sFactory;		break;
+		case oSiteCapacitySupplies:	_spr = sWarehouse;	break;
+		case oSiteCapacityInfantry:	_spr = sHousing;		break;
+		case oSiteCapacityWorkers:	_spr = sHousing;		break;
 	}
 	
 	return _spr;

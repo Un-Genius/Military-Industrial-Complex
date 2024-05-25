@@ -117,7 +117,8 @@ obj_info[OBJ_NAME.SITE_PRO_CM].capacity.cm					= 20;
 
 obj_info[OBJ_NAME.SITE_CAP_INF].cost.supplies				= -15;
 obj_info[OBJ_NAME.SITE_CAP_INF].cost.cm						= -10;
-obj_info[OBJ_NAME.SITE_CAP_INF].capacity.infantry			= 20;
+obj_info[OBJ_NAME.SITE_CAP_INF].capacity.people				= 20;
+//obj_info[OBJ_NAME.SITE_CAP_INF].capacity.infantry			= 20;
 
 obj_info[OBJ_NAME.SITE_PRO_FOOD].cost.supplies				= -35;
 obj_info[OBJ_NAME.SITE_PRO_FOOD].cost.cm					= -15;
@@ -133,6 +134,8 @@ obj_info[OBJ_NAME.SITE_PRO_WEAPONS].capacity.weapons		= 30;
 
 obj_info[OBJ_NAME.SITE_PRO_INF].cost.supplies				= -50;
 obj_info[OBJ_NAME.SITE_PRO_INF].cost.cm						= -15;
-obj_info[OBJ_NAME.SITE_PRO_INF].resource_per_minute.infantry = 1;
-obj_info[OBJ_NAME.SITE_PRO_INF].capacity.infantry			= 6;
+obj_info[OBJ_NAME.SITE_PRO_INF].resource_per_minute.people	= 1;
+obj_info[OBJ_NAME.SITE_PRO_INF].capacity.people				= 6;
+//obj_info[OBJ_NAME.SITE_PRO_INF].resource_per_minute.infantry = 1;
+//obj_info[OBJ_NAME.SITE_PRO_INF].capacity.infantry			= 6;
 

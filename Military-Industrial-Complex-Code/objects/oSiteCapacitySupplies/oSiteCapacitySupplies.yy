@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sZoneSupplies",
-    "path":"sprites/sZoneSupplies/sZoneSupplies.yy",
+    "name":"sWarehouse",
+    "path":"sprites/sWarehouse/sWarehouse.yy",
   },
   "spriteMaskId":null,
   "visible":true,

@@ -31,8 +31,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sZoneBootCamp",
-    "path":"sprites/sZoneBootCamp/sZoneBootCamp.yy",
+    "name":"sHAB",
+    "path":"sprites/sHAB/sHAB.yy",
   },
   "spriteMaskId":null,
   "visible":true,

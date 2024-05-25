@@ -9,11 +9,9 @@ switch(_inst.object_index)
 	case oInfantryAI:
 		sprite_index = sOVLInf;
 		break;
-	case oHQ:
 	case oSiteHQ:
 		sprite_index = sOVLHQ;
 		break;
-	case oHAB:
 	case oSiteProduceInfantry:
 	case oSiteCapacityInfantry:
 	case oSiteProduceSupplies:
@@ -21,5 +19,7 @@ switch(_inst.object_index)
 	default:
 		sprite_index = sOVLHAB;
 }
+
+/*
 if variable_instance_exists(_inst, "hash_color")
 	image_blend = _inst.hash_color;

@@ -27,8 +27,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"USA",
-    "path":"folders/Sprites/Units/Units/Infantry/USA.yy",
+    "name":"Basic Inf 1",
+    "path":"folders/Sprites/Units/Units/Infantry/USA/Basic Inf 1.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

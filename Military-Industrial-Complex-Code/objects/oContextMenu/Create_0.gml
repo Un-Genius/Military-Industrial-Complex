@@ -37,4 +37,10 @@ folder_timer = -1;
 // Set heirarchy
 level = 0;
 
-event_user(0);
+var _max = instance_number(oContextMenu);
+
+if _max <= 1
+	exit;
+
+var _inst = instance_find(oContextMenu, _max-2);
+mp_gui_x = _inst.mp_gui_x + _inst.width;
