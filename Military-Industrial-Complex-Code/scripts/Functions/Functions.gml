@@ -285,10 +285,6 @@ function update_state(_newState, _newMoveState) {
 function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
     var hcells = room_width div grid_cell_width;
     var vcells = room_height div grid_cell_height;
-	
-	show_debug_message("-----------------------")
-	show_debug_message(_pathGoalX)
-	show_debug_message(_pathGoalY)
 
     // Convert target coordinates to grid coordinates
     var gridX = floor(_pathGoalX / grid_cell_width);
@@ -331,8 +327,6 @@ function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
                 if (mp_grid_get_cell(global.grid, checkX, checkY) == 0) {
                     ds_queue_destroy(queue);
                     ds_grid_destroy(visited);
-					show_debug_message("X: " + string(checkX) + " + " + string(grid_cell_width) + " = " + string(checkX * grid_cell_width))
-					show_debug_message("Y: " + string(checkY) + " + " + string(grid_cell_height) + " = " + string(checkY * grid_cell_height))
                     return [checkX * grid_cell_width, checkY * grid_cell_height];
                 }
 
@@ -347,43 +341,6 @@ function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
 
     dbg("Error with Pathfinding");
     return [_pathGoalX, _pathGoalY];
-}
-
-function find_nearest_empty_space_old(_pathGoalX, _pathGoalY) {
-	var hcells = room_width div grid_cell_width;
-	var vcells = room_height div grid_cell_height;
-	
-    // Convert target coordinates to grid coordinates
-    var gridX = floor(_pathGoalX / grid_cell_width);
-    var gridY = floor(_pathGoalY / grid_cell_height);
-
-    // Check if the initial position is free
-    if (mp_grid_get_cell(global.grid, gridX, gridY) == 0)
-        return [_pathGoalX, _pathGoalY];
-
-    // BFS search for nearest empty cell
-    var radius = 1;
-    while (true) {
-        for (var dx = -radius; dx <= radius; dx++) {
-            for (var dy = -radius; dy <= radius; dy++) {
-                var checkX = gridX + dx;
-                var checkY = gridY + dy;
-
-                // Boundary check
-                if (checkX < 0 || checkY < 0 || checkX >= hcells || checkY >= vcells) continue;
-
-                // Check if the cell is empty
-                if (mp_grid_get_cell(global.grid, checkX, checkY) == 0) {
-                    // Convert back to world coordinates
-                    return [checkX * grid_cell_width, checkY * grid_cell_height];
-                }
-            }
-        }
-        radius++;
-    }
-	
-	dbg("Error with Pathfinding")
-	return [_pathGoalX, _pathGoalY]
 }
 
 function path_goal_find(startX, startY, _pathGoalX, _pathGoalY, _path) {
@@ -459,10 +416,11 @@ function path_goal_find(startX, startY, _pathGoalX, _pathGoalY, _path) {
 		var i = 0
 		while path_get_length(path) > 0
 			path_delete_point(path, 0)
-		return false
+		
+		return false;
 	}
 	
-	return true
+	return true;
 }
 
 function path_goal_multiplayer_update(_x, _y, _pathGoalX, _pathGoalY) {
@@ -2358,8 +2316,8 @@ function scr_context_move(movement_type=noone) {
 			release = false;
 
 			// Set goal
-			goal_x	= _mouse_x + random_range(-15, 15);
-			goal_y	= _mouse_y + random_range(-15, 15);
+			goal_x	= _mouse_x + random_range(-30, 30);
+			goal_y	= _mouse_y + random_range(-30, 30);
 
 			b_sm.swap(b_idle)
 			m_sm.swap(_set_type);
