@@ -283,6 +283,73 @@ function update_state(_newState, _newMoveState) {
 #region Pathfinding
 
 function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
+    var hcells = room_width div grid_cell_width;
+    var vcells = room_height div grid_cell_height;
+	
+	show_debug_message("-----------------------")
+	show_debug_message(_pathGoalX)
+	show_debug_message(_pathGoalY)
+
+    // Convert target coordinates to grid coordinates
+    var gridX = floor(_pathGoalX / grid_cell_width);
+    var gridY = floor(_pathGoalY / grid_cell_height);
+
+    // Check if the initial position is free
+    if (mp_grid_get_cell(global.grid, gridX, gridY) == 0)
+        return [_pathGoalX, _pathGoalY];
+
+    // Initialize the BFS
+    var queue = ds_queue_create();
+    ds_queue_enqueue(queue, [gridX, gridY]);
+
+    // Keep track of visited cells
+    var visited = ds_grid_create(hcells, vcells);
+    ds_grid_set_region(visited, 0, 0, hcells - 1, vcells - 1, 0);
+
+    // Directions for 8 neighboring cells (N, NE, E, SE, S, SW, W, NW)
+    var directions = [
+        [1, 0], [-1, 0], [0, 1], [0, -1], 
+        [1, 1], [-1, -1], [1, -1], [-1, 1]
+    ];
+
+    while (ds_queue_size(queue) != 0) {
+        var current = ds_queue_dequeue(queue);
+        var curX = current[0];
+        var curY = current[1];
+
+        // Check all 8 neighboring cells
+        for (var i = 0; i < array_length(directions); i++) {
+            var checkX = curX + directions[i][0];
+            var checkY = curY + directions[i][1];
+
+            // Boundary check and visited check
+            if (checkX >= 0 && checkY >= 0 && checkX < hcells && checkY < vcells && ds_grid_get(visited, checkX, checkY) == 0) {
+                // Mark cell as visited
+                ds_grid_set(visited, checkX, checkY, 1);
+
+                // Check if the cell is empty
+                if (mp_grid_get_cell(global.grid, checkX, checkY) == 0) {
+                    ds_queue_destroy(queue);
+                    ds_grid_destroy(visited);
+					show_debug_message("X: " + string(checkX) + " + " + string(grid_cell_width) + " = " + string(checkX * grid_cell_width))
+					show_debug_message("Y: " + string(checkY) + " + " + string(grid_cell_height) + " = " + string(checkY * grid_cell_height))
+                    return [checkX * grid_cell_width, checkY * grid_cell_height];
+                }
+
+                // Enqueue the cell
+                ds_queue_enqueue(queue, [checkX, checkY]);
+            }
+        }
+    }
+
+    ds_queue_destroy(queue);
+    ds_grid_destroy(visited);
+
+    dbg("Error with Pathfinding");
+    return [_pathGoalX, _pathGoalY];
+}
+
+function find_nearest_empty_space_old(_pathGoalX, _pathGoalY) {
 	var hcells = room_width div grid_cell_width;
 	var vcells = room_height div grid_cell_height;
 	
@@ -495,19 +562,6 @@ function path_finished() {
 	var _path_finished	= _answer_array[2];
 
 	return _path_finished;
-}
-
-function veh_position(_veh) {
-	with(_veh)
-	{
-		// Find new position
-		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
-		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
-	}
-
-	// Set goal
-	goal_x = _newX;
-	goal_y = _newY;
 }
 
 #endregion
@@ -2451,7 +2505,7 @@ function scr_context_select_onScreen() {
 }
 
 function scr_instance_destroy(_objectIndex) {
-	instance_destroy(_objectIndex[0])
+	instance_destroy(_objectIndex)
 }
 
 function scr_context_spawn_object() {

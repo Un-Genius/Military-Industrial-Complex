@@ -42,6 +42,8 @@ buildingIntersect = false;
 instance_selected = noone;
 instances_selected_list = ds_grid_width(global.instGrid);
 
+path_grid_reset();
+
 #region Mouse actions
 
 // Enum for mouse types
