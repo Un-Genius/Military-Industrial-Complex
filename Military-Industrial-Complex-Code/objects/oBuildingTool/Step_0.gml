@@ -17,7 +17,7 @@ if(!compare_resources(global.resources, _cost))
 	image_blend = c_orange;
 	
 	if(_click_left_released)
-		trace(1, "Not enough supplies.");
+		trace(1, "Not enough oil.");
 }
 else
 {

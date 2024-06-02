@@ -12,10 +12,10 @@ switch(_inst.object_index)
 	case oSiteHQ:
 		sprite_index = sOVLHQ;
 		break;
-	case oSiteProduceInfantry:
+	case oSiteProduceAdvancedSupplies:
 	case oSiteCapacityInfantry:
-	case oSiteProduceSupplies:
-	case oSiteCapacitySupplies:
+	case oSiteProduceOil:
+	case oSiteCapacityLightSupplies:
 	default:
 		sprite_index = sOVLHAB;
 }

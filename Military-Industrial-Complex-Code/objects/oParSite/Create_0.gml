@@ -6,6 +6,10 @@ add_resource(global.resources_max, site_data.capacity);
 
 resupplyTime = 5 * room_speed;
 
+// Add supplies recurrently
+if compare_resources(site_data.resource_per_minute, oFaction.resource_struct)
+	alarm[1] = resupplyTime;
+
 event_user(0);
 
 #region ID of Units

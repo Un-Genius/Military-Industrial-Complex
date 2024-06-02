@@ -6,14 +6,15 @@
 
 // Populate item names for display
 item_names = ds_map_create();
-ds_map_add(item_names, "supplies", "Supplies");
-ds_map_add(item_names, "food", "Food");
-ds_map_add(item_names, "weapons", "Weapons");
-ds_map_add(item_names, "people", "People");
-ds_map_add(item_names, "cm", "CM");
-ds_map_add(item_names, "rt", "RT");
+ds_map_add(item_names, "purchase_power", "Purchase Power");
+ds_map_add(item_names, "electricity", "Electricity");
+ds_map_add(item_names, "oil", "Oil");
+ds_map_add(item_names, "light_supplies", "Light Supplies");
+ds_map_add(item_names, "heavy_supplies", "Heavy Supplies");
+ds_map_add(item_names, "advanced_supplies", "Advanced Supplies");
 
-items_sorted = ["supplies", "food", "weapons", "people", "cm", "rt"]
+items_sorted = ["purchase_power", "electricity", "oil", "light_supplies", "heavy_supplies", "advanced_supplies"];
+
 
 info_map = ds_map_create();
 

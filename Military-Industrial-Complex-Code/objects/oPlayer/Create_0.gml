@@ -4,10 +4,6 @@ movementSpeed = 1;
 numColor = c_white;
 hash_color = findColor(numColor);
 
-var _resources = variable_clone(oFaction.resource_struct);
-_resources.supplies += 100;
-add_resource(global.resources, _resources);
-
 // Create and clear list
 contextInstList = ds_list_create();
 ds_list_clear(contextInstList);

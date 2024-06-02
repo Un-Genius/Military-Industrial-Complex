@@ -29,7 +29,7 @@ var _hh = global.RES_H;
 //surface_get_width(application_surface);
 
 var _offset = 20;
-var _btn_width = 175;
+var _btn_width = 195;
 var _btn_height = 75;
 var _btn_offset = 5;
 
@@ -37,25 +37,31 @@ var _wx = (_ww/2) - ((_btn_width + _btn_offset)*2);
 var _wy = _hh - _btn_height - _offset;
 
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.site_type = oSiteHQ
+_inst.site_type = oSiteProduceEnergy
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.site_type = oSiteCapacitySupplies
+_inst.site_type = oSiteCapacityOil
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.site_type = oSiteCapacityInfantry
+_inst.site_type = oSiteCapacityLightSupplies
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteCapacityHeavySupplies
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
 
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteCapacityAdvancedSupplies
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
@@ -64,25 +70,31 @@ _wy -= _btn_height + (_offset);
 _wx = (_ww/2) - ((_btn_width + _btn_offset)*2);
 
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.site_type = oSiteProduceSupplies
-with(_inst) event_user(3)
-ds_list_add(button_instances, _inst)
-
-_wx += _btn_width + _btn_offset;
-var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.site_type = oSiteProduceFood
-with(_inst) event_user(3)
-ds_list_add(button_instances, _inst)
-
-_wx += _btn_width + _btn_offset;
-var _inst = instance_create(_wx, _wy, oInGameButton)
 _inst.site_type = oSiteProduceInfantry
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 
 _wx += _btn_width + _btn_offset;
 var _inst = instance_create(_wx, _wy, oInGameButton)
-_inst.site_type = oSiteProduceCM
+_inst.site_type = oSiteProduceOil
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceLightSupplies
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceHeavySupplies
+with(_inst) event_user(3)
+ds_list_add(button_instances, _inst)
+
+_wx += _btn_width + _btn_offset;
+var _inst = instance_create(_wx, _wy, oInGameButton)
+_inst.site_type = oSiteProduceAdvancedSupplies
 with(_inst) event_user(3)
 ds_list_add(button_instances, _inst)
 

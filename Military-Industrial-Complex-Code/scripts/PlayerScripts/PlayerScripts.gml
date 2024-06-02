@@ -19,23 +19,15 @@ function zoning_switch()
 	switch(keyboard_lastkey)
 	{
 	    case ord("E"):
-	        zoning = (zoning == OBJ_NAME.SITE_PRO_SUPPLIES) ? -1 : OBJ_NAME.SITE_PRO_SUPPLIES;
+	        zoning = (zoning == OBJ_NAME.SITE_PRO_OIL) ? -1 : OBJ_NAME.SITE_PRO_OIL;
 	        break;
 
 	    case ord("T"):
-	        zoning = (zoning == OBJ_NAME.SITE_PRO_WEAPONS) ? -1 : OBJ_NAME.SITE_PRO_WEAPONS;
-	        break;
-
-	    case ord("R"):
-	        zoning = (zoning == OBJ_NAME.SITE_CAP_SUPPLIES) ? -1 : OBJ_NAME.SITE_CAP_SUPPLIES;
+	        zoning = (zoning == OBJ_NAME.SITE_PRO_HEAVY_SUPPLIES) ? -1 : OBJ_NAME.SITE_PRO_HEAVY_SUPPLIES;
 	        break;
 
 	    case ord("Y"):
-	        zoning = (zoning == OBJ_NAME.SITE_PRO_INF) ? -1 : OBJ_NAME.SITE_PRO_INF;
-	        break;
-
-	    case ord("Q"):
-	        zoning = (zoning == infantry) ? -1 : infantry;
+	        zoning = (zoning == OBJ_NAME.SITE_PRO_ADVANCED_SUPPLIES) ? -1 : OBJ_NAME.SITE_PRO_ADVANCED_SUPPLIES;
 	        break;
 
 	    default: break;
@@ -298,7 +290,7 @@ function context_menu_unit_actions(_instSel)
 		{
 			case oInfantry:
 				add_context("Change Behavior", scr_context_folder_behavior, true)
-			case oSiteProduceInfantry:
+			case oSiteProduceAdvancedSupplies:
 				// Spawn units
 				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
 				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, oInfantry, 7]);

@@ -12,7 +12,7 @@ event_inherited();
 
 #region CUSTOMIZEABLE VARIABLES
 
-width = 175;
+width = 195;
 height = 75;
 text = "Button Text"; //displayed text
 icon = -1; //sprite index

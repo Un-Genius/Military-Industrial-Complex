@@ -63,7 +63,7 @@ function sort_based_on_reference(unsorted, reference) {
 function create_gui_panels() {
     panel = instance_create(25, 41, objGUIPanel);
     panel.depth = depth + 2;
-    panel.width = 240;
+    panel.width = 325;
     panel.height = 200;
 	
 	panel_title = instance_create(25, 20, objGUILabel)
@@ -77,11 +77,22 @@ function create_gui_panels() {
 
 
 function update_cost_upkeep_display() {
-	if !instance_exists(oBuildingTool)
+	if instance_exists(oBuildingTool) && oBuildingTool.buildingType != noone
+	{ }
+	else
+	{
+		struct_foreach(global.resources, function(_name, _value){
+			var _data = ds_map_find_value(info_map, _name);
+			_data[INFO_TABLE.UPKEEP] = _value;
+			if _value != 0
+				_data[INFO_TABLE.VISIBILITY] = true;
+			else
+				_data[INFO_TABLE.VISIBILITY] = false;
+			ds_map_set(info_map, _name, _data);
+		})
+		
 		return
-
-	if oBuildingTool.buildingType == noone
-		return
+	}
 		
 	var _object_enum = obj_to_enum(oBuildingTool.buildingType);
 	var _object_info = oFaction.obj_info[_object_enum];

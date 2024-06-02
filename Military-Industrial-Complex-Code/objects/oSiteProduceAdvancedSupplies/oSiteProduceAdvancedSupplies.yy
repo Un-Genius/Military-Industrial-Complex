@@ -1,9 +1,9 @@
 {
   "$GMObject":"",
-  "%Name":"oSiteHQ",
+  "%Name":"oSiteProduceAdvancedSupplies",
   "eventList":[],
   "managed":true,
-  "name":"oSiteHQ",
+  "name":"oSiteProduceAdvancedSupplies",
   "overriddenProperties":[],
   "parent":{
     "name":"Local",
@@ -31,8 +31,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sHQ",
-    "path":"sprites/sHQ/sHQ.yy",
+    "name":"sFactory",
+    "path":"sprites/sFactory/sFactory.yy",
   },
   "spriteMaskId":null,
   "visible":true,
