@@ -36,7 +36,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"sInf_USA_basic_0_0",
+    "path":"sprites/sInf_USA_basic_0_0/sInf_USA_basic_0_0.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

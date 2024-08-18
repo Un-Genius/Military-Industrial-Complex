@@ -42,6 +42,12 @@ bullet_reload_timer = 0;
 
 #region Dont Touch		Variables
 
+// Define the outline color
+outline_color = undefined; // Set this to a color, or undefined to disable the outline
+outline_size = 1; // Optional: you can adjust the outline size here
+
+outline_init();
+
 enum UNIT_STATES {
 	WALKING,
 	SHOOTING

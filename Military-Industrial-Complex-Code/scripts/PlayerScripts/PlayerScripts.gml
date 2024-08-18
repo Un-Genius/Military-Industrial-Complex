@@ -627,3 +627,40 @@ function retrieve_hand() {
 		add_Inst(_ds_grid, 0, _hand)
 	}
 }
+	
+function comms_functions() {
+	if ds_list_size(comms_list) > 0
+		for(var i = 0; i < ds_list_size(comms_list); i++)
+			ds_list_find_value(comms_list, i).outline_color = undefined;
+		ds_list_clear(comms_list)
+	
+	if !comms_active
+		return
+	
+	// Create a list of all people within comms
+	var is_nearby = collision_circle_list(x, y, comms_dist, oInfantry, false, true, comms_list, true)
+	
+	if !is_nearby
+		return
+	
+	// Update objects to be highlighted in white
+	for(var i = 0; i < ds_list_size(comms_list); i++)
+		ds_list_find_value(comms_list, i).outline_color = c_ltgray;
+	
+	// Find the nearest one
+	var comms_target = ds_list_find_value(comms_list, 0)
+	
+	// Update nearest object to be highlighted in yellow
+	comms_target.outline_color = c_yellow;
+}
+
+
+
+
+
+
+
+
+
+
+

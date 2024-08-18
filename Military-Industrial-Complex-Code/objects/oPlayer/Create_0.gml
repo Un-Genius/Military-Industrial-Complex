@@ -76,6 +76,12 @@ mouseRightPressGui_y = device_mouse_y_to_gui(0);
 
 #endregion
 
+// Communication
+comms_active = true;
+comms_dist = 200;
+comms_target = noone;
+comms_list = ds_list_create();
+
 // Create Particles
 global.Wind_Direction = 270;
 global.P_System = part_system_create_layer("Bullets", false);

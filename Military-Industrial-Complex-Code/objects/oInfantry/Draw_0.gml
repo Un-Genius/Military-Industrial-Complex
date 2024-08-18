@@ -16,4 +16,16 @@ if(global.debug)
 
 // Draw Shadow
 draw_sprite_ext(sprite_index, image_index, x + 1, y - 2, image_xscale, image_yscale, image_angle+5, c_dkgray, 0.2);
-draw_self();
+
+if is_undefined(outline_color) && selected = false
+	draw_self()
+else
+{
+	var _color = outline_color;
+	if selected
+		_color = c_white
+	outline_start(outline_size, _color);
+	draw_self()
+	outline_end()
+}
+
