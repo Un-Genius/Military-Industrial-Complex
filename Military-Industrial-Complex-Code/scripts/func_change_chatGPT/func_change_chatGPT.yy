@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"func_change_chatGPT",
   "isCompatibility":false,
   "isDnD":false,

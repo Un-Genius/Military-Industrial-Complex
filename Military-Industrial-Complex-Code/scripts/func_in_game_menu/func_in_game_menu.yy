@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"func_in_game_menu",
   "isCompatibility":false,
   "isDnD":false,

@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"func_reset_menu",
   "isCompatibility":false,
   "isDnD":false,

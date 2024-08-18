@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"menu_review_character",
   "isCompatibility":false,
   "isDnD":false,

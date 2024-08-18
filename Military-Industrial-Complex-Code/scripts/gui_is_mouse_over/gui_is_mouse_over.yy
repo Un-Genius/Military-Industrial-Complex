@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"gui_is_mouse_over",
   "isCompatibility":false,
   "isDnD":false,

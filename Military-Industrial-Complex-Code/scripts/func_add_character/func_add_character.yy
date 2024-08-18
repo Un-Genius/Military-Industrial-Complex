@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"func_add_character",
   "isCompatibility":false,
   "isDnD":false,

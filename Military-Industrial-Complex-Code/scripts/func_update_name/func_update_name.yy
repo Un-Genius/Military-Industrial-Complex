@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"func_update_name",
   "isCompatibility":false,
   "isDnD":false,

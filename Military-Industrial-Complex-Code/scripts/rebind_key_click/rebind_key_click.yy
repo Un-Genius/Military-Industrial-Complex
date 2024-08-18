@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"rebind_key_click",
   "isCompatibility":false,
   "isDnD":false,

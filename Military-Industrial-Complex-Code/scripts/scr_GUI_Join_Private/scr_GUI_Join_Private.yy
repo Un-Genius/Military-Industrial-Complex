@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"scr_GUI_Join_Private",
   "isCompatibility":false,
   "isDnD":false,

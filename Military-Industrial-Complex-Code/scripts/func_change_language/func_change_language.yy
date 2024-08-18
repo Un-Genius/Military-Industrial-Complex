@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"func_change_language",
   "isCompatibility":false,
   "isDnD":false,
