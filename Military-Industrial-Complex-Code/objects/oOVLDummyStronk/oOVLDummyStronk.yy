@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sOVLInf",
-    "path":"sprites/sOVLInf/sOVLInf.yy",
+    "name":"sSymbolInfantry",
+    "path":"sprites/sSymbolInfantry/sSymbolInfantry.yy",
   },
   "spriteMaskId":null,
   "visible":true,

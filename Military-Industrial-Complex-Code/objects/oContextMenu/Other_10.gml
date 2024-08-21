@@ -24,4 +24,4 @@ for(var i = 0; i < _grid_height; i++)
 }
 	
 // Add extra width for more space
-width += 10 + padding;
+width += (padding*4);

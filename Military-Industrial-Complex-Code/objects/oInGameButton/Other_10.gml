@@ -8,7 +8,7 @@ to get the sounds and other behaviors
 
 if site_type == noone
 {
-	dbg("Error with figuring out the object type")
+	print("Error with figuring out the object type")
 	exit;
 }
 

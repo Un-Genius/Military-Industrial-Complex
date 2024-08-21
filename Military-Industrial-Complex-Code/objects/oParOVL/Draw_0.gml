@@ -1,4 +1,4 @@
-var _zoom = oCamera.zoom;
+var _zoom = oPlayer.zoom;
 
 var _col = hash_color;
 

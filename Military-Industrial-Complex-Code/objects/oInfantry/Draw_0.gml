@@ -23,7 +23,7 @@ else
 {
 	var _color = outline_color;
 	if selected
-		_color = c_white
+		_color = c_yellow
 	outline_start(outline_size, _color);
 	draw_self()
 	outline_end()

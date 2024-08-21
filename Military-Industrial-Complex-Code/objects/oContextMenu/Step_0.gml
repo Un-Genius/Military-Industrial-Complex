@@ -5,13 +5,6 @@ click_shift = keyboard_check_pressed(vk_shift);
 
 slot_height = 0;
 
-var _x1 = mp_gui_x;
-var _x2 = mp_gui_x + width;
-var _y1 = mp_gui_y;
-var _y2 = mp_gui_y + (height*grid_height)
-
-hovering = get_hover(_x1, _y1,_x2, _y2, false)
-
 // Add context menu buttons
 if click_right_pressed && click_shift
 {
@@ -30,7 +23,12 @@ width	= string_width("M")*scale;
 height	= string_height("M")*scale;
 */
 
+var _x1 = mp_gui_x;
+var _x2 = mp_gui_x + width;
+var _y1 = mp_gui_y;
+var _y2 = mp_gui_y + (height*grid_height)
+
+hovering = get_hover(_x1, _y1,_x2, _y2, false)
+
 // cm_close_distance() This closes the contextmenu if the mouse is too far
 //cm_update_position(); This updates the Contextmenu to be in the screen
-
-cm_close()

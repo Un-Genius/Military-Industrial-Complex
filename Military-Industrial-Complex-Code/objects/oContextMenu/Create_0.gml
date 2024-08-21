@@ -43,4 +43,4 @@ if _max <= 1
 	exit;
 
 var _inst = instance_find(oContextMenu, _max-2);
-mp_gui_x = _inst.mp_gui_x + _inst.width;
+mp_gui_x = _inst.mp_gui_x + _inst.width + 2;

@@ -192,6 +192,9 @@ function context_menu_open()
 
 	// Spawn Units through a unit
 	instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParUnit);
+	
+	if instRightSelected == noone
+		instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oWaypoint);
 
 	if instRightSelected == noone
 		instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParSiteLocal);
@@ -209,14 +212,12 @@ function context_menu_open()
 
 	var _cm_inst = create_context(mouseRightPressGui_x, mouseRightPressGui_y);
 
-	context_menu_select_all(_instSel);
-
 	var unique_list = ds_list_create();
 	var _inst_in_hand;
 	var _size = ds_grid_width(global.instGrid);
 
 	ds_list_add(unique_list, _instSel);
-	context_menu_unit_actions(_instSel);
+	context_menu_actions(_instSel);
 
 	for (var i = 0; i < _size; i++)
 	{
@@ -229,7 +230,7 @@ function context_menu_open()
 			continue;
 
 	    ds_list_add(unique_list, _inst_in_hand);
-		context_menu_unit_actions(_inst_in_hand);
+		context_menu_actions(_inst_in_hand);
 	}
 
 	context_menu_debug();
@@ -238,71 +239,48 @@ function context_menu_open()
 
 	ds_list_destroy(unique_list);
 }
-function context_menu_select_all(_instSel)
+
+function context_menu_actions(_instSel=noone)
 {
-	if(instance_exists(_instSel))
-		return;
-
-	// var _size = ds_grid_width(global.instGrid);
-
-	/*/ Check if any units are selected
-	for(var i = 0; i < _size; i++)
-	{
-		var _value = ds_grid_get(global.instGrid, i, 0);
-
-		if(instance_exists(_value))
-		{
-			// Move Unit
-			add_context("Move", scr_context_move, false);
-			add_context("break", on_click, false);
-			break;
-		}
-	}*/
-
-	// Select multiple instances
-	var _inst = instance_find(oContextMenu, 0);
-	with(_inst) {
+	with(instance_find(oContextMenu, 0)) {
+		
 		add_context("Select all",			scr_context_select_all,			false);
 		add_context("Select all on screen", scr_context_select_onScreen,	false);
 		add_context("break",				on_click,						false);
 		add_context("Spawn AI",				scr_create_squad,				false, [mouse_x, mouse_y, oInfantryAI, 3]);
 		add_context("break",				on_click,						false);
-	}
-}
-function context_menu_unit_actions(_instSel)
-{
-	if(!instance_exists(_instSel))
-		return;
+		add_context("Markers",				scr_context_folder_waypoint,	true);
+		
+		if(!instance_exists(_instSel))
+			return false
 
-	with(_instSel)
-	{
-		goal_x = x;
-		goal_y = y;
-		moveState = action.idle;
-
-		var _objectIndex = object_index;
-		var _x = x;
-		var _y = y;
-	}
-
-	with(instance_find(oContextMenu, 0)) {
+		var _objectIndex = _instSel.object_index;
+		
 		switch(_objectIndex)
 		{
 			case oInfantry:
 				add_context("Change Behavior", scr_context_folder_behavior, true)
-			case oSiteProduceAdvancedSupplies:
+				break;
+				
+			case oSiteProduceInfantry:
 				// Spawn units
 				//add_context("Train Infantry", scr_context_spawn_object, false, [objectType.oInfantry, 7]);
-				add_context("Train Infantry Squad", scr_create_squad, false, [x, y, oInfantry, 7]);
+				add_context("Train Infantry Squad", scr_create_squad, false, [_instSel.x, _instSel.y-25, oInfantry, 7]);
 				break;
 
 			case oSiteHQ:
 				// Spawn units
 				add_context("Spawn Units", scr_context_folder_HQspawn, true);
 				break;
+				
+			case oWaypoint:
+				// Delete
+				add_context("Delete Waypoint", scr_context_destroy, false, [_instSel])
+				break;
 		}
 		
-		add_context("Destroy", scr_instance_destroy, false, [_objectIndex])
+		if(object_get_parent(_instSel.object_index) == oParSiteLocal)
+			add_context("Delete Building", scr_context_destroy, false)
 	}
 }
 function context_menu_debug()
@@ -635,13 +613,13 @@ function comms_functions() {
 		ds_list_clear(comms_list)
 	
 	if !comms_active
-		return
+		return false
 	
 	// Create a list of all people within comms
 	var is_nearby = collision_circle_list(x, y, comms_dist, oInfantry, false, true, comms_list, true)
 	
 	if !is_nearby
-		return
+		return false
 	
 	// Update objects to be highlighted in white
 	for(var i = 0; i < ds_list_size(comms_list); i++)
@@ -652,6 +630,8 @@ function comms_functions() {
 	
 	// Update nearest object to be highlighted in yellow
 	comms_target.outline_color = c_yellow;
+	
+	return true
 }
 
 

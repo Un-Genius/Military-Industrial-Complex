@@ -2,7 +2,9 @@ function cm_background()
 {
 	// Draw background
 	draw_set_color(c_dkgray);
+	draw_set_alpha(0.8)
 		draw_rectangle(mp_gui_x, mp_gui_y, mp_gui_x + width, mp_gui_y + cm_background_height, false);
+	draw_set_alpha(1)
 	draw_set_color(-1);
 	
 	// Draw outline
@@ -29,15 +31,8 @@ function cm_break(i, _string)
 
 function cm_folder(i)
 {
-	// Get data
-	var _folder = ds_grid_get(cm_grid, 2, i);
-	
 	var height_level = mp_gui_y + slot_height;
-		
-	// Draw data
 	draw_text(mp_gui_x + padding, height_level, _string);
-	//draw_text_ext_transformed(mp_gui_x + padding, height_level, _string, 10, 300, scale, scale, image_angle)
-	
 	cm_triangle();
 }
 
@@ -46,17 +41,17 @@ function cm_triangle()
 	// Define the base position and size variables
 	var base_x = mp_gui_x;
 	var base_y = height_level+2;
-	var triangle_width = width;
+	var triangle_width = width-(padding);
 	var triangle_height = height-5;
 
 	// Calculate the coordinates for the three points of the triangle
-	var point1_x = base_x + ((triangle_width/15)*13.5);
+	var point1_x = base_x + triangle_width-7//((triangle_width/15)*13.5);
 	var point1_y = base_y + 4;
 
-	var point2_x = base_x + ((triangle_width/15)*13.5);
+	var point2_x = base_x + triangle_width-7//((triangle_width/15)*13.5);
 	var point2_y = base_y + triangle_height - 4;
 
-	var point3_x = base_x + triangle_width - 7;
+	var point3_x = base_x + triangle_width;
 	var point3_y = base_y + (triangle_height / 2);
 
 	// Now use the variables to draw the triangle
@@ -111,7 +106,7 @@ function cm_execute(i)
 {
 	if !click_left_pressed
 		exit;
-	
+			
 	var _script = ds_grid_get(cm_grid, 1, i);	
 	var _script_arg = ds_grid_get(cm_grid, 3, i);
 	
@@ -180,6 +175,28 @@ function cm_close_distance()
 	close_context(_inst);
 }
 
+function cm_get_hover_all()
+{
+	// Returns -1 if noone are hovering
+	// Else returns the level at which it is hovering
+	
+	var _hovering = -1
+	
+	// find number
+	var _size = instance_number(oContextMenu);
+
+	for(var i = 0; i < _size; i++)
+	{
+		// Get ID
+		var _inst = instance_find(oContextMenu, i);
+		
+		if _inst.hovering
+			return _inst.level
+	}
+	
+	return _hovering
+}
+
 function cm_close()
 {
 	if click_left_pressed || (click_right_pressed && click_shift)
@@ -187,24 +204,12 @@ function cm_close()
  	else
 		return false;
 	
-	// Check if not hovering over other menus
-	var _list = oPlayer.contextInstList
-	var _size = ds_list_size(_list)
+	var _hovering_level = cm_get_hover_all()
 	
-	for(var i = 0; i < _size; i++)
-	{
-		var _contextMenu = ds_list_find_value(_list, i);
-
-		if !_contextMenu.hovering
-			continue;
-			
-		hovering = true;
-	}
-	
-	if hovering
+	if _hovering_level >= level
 		return false;
 	
-	close_context(-1);
+	close_context(id);
 	
 	return true;
 }

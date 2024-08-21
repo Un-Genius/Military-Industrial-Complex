@@ -7,7 +7,7 @@ switch(_inst.object_index)
 {
 	case oInfantry:
 	case oInfantryAI:
-		sprite_index = sOVLInf;
+		sprite_index = sSymbolInfantry;
 		break;
 	case oSiteHQ:
 		sprite_index = sOVLHQ;

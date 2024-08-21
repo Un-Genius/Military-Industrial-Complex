@@ -31,7 +31,7 @@ for(var i = 0; i < grid_height; i++)
 		
 	// Check for mouse hover
 	if hovering
-	{				
+	{			
 		cm_file_expand(i)
 			
 		cm_execute(i);

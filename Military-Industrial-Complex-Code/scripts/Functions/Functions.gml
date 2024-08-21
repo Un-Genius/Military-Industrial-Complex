@@ -1,6 +1,6 @@
 #region Debugging	Functions
 
-function dbg(_value) {
+function print(_value) {
 	show_debug_message(_value)
 }
 
@@ -339,7 +339,7 @@ function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
     ds_queue_destroy(queue);
     ds_grid_destroy(visited);
 
-    dbg("Error with Pathfinding");
+    print("Error with Pathfinding");
     return [_pathGoalX, _pathGoalY];
 }
 
@@ -412,7 +412,7 @@ function path_goal_find(startX, startY, _pathGoalX, _pathGoalY, _path) {
 	}
 	else
 	{
-		dbg("Error pathfinding. Could not avoid obstacle.");
+		print("Error pathfinding. Could not avoid obstacle.");
 		var i = 0
 		while path_get_length(path) > 0
 			path_delete_point(path, 0)
@@ -2104,7 +2104,7 @@ function add_context(_string, _scriptID, _folder, _scriptArg=-1) {
 	}
 }
 
-function close_context(_inst) {
+function close_context(_inst, _level=0) {
 
 	with(oPlayer)
 	{
@@ -2117,18 +2117,23 @@ function close_context(_inst) {
 			for(var i = _size - 1; i > -1; i--)
 			{
 				// Get ID
-				_inst = ds_list_find_value(contextInstList, i);
-
-				instance_destroy(_inst);
-
+				var _context_inst = ds_list_find_value(contextInstList, i);
+				
+				if !instance_exists(_context_inst) {
+					ds_list_delete(contextInstList, i);
+					continue
+				}
+				
+				if _level > _context_inst.level
+					continue
+					
+				instance_destroy(_context_inst);
 				ds_list_delete(contextInstList, i);
 			}
 
 			// Close context menu
 			contextMenu = false;
-		}
-		else
-		{
+		} else {
 			// Delete single instance
 			instance_destroy(_inst)
 
@@ -2252,6 +2257,91 @@ function scr_context_folder_behavior() {
 		event_user(0);
 	}
 }
+	
+function scr_context_folder_waypoint() {
+	// Set heirarchy
+	var _level = 1;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(contextInstList)
+
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(contextInstList, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mp_gui_x, mp_gui_y);
+
+	with(_inst)
+	{
+		// Set heirarchy
+		level = _level;
+
+		// Add buttons
+		add_context("Attack",	scr_context_waypoint,	 false, ["Attack"]);
+		add_context("Defend",	scr_context_waypoint,	 false, ["Defend"]);
+		add_context("Recon",	scr_context_waypoint,	 false, ["Recon"]);
+		add_context("Patrol",	scr_context_waypoint_folder,	 true,	["Patrol"]);
+		add_context("Retreat",	scr_context_waypoint,	 false, ["Retreat"]);
+
+		// Update size
+		event_user(0);
+	}
+}
+
+function scr_context_waypoint_folder(_waypoint) {
+	// Set heirarchy
+	var _level = 2;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(contextInstList)
+
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(contextInstList, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mp_gui_x, mp_gui_y);
+
+	with(_inst)
+	{
+		// Set heirarchy
+		level = _level;
+
+		// Add buttons
+		add_context("New Group",	scr_context_waypoint,	 false, ["Patrol"]);
+
+		// Update size
+		event_user(0);
+	}
+}
+
+function scr_context_waypoint(_waypoint) {
+	var _inst = instance_find(oContextMenu, 0)
+	var _x = _inst.mp_gui_x;
+	var _y = _inst.mp_gui_y;
+	var _waypoint_inst = instance_create_layer(_x, _y, "UI", oWaypoint);
+	
+	with(_waypoint_inst)
+	{
+		type = _waypoint
+		event_user(0)
+	}
+	
+	close_context(-1);
+}
 
 function scr_context_move(movement_type=noone) {
 	with(oPlayer)
@@ -2370,19 +2460,21 @@ function scr_context_behavior(_behavior) {
 	close_context(-1);
 }
 
-function scr_context_destroy() {
+function scr_context_destroy(_inst=noone) {
 
-	with(oPlayer)
+	if _inst == noone
 	{
-		// Find goal
-		var _mouse_x = mouseRightPress_x;
-		var _mouse_y = mouseRightPress_y;
+		with(oPlayer)
+		{
+			// Find goal
+			var _mouse_x = mouseRightPress_x;
+			var _mouse_y = mouseRightPress_y;
+		}
+		
+		_inst = find_top_Inst(_mouse_x, _mouse_y, oParUnit);
 	}
-
-	var _instFind = find_top_Inst(_mouse_x, _mouse_y, oParUnit);
-
-	// Destroy HAB
-	instance_destroy(_instFind);
+		
+	instance_destroy(_inst);
 
 	close_context(-1);
 }
@@ -2460,10 +2552,6 @@ function scr_context_select_onScreen() {
 	}
 
 	close_context(-1);
-}
-
-function scr_instance_destroy(_objectIndex) {
-	instance_destroy(_objectIndex)
 }
 
 function scr_context_spawn_object() {
