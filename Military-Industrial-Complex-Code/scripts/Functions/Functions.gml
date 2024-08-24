@@ -3011,3 +3011,93 @@ function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch
 }
 
 #endregion
+
+#region ChatGPT
+
+#macro APIKEY "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"
+global.chatGPT = "gpt-4o-mini"
+
+/// @description send_gpt_chat( system_input, user_history, user_input )
+/// @param  system_input
+/// @param  user_history
+/// @param  user_input
+
+function send_gpt_chat()
+{	
+    // Check for valid API key
+    if (APIKEY == "") {
+        show_debug_message("Invalid API Key!");
+		show_message("Invalid API Key!");
+        return;
+    }
+
+    var map = ds_map_create();
+    ds_map_add(map, "Authorization", "Bearer " + APIKEY);
+    ds_map_add(map, "Content-Type", "application/json");
+	
+    var _data = {
+                    "model": global.chatGPT,
+                    
+                    "messages": [
+                        {"role": "system",	"content": argument[0]},
+                        {"role": "user",	"content": "Chat History: '''"	+ argument[1]	+ "'''"},
+                        {"role": "user",	"content": "User Input: '''"	+ argument[2]	+ "'''"},
+                    ],
+
+                    "max_tokens": int64(450),  // How much it can cost
+                    "temperature": 0.6,        // How random it can be
+                    "n": int64(1),             // How many outputs
+                };
+			
+	var data = json_stringify(_data);
+	
+	var api_endpoint = "https://api.openai.com/v1/chat/completions";
+
+	request = http_request(api_endpoint, "POST", map, data);
+
+	display_string = "Loading"
+
+	show_debug_message("Request Sent");
+
+	ds_map_destroy(map)
+}
+
+function send_gpt(_system, _user){
+	
+    var map = ds_map_create();
+    ds_map_add(map, "Authorization", "Bearer " + APIKEY);
+    ds_map_add(map, "Content-Type", "application/json");
+
+	var _data = {
+					"model": global.chatGPT,
+					
+					"messages": [
+					    {"role": "system", "content": _system},
+					    {"role": "user", "content": _user},
+					],
+
+					"max_tokens": int64(450),	// How much it can cost
+					"temperature": 0.6,			// How random it can be
+					"n": int64(1),				// How many outputs
+				};
+			
+	var data = json_stringify(_data);
+	
+	var api_endpoint = "https://api.openai.com/v1/chat/completions";
+
+	request = http_request(api_endpoint, "POST", map, data);
+
+	display_string = "Loading";
+	
+	show_debug_message("Request Sent");
+
+	ds_map_destroy(map)
+}
+
+#region Tools
+
+
+
+#endregion
+
+#endregion
