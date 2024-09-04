@@ -270,6 +270,7 @@
     {"name":"spr_ready","order":4,"path":"sprites/spr_ready/spr_ready.yy",},
     {"name":"spr_reference","order":7,"path":"sprites/spr_reference/spr_reference.yy",},
     {"name":"spr_regroup","order":7,"path":"sprites/spr_regroup/spr_regroup.yy",},
+    {"name":"spr_talking","order":8,"path":"sprites/spr_talking/spr_talking.yy",},
     {"name":"spr_textbox","order":1,"path":"sprites/spr_textbox/spr_textbox.yy",},
     {"name":"sprButtonModalShadow","order":1,"path":"sprites/sprButtonModalShadow/sprButtonModalShadow.yy",},
     {"name":"sprButtonPressed","order":2,"path":"sprites/sprButtonPressed/sprButtonPressed.yy",},

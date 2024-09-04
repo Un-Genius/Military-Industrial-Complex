@@ -381,6 +381,7 @@
     {"id":{"name":"spr_ready","path":"sprites/spr_ready/spr_ready.yy",},},
     {"id":{"name":"spr_reference","path":"sprites/spr_reference/spr_reference.yy",},},
     {"id":{"name":"spr_regroup","path":"sprites/spr_regroup/spr_regroup.yy",},},
+    {"id":{"name":"spr_talking","path":"sprites/spr_talking/spr_talking.yy",},},
     {"id":{"name":"spr_textbox","path":"sprites/spr_textbox/spr_textbox.yy",},},
     {"id":{"name":"sprButton","path":"sprites/sprButton/sprButton.yy",},},
     {"id":{"name":"sprButtonModalShadow","path":"sprites/sprButtonModalShadow/sprButtonModalShadow.yy",},},

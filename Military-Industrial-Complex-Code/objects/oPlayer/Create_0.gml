@@ -38,6 +38,8 @@ buildingIntersect = false;
 instance_selected = noone;
 instances_selected_list = ds_grid_width(global.instGrid);
 
+instance_create_layer(0, 0, "AboveAll", oCommunication);
+
 path_grid_reset();
 
 #region Mouse actions

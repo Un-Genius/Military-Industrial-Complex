@@ -8,7 +8,7 @@
   "option_windows_copyright_info":"(c) 2020 CompanyName",
   "option_windows_copy_exe_to_dest":false,
   "option_windows_description_info":"RTS game in Alpha development",
-  "option_windows_disable_sandbox":false,
+  "option_windows_disable_sandbox":true,
   "option_windows_display_cursor":true,
   "option_windows_display_name":"Made in GameMaker Studio 2",
   "option_windows_enable_steam":true,

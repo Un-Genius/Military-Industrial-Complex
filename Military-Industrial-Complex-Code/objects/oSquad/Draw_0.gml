@@ -19,5 +19,7 @@ if(_size) > 0
 	}
 }
 
-draw_set_color(c_white)
 draw_self();
+
+draw_set_font_ext(ftDefault, image_blend, fa_center, fa_center, image_alpha)
+	draw_text(x, y+(sprite_height/2), identifier)

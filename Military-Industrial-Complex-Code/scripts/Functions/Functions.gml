@@ -3009,60 +3009,119 @@ function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch
 		audio_sound_gain(_sound, _outVolume, 0);
 	}
 }
+	
+///@func audio_channels_label(channelsConstant)
+///@arg {Constant.AudioType} channelsConstant
+///@return {String}
+///@desc Return the string label of the given audio channel constant.
+function audio_channels_label(channelsConstant) {
+	switch (channelsConstant) {
+
+		case audio_mono: return "Mono";
+		case audio_stereo: return "Stereo";
+		case audio_3D: return "3D (5.1)";
+	}
+	return "Unknown";
+}
+
+///@func audio_channels_count(channelsConstant)
+///@arg {Constant.AudioType} channelsConstant
+///@return {Real}
+///@desc Return the number of channels in the given audio channel constant.
+function audio_channels_count(channelsConstant) {
+	switch (channelsConstant) {
+
+		case audio_mono: return 1;
+		case audio_stereo: return 2;
+		case audio_3D: return 6;
+	}
+	return 0;
+}
+
+///@func buffer_type_label(bufferTypeConstant)
+///@arg {Constant.BufferDataType} bufferTypeConstant
+///@return {String}
+///@desc Return the string label of the given buffer type constant.
+function buffer_type_label(bufferTypeConstant) {
+	switch (bufferTypeConstant) {
+		case buffer_u8: return "Unsigned 8-bit integer";
+		case buffer_s8: return "Signed 8-bit integer";
+		case buffer_u16: return "Unsigned 16-bit integer";
+		case buffer_s16: return "Signed 16-bit integer";
+		case buffer_u32: return "Unsigned 32-bit integer";
+		case buffer_s32: return "Signed 32-bit integer";
+		case buffer_u64: return "Unsigned 64-bit integer";
+		case buffer_f16: return "16-bit float";
+		case buffer_f32: return "32-bit float";
+		case buffer_f64: return "64-bit float";
+		case buffer_bool: return "Boolean";
+		case buffer_string: return "Null-terminated string";
+		case buffer_text: return "Unterminated string";
+	}
+	return "Unknown";
+}
+
+///@func buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat)
+///@arg {Id.Buffer} buffer
+///@arg {String} filename
+///@arg {Constant.AudioType} channels
+///@arg {Real} sampleRate
+///@arg {Constant.BufferDataType} dataFormat
+///@desc Save the given fast audio buffer to a WAV file
+function buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat) {
+	var size = buffer_get_size(buffer);
+	var nChannels = audio_channels_count(channels);
+	var formatSize = buffer_sizeof(dataFormat);
+	
+	var waveBuffer = buffer_create(size+44, buffer_fixed, 1);
+	// Chunk ID
+	buffer_write(waveBuffer, buffer_text, "RIFF");
+	// Chunk Size
+	buffer_write(waveBuffer, buffer_u32, size+36);
+	// Chunk Format
+	buffer_write(waveBuffer, buffer_text, "WAVE");
+	// Subchunk ID
+	buffer_write(waveBuffer, buffer_text, "fmt ");
+	// Subchunk Size
+	buffer_write(waveBuffer, buffer_u32, 16);
+	// Audio Format
+	buffer_write(waveBuffer, buffer_u16, 1);
+	// Number of Channels
+	buffer_write(waveBuffer, buffer_u16, nChannels);
+	// Sample Rate
+	buffer_write(waveBuffer, buffer_u32, sampleRate);
+	// Byte Rate
+	buffer_write(waveBuffer, buffer_u32, sampleRate*nChannels*formatSize);
+	// Block Alignment
+	buffer_write(waveBuffer, buffer_u16, nChannels*formatSize);
+	// Bits Per Sample
+	buffer_write(waveBuffer, buffer_u16, formatSize*8);
+	// Subchunk ID
+	buffer_write(waveBuffer, buffer_text, "data");
+	// Subchunk Size
+	buffer_write(waveBuffer, buffer_u32, size);
+	// Body
+	buffer_copy(buffer, 0, size, waveBuffer, 44);
+	// Save
+	buffer_save(waveBuffer, filename);
+	
+	// Cleanup
+	buffer_delete(waveBuffer);
+}
 
 #endregion
 
 #region ChatGPT
 
 #macro APIKEY "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"
-global.chatGPT = "gpt-4o-mini"
+global.chatGPT = "gpt-4o" // "gpt-4o-mini"
 
 /// @description send_gpt_chat( system_input, user_history, user_input )
 /// @param  system_input
 /// @param  user_history
 /// @param  user_input
 
-function send_gpt_chat()
-{	
-    // Check for valid API key
-    if (APIKEY == "") {
-        show_debug_message("Invalid API Key!");
-		show_message("Invalid API Key!");
-        return;
-    }
-
-    var map = ds_map_create();
-    ds_map_add(map, "Authorization", "Bearer " + APIKEY);
-    ds_map_add(map, "Content-Type", "application/json");
-	
-    var _data = {
-                    "model": global.chatGPT,
-                    
-                    "messages": [
-                        {"role": "system",	"content": argument[0]},
-                        {"role": "user",	"content": "Chat History: '''"	+ argument[1]	+ "'''"},
-                        {"role": "user",	"content": "User Input: '''"	+ argument[2]	+ "'''"},
-                    ],
-
-                    "max_tokens": int64(450),  // How much it can cost
-                    "temperature": 0.6,        // How random it can be
-                    "n": int64(1),             // How many outputs
-                };
-			
-	var data = json_stringify(_data);
-	
-	var api_endpoint = "https://api.openai.com/v1/chat/completions";
-
-	request = http_request(api_endpoint, "POST", map, data);
-
-	display_string = "Loading"
-
-	show_debug_message("Request Sent");
-
-	ds_map_destroy(map)
-}
-
-function send_gpt(_system, _user){
+function send_gpt(_system, _user, _tools) {
 	
     var map = ds_map_create();
     ds_map_add(map, "Authorization", "Bearer " + APIKEY);
@@ -3075,8 +3134,8 @@ function send_gpt(_system, _user){
 					    {"role": "system", "content": _system},
 					    {"role": "user", "content": _user},
 					],
-
-					"max_tokens": int64(450),	// How much it can cost
+					"tools": _tools,
+					"max_tokens": int64(500),	// How much it can cost
 					"temperature": 0.6,			// How random it can be
 					"n": int64(1),				// How many outputs
 				};
@@ -3085,19 +3144,461 @@ function send_gpt(_system, _user){
 	
 	var api_endpoint = "https://api.openai.com/v1/chat/completions";
 
-	request = http_request(api_endpoint, "POST", map, data);
-
-	display_string = "Loading";
+	var _chatgpt_request = http_request(api_endpoint, "POST", map, data);
 	
 	show_debug_message("Request Sent");
 
 	ds_map_destroy(map)
+	
+	return _chatgpt_request
 }
 
-#region Tools
+
+function execute_action(_arguments) {
+    var _arg_names = struct_get_names(_arguments);
+    
+    // Initialize variables to default values
+	var _who = undefined;
+	var _who_ident = undefined;
+	var _who_amount = undefined;
+	var _who_prox = undefined;
+	var _who_pox_ident = undefined;
+	var _action = undefined;
+	var _behavior = undefined;
+	var _where = undefined;
+	var _where_ident = undefined;
+	var _condition = undefined;
+
+    // Extract parameters from arguments struct
+    for (var i = 0; i < array_length(_arg_names); i++) {
+        var _name = _arg_names[i];
+        var _value = struct_get(_arguments, _name);
+
+        switch (_name) {
+            case "who": _who = _value; break;
+            case "who_identifier": _who_ident = _value; break;
+            case "who_amount": _who_amount = _value; break;
+            case "who_proximity": _who_prox = _value; break;
+            case "who_proximity_identifier": _who_pox_ident = _value; break;
+            case "action": _action = _value; break;
+            case "behavior": _behavior = _value; break;
+            case "where": _where = _value; break;
+            case "where_identifier": _where_ident = _value; break;
+            case "condition": _condition = _value; break;
+        }
+    }
+    
+    // Validate required parameters
+    if (is_undefined(_who) || is_undefined(_where) || is_undefined(_action)) {
+        return false; // Missing essential parameters
+    }
+
+    // Find target instances based on the 'who' parameters
+    var _inst_array_selected = find_who(_who, _who_ident, _who_amount, _who_prox, _who_pox_ident);
+    if (array_length(_inst_array_selected) == 0) {
+        return false; // No valid target found
+    }
+
+    // Find target location or instance based on the 'where' parameters
+    var _inst_target = find_where(_where, _where_ident);
+    if (_inst_target == noone) {
+        return false; // No valid location found
+    }
+
+    // Decide the action to take for the selected instances
+    for (var i = 0; i < array_length(_inst_array_selected); i++) {
+        var _inst = _inst_array_selected[i];
+
+        // Set behavior if specified
+        if (!is_undefined(_behavior)) {
+            set_behavior(_inst, _behavior);
+        }
+
+        // Execute the action based on the extracted parameters
+        if (_action == "move") {
+            set_movement(_inst, _action, _inst_target.x, _inst_target.y);
+        } else if (_action == "engage") {
+            // Define other actions like engage
+        }
+
+        // Additional logic based on condition or other parameters can go here
+    }
+
+    return true; // Action executed successfully
+}
 
 
+function find_who(_who_type, _who_ident, _who_amount, _who_prox, _who_pox_ident) {
+    var _inst_array_selected = [];
+    
+    // Determine object type: units (oInfantry) or squads (oSquad)
+    var _object = oInfantry;
+    if (_who_type == "squad") {
+        _object = oSquad;
+    }
+    
+    // Find all instances of the object type
+    var _all_instances = instance_find(_object, 0); // Start from the first instance
 
-#endregion
+    // Filter based on identifier if provided
+    if (!is_undefined(_who_ident)) {
+        for (var i = 0; i < instance_number(_object); i++) {
+            var _inst = _all_instances[i];
+            if (_inst.identifier == _who_ident) {  // Assuming each instance has an `identifier` property
+                array_push(_inst_array_selected, _inst);
+            }
+        }
+    } else {
+        _inst_array_selected = _all_instances;  // Select all if no identifier is provided
+    }
+
+    // Sort or filter based on proximity if specified
+    if (!is_undefined(_who_prox) && !is_undefined(_who_pox_ident)) {
+        var _sort_function = find_sort_function(_who_prox, _who_pox_ident);
+        if (_sort_function != undefined) {
+            _inst_array_selected = array_sort(_inst_array_selected, _sort_function);
+        }
+    }
+
+    // Limit the amount if specified (can be a percentage or a fixed number)
+    if (!is_undefined(_who_amount)) {
+        var _selected_count = 0;
+        if (string_pos("%", string(_who_amount)) > 0) {  // Handle percentage (e.g., "75%")
+            var _percentage = real(string_delete(_who_amount, string_length(_who_amount), 1));
+            _selected_count = ceil(array_length(_inst_array_selected) * (_percentage / 100));
+        } else {  // Handle absolute number
+            _selected_count = min(real(_who_amount), array_length(_inst_array_selected));
+        }
+
+        // Create a new array to hold the selected instances
+        var _new_inst_array = array_create(_selected_count);
+        array_copy(_new_inst_array, 0, _inst_array_selected, 0, _selected_count);
+        _inst_array_selected = _new_inst_array;  // Replace the old array with the limited array
+    }
+
+    return _inst_array_selected;
+}
+
+
+function find_sort_function(_who_prox, _who_pox_ident) {
+    var _function = undefined;
+    
+    switch (_who_pox_ident) {
+        case "player_nearest":
+            _function = function(_a, _b) {
+                var _player = instance_nearest(_a.x, _a.y, oPlayer);
+                return point_distance(_a.x, _a.y, _player.x, _player.y) - point_distance(_b.x, _b.y, _player.x, _player.y);
+            };
+            break;
+
+        case "player_furthest":
+            _function = function(_a, _b) {
+                var _player = instance_nearest(_a.x, _a.y, oPlayer);
+                return point_distance(_b.x, _b.y, _player.x, _player.y) - point_distance(_a.x, _a.y, _player.x, _player.y);
+            };
+            break;
+
+        case "unit_nearest":
+            _function = function(_a, _b) {
+                var _unit = instance_nearest(_a.x, _a.y, oInfantry);
+                return point_distance(_a.x, _a.y, _unit.x, _unit.y) - point_distance(_b.x, _b.y, _unit.x, _unit.y);
+            };
+            break;
+
+        case "unit_furthest":
+            _function = function(_a, _b) {
+                var _unit = instance_nearest(_a.x, _a.y, oInfantry);
+                return point_distance(_b.x, _b.y, _unit.x, _unit.y) - point_distance(_a.x, _a.y, _unit.x, _unit.y);
+            };
+            break;
+
+        // Add other cases here (e.g., building_nearest, marker_nearest, etc.)
+
+        default:
+            _function = undefined;  // No sorting if not applicable
+            break;
+    }
+    
+    return _function;
+}
+
+
+function find_where(_where_type, _where_ident) {
+    var _inst_target = noone;  // Initialize target instance to noone
+
+    switch (_where_type) {
+        case "marker":
+            _inst_target = find_location_marker(_where_ident);
+            break;
+            
+        case "building":
+            _inst_target = find_location_specific(_where_ident, oBuilding);
+            break;
+            
+        case "player":
+            _inst_target = find_location_specific(_where_ident, oPlayer);
+            break;
+            
+        case "unit":
+            _inst_target = find_location_specific(_where_ident, oInfantry);
+            break;
+            
+        case "squad":
+            _inst_target = find_location_specific(_where_ident, oSquad);
+            break;
+
+        // Add other cases as needed (e.g., objectives, waypoints)
+
+        default:
+            _inst_target = noone;  // No valid target found
+            break;
+    }
+    
+    return _inst_target;
+}
+
+
+function find_location_marker(_marker_ident) {
+    var _inst_target = noone;
+    
+    switch (_marker_ident) {
+        case "attack_marker":
+            _inst_target = instance_find(oAttackMarker, 0);
+            break;
+        case "defend_marker":
+            _inst_target = instance_find(oDefendMarker, 0);
+            break;
+        case "recon_marker":
+            _inst_target = instance_find(oReconMarker, 0);
+            break;
+        case "patrol_marker":
+            _inst_target = instance_find(oPatrolMarker, 0);
+            break;
+        case "retreat_marker":
+            _inst_target = instance_find(oRetreatMarker, 0);
+            break;
+
+        // Add more cases as needed
+
+        default:
+            _inst_target = noone;  // No valid marker found
+            break;
+    }
+    
+    return _inst_target;
+}
+
+
+function find_location_specific(_where_ident, _object_type) {
+    var _inst_target = noone;
+
+    for (var i = 0; i < instance_number(_object_type); i++) {
+        var _inst = instance_find(_object_type, i);
+        if (_inst.identifier == _where_ident) {  // Assuming each instance has an `identifier` property
+            _inst_target = _inst;
+            break;
+        }
+    }
+
+    return _inst_target;
+}
+
+
+function set_behavior(_inst, _behavior_type) {
+	with(_inst)
+	{
+		var _set_type = b_idle;
+		
+		switch(_behavior_type)
+		{
+			case "aggressive":
+				_set_type = b_aggressive;
+				break;
+			case "defensive":
+				_set_type = b_defensive;
+				break;
+			case "passive":
+				_set_type = b_passive;
+				break;
+		}
+		
+		m_sm.swap(m_idle);
+		b_sm.swap(_set_type)
+	}
+}
+
+
+function set_movement(_inst, _movement_type, _x, _y) {
+	with(_inst)
+	{
+		var _set_type = m_idle;
+		
+		switch(_movement_type)
+		{
+			case "scout":
+				_set_type = m_scout;
+				break;
+			case "retreat":
+				_set_type = m_retreat;
+				break;
+			case "capture":
+				_set_type = m_capture;
+				break;
+			case "patrol":
+				_set_type = m_patrol;
+				break;
+			case "roam":
+				_set_type = m_roam;
+				break;
+			case "protect":
+				_set_type = m_protect;
+				break;
+			case "follow":
+				_set_type = m_follow;
+				break;
+			case "engage":
+				_set_type = m_engage;
+				break;
+			case "haste":
+				_set_type = m_haste;
+				break;
+			case "move":
+				_set_type = m_move;
+		}
+
+		// Set goal
+		goal_x	= _x + random_range(-30, 30);
+		goal_y	= _y + random_range(-30, 30);
+
+		b_sm.swap(b_idle)
+		m_sm.swap(_set_type);
+	}
+}
+
+	
+function transcribe_audio(_file_path) {
+    // Create headers for the HTTP request
+    var headers = ds_map_create();
+    ds_map_add(headers, "Authorization", "Bearer " + APIKEY);
+
+    // Read the WAV file into a buffer and convert it to Base64 (or send as binary directly)
+    var file_buffer = buffer_load(_file_path);
+
+    // API endpoint for Whisper transcription
+    var api_endpoint = "https://api.openai.com/v1/audio/transcriptions"; // Example endpoint
+
+    // Prepare the multipart form data (specific to your environment's capabilities)
+    var form_data = ds_map_create();
+    ds_map_add(form_data, "file", file_buffer);
+    ds_map_add(form_data, "model", "whisper-1");  // Adjust as needed
+	
+	var _data = json_stringify(form_data);
+
+    var request = http_request(api_endpoint, "POST", headers, _data);
+
+    // Optionally, you can store the request ID to handle the response
+    transcription_request = request;
+
+    // Clean up
+    ds_map_destroy(headers);
+    ds_map_destroy(form_data);
+    buffer_delete(file_buffer);
+
+    show_debug_message("Transcription request sent.");
+}
+	
+
+function handle_opening(_async_load, _request_id) {
+	try {
+		if (_async_load[? "id"] != _request_id)
+			return false;
+			
+		if(_async_load[? "status"] < 0) {
+			show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_async_load[? "status"]));
+			return false;
+		}
+		
+		if(!struct_exists(_async_load, "result"))
+			return false;
+			
+		var _response_json = _async_load[? "result"];
+		var _response_data = json_parse(_response_json);
+		
+		if(struct_exists(_response_data, "error")) {
+			show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_response_data(_response_json, "error")));
+			return false;
+		}
+		
+		return _response_data;
+	}
+	catch(_e) {
+		show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
+	}
+}
+
+
+function handle_transcription(_async_load, _request_id) {
+	try {
+		var _response_data = handle_opening(_async_load, _request_id)
+			
+		if !_response_data
+			return false
+
+		// Access the transcription text (this depends on the API response structure)
+		var _transcription_text = _response_data[? "text"];
+		show_debug_message("Transcription: " + _transcription_text);
+
+		// Cleanup
+		ds_map_destroy(_response_data);
+	}
+	catch(_e) {
+		show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
+	}
+}
+
+
+function handle_chatgpt(_async_load, _request_id) {
+	try {
+		var _response_data = handle_opening(_async_load, _request_id)
+			
+		if !_response_data
+			return false
+		
+		var _choices = struct_get(_response_data, "choices");
+		
+		var _number_returned = array_length(_choices);
+		
+		if _number_returned > 1
+			show_debug_message("ERROR HANDLING MESSAGE. STATUS: Not setup to handle more than 1 message in a single call.");
+		
+		var _message = struct_get(_choices[0], "message");
+		var _tools_array = struct_get(_message, "tool_calls");
+		
+		var _arguments_array = [];
+		
+		// Gather arguments
+		for (var j = 0; j < array_length(_tools_array); ++j) {
+			var _function_info = _tools_array[j];
+			var _function = struct_get(_function_info, "function");
+			var _arguments = struct_get(_function, "arguments");
+			_arguments_array[j] = json_parse(_arguments);
+		}
+				
+		show_debug_message("CONTENT: " + string(_arguments_array));
+		
+		var _usage = struct_get(_response_data, "usage");
+		var _total_tokens = struct_get(_usage, "total_tokens");
+		show_debug_message("COST: " + string(_total_tokens))
+		
+		// Execute script
+		for (var j = 0; j < array_length(_tools_array); ++j) {
+			execute_action(_arguments_array[j]);
+		}
+	}
+	catch(_e) {
+		show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
+	}
+}
+
 
 #endregion

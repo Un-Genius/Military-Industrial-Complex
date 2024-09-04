@@ -28,8 +28,4 @@ if(zoning > 0 && !global.mouse_on_ui)
 
 #endregion
 
-#region Comms
-draw_circle(x,y,comms_dist, true)
-#endregion
-
 draw_self()

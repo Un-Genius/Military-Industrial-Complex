@@ -7,6 +7,7 @@ var i = 0;
 var _value = ds_grid_get(global.instGrid, i, 0);
 
 var _key_shft	= keyboard_check(vk_shift);
+var _key_space = keyboard_check(vk_space);
 
 if _key_shft
 {
@@ -16,4 +17,9 @@ if _key_shft
 		special_sprite = spr_regroup;
 	
 	draw_sprite_ext(special_sprite, 0, device_mouse_x_to_gui(0)-32, device_mouse_y_to_gui(0)-16, 0.5,0.5,0,image_blend, 1);
+}
+
+if _key_space
+{
+	draw_sprite_ext(spr_talking, 0, device_mouse_x_to_gui(0)+16, device_mouse_y_to_gui(0)-16, 0.5,0.5,0,image_blend, 1);
 }
