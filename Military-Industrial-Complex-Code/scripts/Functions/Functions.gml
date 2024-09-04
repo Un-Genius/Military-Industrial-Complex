@@ -3113,7 +3113,9 @@ function buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat) {
 
 #region ChatGPT
 
-#macro APIKEY "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"
+#macro APIFILE "no_touchy_api"
+#macro APIKEY decrypt_api_key()
+
 global.chatGPT = "gpt-4o" // "gpt-4o-mini"
 
 /// @description send_gpt_chat( system_input, user_history, user_input )
@@ -3151,6 +3153,43 @@ function send_gpt(_system, _user, _tools) {
 	ds_map_destroy(map)
 	
 	return _chatgpt_request
+}
+
+/// @function encrypt_api_key(api_key)
+/// @param api_key The API key as a string to encrypt
+/// @returns A buffer containing the encrypted API key
+
+function encrypt_api_key(api_key) {
+    var key_length = string_length(api_key);
+    var buffer = buffer_create(key_length, buffer_fixed, 1);
+
+    for (var i = 1; i <= key_length; i++) {
+        var char_byte = ord(string_char_at(api_key, i));
+        var encrypted_byte = char_byte ^ 123; // XOR with a simple number for obfuscation
+        buffer_write(buffer, buffer_u8, encrypted_byte);
+    }
+
+	buffer_save(buffer, APIFILE)
+}
+
+
+/// @function decrypt_api_key(buffer)
+/// @param buffer The buffer containing the encrypted API key
+/// @returns The decrypted API key as a string
+
+function decrypt_api_key() {
+	var buffer = buffer_load(APIFILE)
+    var decrypted_key = "";
+    var buffer_size = buffer_get_size(buffer);
+    buffer_seek(buffer, buffer_seek_start, 0);
+
+    for (var i = 0; i < buffer_size; i++) {
+        var encrypted_byte = buffer_read(buffer, buffer_u8);
+        var decrypted_byte = encrypted_byte ^ 123; // Reverse the XOR operation
+        decrypted_key += chr(decrypted_byte);
+    }
+
+    return decrypted_key;
 }
 
 
