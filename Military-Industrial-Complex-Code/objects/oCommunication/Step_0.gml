@@ -143,24 +143,26 @@ var _old_communication_tool = [{
 if keyboard_check_released(vk_enter)
 	chatgpt_request = send_gpt(_instructions, _input, _communication_tool)
 
-
+// Start recording
 if keyboard_check_pressed(vk_space) && !isRecording {
-	isRecording = true;
-	ds_map_destroy(recordSpecs);
-	
-	if !is_undefined(recordSound)
-	{
-		audio_free_buffer_sound(recordSound);
-		recordSound = undefined;
+	for (var i = audio_get_recorder_count()-1; i >= 0; --i) {
+		if i != recordingDevice
+			continue;
+			
+		isRecording = true;
+		ds_map_destroy(recordSpecs);
+		if !is_undefined(recordSound)
+			audio_free_buffer_sound(recordSound);
+		buffer_delete(recordBuffer);
+		recordSpecs = audio_get_recorder_info(i);
+		recordBuffer = buffer_create(recordSpecs[? "sample_rate"]*buffer_sizeof(recordSpecs[? "data_format"]), buffer_grow, 1);
+		recordingChannel = audio_start_recording(i);
+		recordingDevice = i;
+		break;
 	}
-		
-	buffer_delete(recordBuffer);
-	
-	recordSpecs = audio_get_recorder_info(recordingDevice);
-	recordBuffer = buffer_create(recordSpecs[? "sample_rate"]*buffer_sizeof(recordSpecs[? "data_format"]), buffer_grow, 1);
-	recordingChannel = audio_start_recording(recordingDevice);
 }
 
+// Stop recording
 if keyboard_check_released(vk_space) && isRecording {
 	isRecording = false;
 	audio_stop_recording(recordingChannel);
@@ -177,13 +179,14 @@ if keyboard_check_released(vk_space) && isRecording {
 	buffer_delete(recordBuffer);
 	recordBuffer = convertedRecordBuffer;
 	recordingChannel = -1;
+	recordingDevice = -1;
  
 	var _file_path = working_directory + "temp_audio_recording.wav";
 	
 	audio_play_sound(recordSound, 0, false);
   
-	//if (!ds_map_empty(recordSpecs))
-		//buffer_save_wav(recordBuffer, _file_path, recordSpecs[? "channels"], recordSpecs[? "sample_rate"], recordSpecs[? "data_format"]);
+	if (!ds_map_empty(recordSpecs))
+		buffer_save_wav(recordBuffer, _file_path, recordSpecs[? "channels"], recordSpecs[? "sample_rate"], recordSpecs[? "data_format"]);
  
 	if (file_exists(_file_path)) {
 	    show_debug_message("File saved successfully: " + _file_path);
