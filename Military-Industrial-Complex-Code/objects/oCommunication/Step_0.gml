@@ -179,7 +179,6 @@ if keyboard_check_released(vk_space) && isRecording {
 	buffer_delete(recordBuffer);
 	recordBuffer = convertedRecordBuffer;
 	recordingChannel = -1;
-	recordingDevice = -1;
  
 	var _file_path = working_directory + "temp_audio_recording.wav";
 	
