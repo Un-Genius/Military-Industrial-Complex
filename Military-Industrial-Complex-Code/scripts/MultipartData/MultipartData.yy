@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"MultipartData",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"MultipartData",
+  "parent":{
+    "name":"RequestMaster",
+    "path":"folders/Libraries/RequestMaster.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

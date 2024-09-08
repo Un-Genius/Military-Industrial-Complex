@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"RequestBody",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"RequestBody",
+  "parent":{
+    "name":"RequestMaster",
+    "path":"folders/Libraries/RequestMaster.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"__REQM_CONFIGS__",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"__REQM_CONFIGS__",
+  "parent":{
+    "name":"RequestMaster",
+    "path":"folders/Libraries_config/RequestMaster.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

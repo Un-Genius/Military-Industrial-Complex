@@ -3130,17 +3130,17 @@ function send_gpt(_system, _user, _tools) {
     ds_map_add(map, "Content-Type", "application/json");
 
 	var _data = {
-					"model": global.chatGPT,
+		"model": global.chatGPT,
 					
-					"messages": [
-					    {"role": "system", "content": _system},
-					    {"role": "user", "content": _user},
-					],
-					"tools": _tools,
-					"max_tokens": int64(500),	// How much it can cost
-					"temperature": 0.6,			// How random it can be
-					"n": int64(1),				// How many outputs
-				};
+		"messages": [
+			{"role": "system", "content": _system},
+			{"role": "user", "content": _user},
+		],
+		"tools": _tools,
+		"max_tokens": int64(500),	// How much it can cost
+		"temperature": 0.6,			// How random it can be
+		"n": int64(1),				// How many outputs
+	};
 			
 	var data = json_stringify(_data);
 	
@@ -3188,8 +3188,8 @@ function decrypt_api_key() {
         var decrypted_byte = encrypted_byte ^ 123; // Reverse the XOR operation
         decrypted_key += chr(decrypted_byte);
     }
-
-    return decrypted_key;
+	
+	return decrypted_key;
 }
 
 
@@ -3516,36 +3516,41 @@ function set_movement(_inst, _movement_type, _x, _y) {
 
 	
 function transcribe_audio(_file_path) {
-    // Create headers for the HTTP request
-    var headers = ds_map_create();
-    ds_map_add(headers, "Authorization", "Bearer " + APIKEY);
+    // Set up the OpenAI Whisper API endpoint
+    var api_endpoint = "https://api.openai.com/v1/audio/transcriptions";
 
-    // Read the WAV file into a buffer and convert it to Base64 (or send as binary directly)
-    var file_buffer = buffer_load(_file_path);
+    // Create a MultipartDataBuilder with the audio file and necessary parameters
+    var mpdb = new MultipartDataBuilder({
+        model: "whisper-1",  // Whisper model ID
+        file: new FilePart(_file_path)  // Attach the audio file
+    });
 
-    // API endpoint for Whisper transcription
-    var api_endpoint = "https://api.openai.com/v1/audio/transcriptions"; // Example endpoint
+    // Get the multipart body and headers for the request
+    var bufferBody = mpdb.getBuffer();
+    var headers = mpdb.getHeaderMap();
+    
+    // Add the authorization header using the API key macro
+    headers[? "Authorization"] = "Bearer " + APIKEY;
 
-    // Prepare the multipart form data (specific to your environment's capabilities)
-    var form_data = ds_map_create();
-    ds_map_add(form_data, "file", file_buffer);
-    ds_map_add(form_data, "model", "whisper-1");  // Adjust as needed
-	
-	var _data = json_stringify(form_data);
-
-    var request = http_request(api_endpoint, "POST", headers, _data);
-
-    // Optionally, you can store the request ID to handle the response
-    transcription_request = request;
-
-    // Clean up
-    ds_map_destroy(headers);
-    ds_map_destroy(form_data);
-    buffer_delete(file_buffer);
-
-    show_debug_message("Transcription request sent.");
+    // Send the request using xhr_post
+    xhr_post(api_endpoint, bufferBody, {
+        headers: headers, 
+        done: function(res) {
+            var json = res.data;
+            print("Transcription successful: " + json.text);
+        },
+        fail: function(res) {
+            print("Transcription failed. Error: " + res.data);
+        }
+    });
 }
-	
+
+
+
+
+
+
+
 
 function handle_opening(_async_load, _request_id) {
 	try {
