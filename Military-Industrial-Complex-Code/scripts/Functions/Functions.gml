@@ -3123,7 +3123,7 @@ global.chatGPT = "gpt-4o" // "gpt-4o-mini"
 /// @param  user_history
 /// @param  user_input
 
-function send_gpt(_system, _user, _tools) {
+function send_gpt_old(_system, _user, _tools) {
 	
     var map = ds_map_create();
     ds_map_add(map, "Authorization", "Bearer " + APIKEY);
@@ -3153,6 +3153,86 @@ function send_gpt(_system, _user, _tools) {
 	ds_map_destroy(map)
 	
 	return _chatgpt_request
+}
+	
+/// @description send_gpt_chat( system_input, user_history, user_input )
+/// @param  system_input
+/// @param  user_history
+/// @param  user_input
+
+function send_gpt(_system, _user, _tools) {
+    var headers = [
+        ["Authorization", "Bearer " + APIKEY],
+        ["Content-Type", "application/json"]
+    ];
+    
+    var _data = {
+        "model": global.chatGPT,
+        "messages": [
+            {"role": "system", "content": _system},
+            {"role": "user", "content": _user}
+        ],
+        "tools": _tools,
+        "max_tokens": 500,  // How much it can cost
+        "temperature": 0.6, // How random it can be
+        "n": 1              // How many outputs
+    };
+    
+    var api_endpoint = "https://api.openai.com/v1/chat/completions";
+    
+    xhr_post(api_endpoint, json_stringify(_data), {
+        headers: headers,
+        done: function(res) {
+            if (res.isSuccessful()) {
+                handle_chatgpt(res.data, res.handle);
+            } else {
+                show_debug_message("ERROR: Request failed. Status: " + string(res.httpStatus));
+            }
+        },
+        fail: function(res) {
+            show_debug_message("ERROR: Failed to send request. Status: " + string(res.httpStatus));
+        }
+    });
+    
+    show_debug_message("Request Sent");
+}
+
+function handle_chatgpt(_response_data, _request_id) {
+    try {
+        var _choices = struct_get(_response_data, "choices");
+        
+        if (array_length(_choices) > 1) {
+            show_debug_message("ERROR HANDLING MESSAGE. STATUS: Not setup to handle more than 1 message in a single call.");
+            return false;
+        }
+        
+        var _message = struct_get(_choices[0], "message");
+        var _tools_array = struct_get(_message, "tool_calls");
+        
+        var _arguments_array = [];
+        
+        // Gather arguments
+        for (var j = 0; j < array_length(_tools_array); ++j) {
+            var _function_info = _tools_array[j];
+            var _function = struct_get(_function_info, "function");
+            var _arguments = struct_get(_function, "arguments");
+            _arguments_array[j] = json_parse(_arguments);
+        }
+                
+        show_debug_message("CONTENT: " + string(_arguments_array));
+        
+        var _usage = struct_get(_response_data, "usage");
+        var _total_tokens = struct_get(_usage, "total_tokens");
+        show_debug_message("COST: " + string(_total_tokens));
+        
+        // Execute script
+        for (var j = 0; j < array_length(_tools_array); ++j) {
+            execute_action(_arguments_array[j]);
+        }
+    }
+    catch (_e) {
+        show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
+    }
 }
 
 /// @function encrypt_api_key(api_key)
@@ -3545,13 +3625,6 @@ function transcribe_audio(_file_path) {
     });
 }
 
-
-
-
-
-
-
-
 function handle_opening(_async_load, _request_id) {
 	try {
 		if (_async_load[? "id"] != _request_id)
@@ -3580,28 +3653,7 @@ function handle_opening(_async_load, _request_id) {
 	}
 }
 
-
-function handle_transcription(_async_load, _request_id) {
-	try {
-		var _response_data = handle_opening(_async_load, _request_id)
-			
-		if !_response_data
-			return false
-
-		// Access the transcription text (this depends on the API response structure)
-		var _transcription_text = _response_data[? "text"];
-		show_debug_message("Transcription: " + _transcription_text);
-
-		// Cleanup
-		ds_map_destroy(_response_data);
-	}
-	catch(_e) {
-		show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
-	}
-}
-
-
-function handle_chatgpt(_async_load, _request_id) {
+function handle_chatgpt_old(_async_load, _request_id) {
 	try {
 		var _response_data = handle_opening(_async_load, _request_id)
 			
