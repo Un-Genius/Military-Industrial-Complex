@@ -3118,49 +3118,12 @@ function buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat) {
 
 global.chatGPT = "gpt-4o" // "gpt-4o-mini"
 
-/// @description send_gpt_chat( system_input, user_history, user_input )
+/// @description send_openai_gpt_chat( system_input, user_history, user_input )
 /// @param  system_input
 /// @param  user_history
 /// @param  user_input
 
-function send_gpt_old(_system, _user, _tools) {
-	
-    var map = ds_map_create();
-    ds_map_add(map, "Authorization", "Bearer " + APIKEY);
-    ds_map_add(map, "Content-Type", "application/json");
-
-	var _data = {
-		"model": global.chatGPT,
-					
-		"messages": [
-			{"role": "system", "content": _system},
-			{"role": "user", "content": _user},
-		],
-		"tools": _tools,
-		"max_tokens": int64(500),	// How much it can cost
-		"temperature": 0.6,			// How random it can be
-		"n": int64(1),				// How many outputs
-	};
-			
-	var data = json_stringify(_data);
-	
-	var api_endpoint = "https://api.openai.com/v1/chat/completions";
-
-	var _chatgpt_request = http_request(api_endpoint, "POST", map, data);
-	
-	show_debug_message("Request Sent");
-
-	ds_map_destroy(map)
-	
-	return _chatgpt_request
-}
-	
-/// @description send_gpt_chat( system_input, user_history, user_input )
-/// @param  system_input
-/// @param  user_history
-/// @param  user_input
-
-function send_gpt(_system, _user, _tools) {
+function send_openai_gpt(_system, _user, _tools) {
     var headers = [
         ["Authorization", "Bearer " + APIKEY],
         ["Content-Type", "application/json"]
@@ -3173,9 +3136,9 @@ function send_gpt(_system, _user, _tools) {
             {"role": "user", "content": _user}
         ],
         "tools": _tools,
-        "max_tokens": 500,  // How much it can cost
+        "max_tokens": int64(500),  // How much it can cost
         "temperature": 0.6, // How random it can be
-        "n": 1              // How many outputs
+        "n": int64(1)              // How many outputs
     };
     
     var api_endpoint = "https://api.openai.com/v1/chat/completions";
@@ -3184,7 +3147,7 @@ function send_gpt(_system, _user, _tools) {
         headers: headers,
         done: function(res) {
             if (res.isSuccessful()) {
-                handle_chatgpt(res.data, res.handle);
+                handle_openai_gpt(res.data, res.handle);
             } else {
                 show_debug_message("ERROR: Request failed. Status: " + string(res.httpStatus));
             }
@@ -3197,7 +3160,7 @@ function send_gpt(_system, _user, _tools) {
     show_debug_message("Request Sent");
 }
 
-function handle_chatgpt(_response_data, _request_id) {
+function handle_openai_gpt(_response_data, _request_id) {
     try {
         var _choices = struct_get(_response_data, "choices");
         
@@ -3233,6 +3196,63 @@ function handle_chatgpt(_response_data, _request_id) {
     catch (_e) {
         show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
     }
+}
+	
+function send_openai_whisper(_file_path) {
+    // Set up the OpenAI Whisper API endpoint
+    var api_endpoint = "https://api.openai.com/v1/audio/transcriptions";
+
+    // Create a MultipartDataBuilder with the audio file and necessary parameters
+    var mpdb = new MultipartDataBuilder({
+        model: "whisper-1",  // Whisper model ID
+        file: new FilePart(_file_path),  // Attach the audio file
+		prompt: "Alpha, Beta, Charlie, HQ, Patrol Marker, Enemy, Unit, Player, Attack, Defend, Recon Marker"
+    });
+
+    // Get the multipart body and headers for the request
+    var bufferBody = mpdb.getBuffer();
+    var headers = mpdb.getHeaderMap();
+    
+    // Add the authorization header using the API key macro
+    headers[? "Authorization"] = "Bearer " + APIKEY;
+
+    // Send the request using xhr_post
+    xhr_post(api_endpoint, bufferBody, {
+        headers: headers, 
+        done: function(res) {
+            var json = res.data;
+            print("Transcription successful: " + json.text);
+        },
+        fail: function(res) {
+            print("Transcription failed. Error: " + res.data);
+        }
+    });
+}
+	
+// Save and transcribe the current buffer
+function save_and_transcribe() {
+	var convertedRecordBuffer = buffer_create(buffer_tell(recordBuffer), buffer_fast, 1);
+	buffer_copy(recordBuffer, 0, buffer_tell(recordBuffer), convertedRecordBuffer, 0);
+	recordSound = audio_create_buffer_sound(
+		convertedRecordBuffer,
+		recordSpecs[? "data_format"],
+		recordSpecs[? "sample_rate"],
+		0,
+		buffer_tell(recordBuffer),
+		recordSpecs[? "channels"]
+	);
+
+	var _file_path = working_directory + "temp_audio_recording.wav";
+	
+	if (!ds_map_empty(recordSpecs))
+		buffer_save_wav(convertedRecordBuffer, _file_path, recordSpecs[? "channels"], recordSpecs[? "sample_rate"], recordSpecs[? "data_format"]);
+
+	if (file_exists(_file_path)) {
+		send_openai_whisper(_file_path);
+	} else {
+	    show_debug_message("Failed to save the file: " + _file_path);
+	}
+	return convertedRecordBuffer;
 }
 
 /// @function encrypt_api_key(api_key)
@@ -3591,108 +3611,6 @@ function set_movement(_inst, _movement_type, _x, _y) {
 
 		b_sm.swap(b_idle)
 		m_sm.swap(_set_type);
-	}
-}
-
-	
-function transcribe_audio(_file_path) {
-    // Set up the OpenAI Whisper API endpoint
-    var api_endpoint = "https://api.openai.com/v1/audio/transcriptions";
-
-    // Create a MultipartDataBuilder with the audio file and necessary parameters
-    var mpdb = new MultipartDataBuilder({
-        model: "whisper-1",  // Whisper model ID
-        file: new FilePart(_file_path)  // Attach the audio file
-    });
-
-    // Get the multipart body and headers for the request
-    var bufferBody = mpdb.getBuffer();
-    var headers = mpdb.getHeaderMap();
-    
-    // Add the authorization header using the API key macro
-    headers[? "Authorization"] = "Bearer " + APIKEY;
-
-    // Send the request using xhr_post
-    xhr_post(api_endpoint, bufferBody, {
-        headers: headers, 
-        done: function(res) {
-            var json = res.data;
-            print("Transcription successful: " + json.text);
-        },
-        fail: function(res) {
-            print("Transcription failed. Error: " + res.data);
-        }
-    });
-}
-
-function handle_opening(_async_load, _request_id) {
-	try {
-		if (_async_load[? "id"] != _request_id)
-			return false;
-			
-		if(_async_load[? "status"] < 0) {
-			show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_async_load[? "status"]));
-			return false;
-		}
-		
-		if(!struct_exists(_async_load, "result"))
-			return false;
-			
-		var _response_json = _async_load[? "result"];
-		var _response_data = json_parse(_response_json);
-		
-		if(struct_exists(_response_data, "error")) {
-			show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_response_data(_response_json, "error")));
-			return false;
-		}
-		
-		return _response_data;
-	}
-	catch(_e) {
-		show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
-	}
-}
-
-function handle_chatgpt_old(_async_load, _request_id) {
-	try {
-		var _response_data = handle_opening(_async_load, _request_id)
-			
-		if !_response_data
-			return false
-		
-		var _choices = struct_get(_response_data, "choices");
-		
-		var _number_returned = array_length(_choices);
-		
-		if _number_returned > 1
-			show_debug_message("ERROR HANDLING MESSAGE. STATUS: Not setup to handle more than 1 message in a single call.");
-		
-		var _message = struct_get(_choices[0], "message");
-		var _tools_array = struct_get(_message, "tool_calls");
-		
-		var _arguments_array = [];
-		
-		// Gather arguments
-		for (var j = 0; j < array_length(_tools_array); ++j) {
-			var _function_info = _tools_array[j];
-			var _function = struct_get(_function_info, "function");
-			var _arguments = struct_get(_function, "arguments");
-			_arguments_array[j] = json_parse(_arguments);
-		}
-				
-		show_debug_message("CONTENT: " + string(_arguments_array));
-		
-		var _usage = struct_get(_response_data, "usage");
-		var _total_tokens = struct_get(_usage, "total_tokens");
-		show_debug_message("COST: " + string(_total_tokens))
-		
-		// Execute script
-		for (var j = 0; j < array_length(_tools_array); ++j) {
-			execute_action(_arguments_array[j]);
-		}
-	}
-	catch(_e) {
-		show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
 	}
 }
 

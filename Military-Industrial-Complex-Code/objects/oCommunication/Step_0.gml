@@ -141,8 +141,63 @@ var _old_communication_tool = [{
 }]
 
 if keyboard_check_released(vk_enter)
-	chatgpt_request = send_gpt(_instructions, _input, _communication_tool)
+	var _chatgpt_request = send_openai_gpt(_instructions, _input, _communication_tool)
 
+
+
+
+
+
+
+
+
+// Start recording
+if (keyboard_check_pressed(vk_space) && !isRecording) {
+	for (var i = audio_get_recorder_count() - 1; i >= 0; --i) {
+		if (i != recordingDevice)
+			continue;
+			
+		isRecording = true;
+		ds_map_destroy(recordSpecs);
+		if (!is_undefined(recordSound))
+			audio_free_buffer_sound(recordSound);
+		buffer_delete(recordBuffer);
+		recordSpecs = audio_get_recorder_info(i);
+		recordBuffer = buffer_create(recordSpecs[? "sample_rate"] * buffer_sizeof(recordSpecs[? "data_format"]), buffer_grow, 1);
+		recordingChannel = audio_start_recording(i);
+		recordingDevice = i;
+		transcriptionTimer = current_time; // Initialize the timer
+		break;
+	}
+}
+
+// Stop recording
+if (keyboard_check_released(vk_space) && isRecording) {
+	isRecording = false;
+	audio_stop_recording(recordingChannel);
+	var _newBuffer = save_and_transcribe();
+	buffer_delete(recordBuffer);
+	recordBuffer = _newBuffer
+	recordingChannel = -1;
+	audio_play_sound(recordSound, 0, false);
+}
+
+
+// Check if transcription is needed every step
+if (isRecording) {
+	if (current_time - transcriptionTimer >= 2000) { // 2000ms = 2 seconds
+		save_and_transcribe();
+		transcriptionTimer = current_time; // Reset the timer
+	}
+}
+
+
+
+
+
+
+
+/*
 // Start recording
 if keyboard_check_pressed(vk_space) && !isRecording {
 	for (var i = audio_get_recorder_count()-1; i >= 0; --i) {
@@ -189,7 +244,7 @@ if keyboard_check_released(vk_space) && isRecording {
  
 	if (file_exists(_file_path)) {
 	    show_debug_message("File saved successfully: " + _file_path);
-		transcribe_audio(_file_path);
+		send_openai_whisper(_file_path);
 	} else {
 	    show_debug_message("Failed to save the file: " + _file_path);
 	}
