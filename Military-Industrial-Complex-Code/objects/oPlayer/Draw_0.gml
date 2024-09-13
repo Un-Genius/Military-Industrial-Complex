@@ -27,3 +27,5 @@ if(zoning > 0 && !global.mouse_on_ui)
 }
 
 #endregion
+
+draw_self()

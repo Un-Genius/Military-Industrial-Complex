@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"lang_btn_click",
   "isCompatibility":false,
   "isDnD":false,

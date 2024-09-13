@@ -75,22 +75,22 @@ if(global.debug > 0)
 					
 					switch(oPlayer.zoning)
 					{
-						case OBJ_NAME.SITE_PRO_SUPPLIES:
+						case OBJ_NAME.SITE_PRO_OIL:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning Camps");
 							_LIncStep++;
 						break;
 						
-						case OBJ_NAME.SITE_PRO_WEAPONS:
+						case OBJ_NAME.SITE_PRO_HEAVY_SUPPLIES:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning Money");
 							_LIncStep++;
 						break;
 						
-						case OBJ_NAME.SITE_CAP_SUPPLIES:
+						case OBJ_NAME.SITE_PRO_ENERGY:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning Supplies");
 							_LIncStep++;
 						break;
 				
-						case OBJ_NAME.SITE_PRO_INF:
+						case OBJ_NAME.SITE_PRO_ADVANCED_SUPPLIES:
 							draw_text(_Lx, _Ly + (_LInc * _LIncStep), "Zoning BootCamp");
 							_LIncStep++;
 						break;

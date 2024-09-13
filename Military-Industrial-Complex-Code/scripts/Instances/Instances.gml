@@ -94,6 +94,12 @@ function add_resource(_target_struct, _value_struct, _max_stuct=-1, _min_value=-
 			
 		var _target_amount = struct_get(_target_struct, _name) + _value;
 		
+		if _value_names[i] == "electricity" || _value_names[i] == "purchase_power"
+		{
+			struct_set(_target_struct, _name, _target_amount);
+			continue;
+		}
+		
 		if _max_stuct != -1
 		{
 			var _max = struct_get(_max_stuct, _name);
@@ -126,136 +132,63 @@ function compare_resources(base_resource, cost) {
 }
 
 
-/// @function enum_to_obj(number);
-/// @param {number} Enumerator_Number to exchange to object
-function enum_to_obj(_num)
-{
-	var _obj = noone;
-	
-	switch (_num)
+// Function implementations
+function enum_to_obj(_num) {
+	with(oFaction)
 	{
-		case OBJ_NAME.UNIT_PLAYER:		_obj = oPlayer;				break;
-		case OBJ_NAME.UNIT_INF:			_obj = oInfantry;			break;
-		case OBJ_NAME.UNIT_ENEMY_INF:	_obj = oInfantryAI;			break;
-		case OBJ_NAME.UNIT_WORKER:		_obj = oWorker;				break;
-		case OBJ_NAME.SITE_HQ:			_obj = oSiteHQ;				break;
-		case OBJ_NAME.SITE_PRO_SUPPLIES:_obj = oSiteProduceSupplies;	break;
-		case OBJ_NAME.SITE_PRO_WORKERS:	_obj = oSiteProduceWorkers;	break;
-		case OBJ_NAME.SITE_PRO_INF:		_obj = oSiteProduceWorkers;break;
-		case OBJ_NAME.SITE_PRO_WEAPONS:	_obj = oSiteProduceWeapons;	break;
-		case OBJ_NAME.SITE_PRO_FOOD:	_obj = oSiteProduceFood;	break;
-		case OBJ_NAME.SITE_PRO_CM:		_obj = oSiteProduceCM;		break;
-		case OBJ_NAME.SITE_PRO_RT:		_obj = oSiteProduceRT;		break;
-		case OBJ_NAME.SITE_CAP_SUPPLIES:_obj = oSiteCapacitySupplies;break;
-		case OBJ_NAME.SITE_CAP_INF:		_obj = oSiteCapacityInfantry;break;
-		case OBJ_NAME.SITE_CAP_WORKERS:	_obj = oSiteCapacityWorkers;break;
+	    if (_num >= 0 && _num < array_length(enum_to_obj_map)) {
+	        return enum_to_obj_map[_num];
+	    } else {
+	        show_debug_message("Error in Function enum_to_obj. Object not found");
+	        return noone;
+	    }
 	}
-	
-	return _obj;
 }
 
-/// @function obj_to_enum(object);
-/// @param {_obj} Object to exchange to enum
-function obj_to_enum(_obj)
-{
-	var _num = -1;
-	
-	switch (_obj)
+function obj_to_enum(_obj) {
+	with(oFaction)
 	{
-		case oPlayer:				_num = OBJ_NAME.UNIT_PLAYER;			break;
-		case oInfantry:				_num = OBJ_NAME.UNIT_INF;				break;
-		case oInfantryAI:			_num = OBJ_NAME.UNIT_ENEMY_INF;			break;
-		case oWorker:				_num = OBJ_NAME.UNIT_WORKER;			break;
-		case oSiteHQ:				_num = OBJ_NAME.SITE_HQ;				break;
-		case oSiteProduceSupplies:	_num = OBJ_NAME.SITE_PRO_SUPPLIES;		break;
-		case oSiteProduceWorkers:	_num = OBJ_NAME.SITE_PRO_WORKERS;		break;
-		case oSiteProduceInfantry:	_num = OBJ_NAME.SITE_PRO_INF;			break;
-		case oSiteProduceWeapons:	_num = OBJ_NAME.SITE_PRO_WEAPONS;		break;
-		case oSiteProduceFood:		_num = OBJ_NAME.SITE_PRO_FOOD;			break;
-		case oSiteProduceCM:		_num = OBJ_NAME.SITE_PRO_CM;			break;
-		case oSiteProduceRT:		_num = OBJ_NAME.SITE_PRO_RT;			break;
-		case oSiteCapacitySupplies:	_num = OBJ_NAME.SITE_CAP_SUPPLIES;		break;
-		case oSiteCapacityInfantry:	_num = OBJ_NAME.SITE_CAP_INF;			break;
-		case oSiteCapacityWorkers:	_num = OBJ_NAME.SITE_CAP_WORKERS;		break;
+	    if (ds_map_exists(obj_to_enum_map, _obj)) {
+	        return ds_map_find_value(obj_to_enum_map, _obj);
+	    } else {
+	        show_debug_message("Error in Function obj_to_enum. Object not found");
+	        return -1;
+	    }
 	}
-	
-	return _num;
 }
 
-function localObj_to_netObj(_localObj)
-{
-	var _netObj = noone;
-			
-	switch(_localObj)
+function localObj_to_netObj(_localObj) {
+	with(oFaction)
 	{
-		case oPlayer:		_netObj = oPlayerClient;	break;
-		case oParSiteLocal:	_netObj = oParZoneNet;		break;
-		case oSiteHQ:		_netObj = oZoneNetHQ;		break;
-		case oSiteCapacityInfantry:		_netObj = oZoneNetCamp;		break;
-		case oSiteProduceInfantry:	_netObj = oZoneNetBootCamp;	break;
-		case oSiteProduceSupplies:	_netObj = oZoneNetMoney;	break;
-		case oSiteCapacitySupplies:	_netObj = oZoneNetSupplies;	break;
-		case oInfantry:		_netObj = oInfantryClient;	break;
-		case oTransport:	_netObj = oTransportClient;	break;
-		default:
-			show_debug_message("Error in Function localObj_to_netObj. Net object not found");
+	    if (ds_map_exists(local_to_net_map, _localObj)) {
+	        return ds_map_find_value(local_to_net_map, _localObj);
+	    } else {
+	        show_debug_message("Error in Function localObj_to_netObj. Net object not found");
+	        return noone;
+	    }
 	}
-	
-	return _netObj;
 }
 
-/// @function enum_to_spr(number);
-/// @param {number} Enumerator_Number to exchange to sprite
-function enum_to_sprite(_num)
-{
-	var _spr = noone;
-	
-	switch (_num)
+function enum_to_sprite(_num) {
+	with(oFaction)
 	{
-		case OBJ_NAME.UNIT_PLAYER:			_spr = sPlayer;			break;
-		case OBJ_NAME.UNIT_INF:				_spr = sZoneInfantry;		break;
-		case OBJ_NAME.UNIT_ENEMY_INF:		_spr = sInfantry;	break;
-		case OBJ_NAME.UNIT_WORKER:			_spr = sInfantry;			break;
-		case OBJ_NAME.SITE_HQ:				_spr = sZoneHQ;				break;
-		case OBJ_NAME.SITE_PRO_SUPPLIES:	_spr = sZoneMoney;	break;
-		case OBJ_NAME.SITE_PRO_WORKERS:		_spr = sZoneBootCamp;	break;
-		case OBJ_NAME.SITE_PRO_INF:			_spr = sZoneBootCamp;	break;
-		case OBJ_NAME.SITE_PRO_WEAPONS:		_spr = sZoneMoney;	break;
-		case OBJ_NAME.SITE_PRO_FOOD:		_spr = sZoneMoney;	break;
-		case OBJ_NAME.SITE_PRO_CM:			_spr = sZoneMoney;		break;
-		case OBJ_NAME.SITE_PRO_RT:			_spr = sZoneMoney;		break;
-		case OBJ_NAME.SITE_CAP_SUPPLIES:	_spr = sZoneSupplies;	break;
-		case OBJ_NAME.SITE_CAP_INF:			_spr = sZoneCamp;	break;
-		case OBJ_NAME.SITE_CAP_WORKERS:		_spr = sZoneCamp;	break;
+	    if (_num >= 0 && _num < array_length(enum_to_sprite_map)) {
+	        return enum_to_sprite_map[_num];
+	    } else {
+	        show_debug_message("Error in Function enum_to_sprite. Sprite not found");
+	        return noone;
+	    }
 	}
-	
-	return _spr;
 }
 
-/// @function object_to_sprite(object);
-/// @param {object} Object to exchange to sprite
-function object_to_sprite(_obj)
-{
-	var _spr = noone;
-	
-	switch (_obj)
+function object_to_sprite(_obj) {
+	with(oFaction)
 	{
-		case oPlayer:				_spr = sPlayer;			break;
-		case oInfantry:				_spr = sZoneInfantry;	break;
-		case oInfantryAI:			_spr = sInfantry;		break;
-		case oWorker:				_spr = sInfantry;		break;
-		case oSiteHQ:				_spr = sZoneHQ;			break;
-		case oSiteProduceSupplies:	_spr = sZoneMoney;		break;
-		case oSiteProduceWorkers:	_spr = sZoneBootCamp;	break;
-		case oSiteProduceInfantry:	_spr = sZoneBootCamp;	break;
-		case oSiteProduceWeapons:	_spr = sZoneMoney;		break;
-		case oSiteProduceFood:		_spr = sZoneMoney;		break;
-		case oSiteProduceCM:		_spr = sZoneMoney;		break;
-		case oSiteProduceRT:		_spr = sZoneMoney;		break;
-		case oSiteCapacitySupplies:	_spr = sZoneSupplies;	break;
-		case oSiteCapacityInfantry:	_spr = sZoneCamp;		break;
-		case oSiteCapacityWorkers:	_spr = sZoneCamp;		break;
+	    if (ds_map_exists(obj_to_sprite_map, _obj)) {
+	        return ds_map_find_value(obj_to_sprite_map, _obj);
+	    } else {
+	        show_debug_message("Error in Function object_to_sprite. Sprite not found");
+	        return noone;
+	    }
 	}
-	
-	return _spr;
 }

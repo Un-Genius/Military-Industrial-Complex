@@ -4,19 +4,17 @@ movementSpeed = 1;
 numColor = c_white;
 hash_color = findColor(numColor);
 
-var _resources = variable_clone(oFaction.resource_struct);
-_resources.supplies += 100;
-add_resource(global.resources, _resources);
-
 // Create and clear list
-contextInstList = ds_list_create();
-ds_list_clear(contextInstList);
+context_inst_list = ds_list_create();
+ds_list_clear(context_inst_list);
 
 squadObjectList = ds_list_create();
 
 contextMenu = false;
 
 maxTroopsInf = 0;
+
+image_speed = 0
 
 // Duds
 goal_x = 0;
@@ -41,6 +39,10 @@ buildingIntersect = false;
 
 instance_selected = noone;
 instances_selected_list = ds_grid_width(global.instGrid);
+
+instance_create_layer(0, 0, "AboveAll", oCommunication);
+
+path_grid_reset();
 
 #region Mouse actions
 
@@ -77,6 +79,12 @@ mouseRightPressGui_x = device_mouse_x_to_gui(0);
 mouseRightPressGui_y = device_mouse_y_to_gui(0);
 
 #endregion
+
+// Communication
+comms_active = true;
+comms_dist = 200;
+comms_target = noone;
+comms_list = ds_list_create();
 
 // Create Particles
 global.Wind_Direction = 270;

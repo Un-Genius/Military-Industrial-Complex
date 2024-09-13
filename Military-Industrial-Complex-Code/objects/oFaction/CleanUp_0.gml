@@ -1,0 +1,5 @@
+
+
+ds_map_destroy(obj_to_enum_map)
+ds_map_destroy(local_to_net_map)
+ds_map_destroy(obj_to_sprite_map)

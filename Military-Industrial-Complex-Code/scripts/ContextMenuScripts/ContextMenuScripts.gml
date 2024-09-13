@@ -2,7 +2,9 @@ function cm_background()
 {
 	// Draw background
 	draw_set_color(c_dkgray);
+	draw_set_alpha(0.8)
 		draw_rectangle(mp_gui_x, mp_gui_y, mp_gui_x + width, mp_gui_y + cm_background_height, false);
+	draw_set_alpha(1)
 	draw_set_color(-1);
 	
 	// Draw outline
@@ -29,46 +31,31 @@ function cm_break(i, _string)
 
 function cm_folder(i)
 {
-	// Get data
-	var _folder = ds_grid_get(cm_grid, 2, i);
-	
-	var height_level = mp_gui_y + slot_height;
-		
-	// Draw data
-	draw_text(mp_gui_x + padding, height_level, _string);
-	//draw_text_ext_transformed(mp_gui_x + padding, height_level, _string, 10, 300, scale, scale, image_angle)
-	
+	var _height_level = mp_gui_y + slot_height;
+	draw_text(mp_gui_x + padding, _height_level, _string);
 	cm_triangle();
-				
-
 }
 
 function cm_triangle()
-{
-	var _folder = ds_grid_get(cm_grid, 2, i);
-	
-	// Draw folder icon
-	if !_folder
-		exit;
-		
+{		
 	// Define the base position and size variables
-	var base_x = mp_gui_x;
-	var base_y = height_level;
-	var triangle_width = width;
-	var triangle_height = height;
+	var _base_x = mp_gui_x;
+	var _base_y = height_level+2;
+	var _triangle_width = width-(padding);
+	var _triangle_height = height-5;
 
 	// Calculate the coordinates for the three points of the triangle
-	var point1_x = base_x + ((triangle_width / 15) * 13.5);
-	var point1_y = base_y + 4;
+	var _point1_x = _base_x + _triangle_width-7//((_triangle_width/15)*13.5);
+	var _point1_y = _base_y + 4;
 
-	var point2_x = base_x + ((triangle_width / 15) * 13.5);
-	var point2_y = base_y + triangle_height - 4;
+	var _point2_x = _base_x + _triangle_width-7//((_triangle_width/15)*13.5);
+	var _point2_y = _base_y + _triangle_height - 4;
 
-	var point3_x = base_x + triangle_width - 7;
-	var point3_y = base_y + (triangle_height / 2);
+	var _point3_x = _base_x + _triangle_width;
+	var _point3_y = _base_y + (_triangle_height / 2);
 
 	// Now use the variables to draw the triangle
-	draw_triangle(point1_x, point1_y, point2_x, point2_y, point3_x, point3_y, true);
+	draw_triangle(_point1_x, _point1_y, _point2_x, _point2_y, _point3_x, _point3_y, false);
 }
 
 function cm_file_expand(i)
@@ -86,31 +73,31 @@ function cm_file_expand(i)
 		
 	var _script = ds_grid_get(cm_grid, 1, i);	
 	var _folder = ds_grid_get(cm_grid, 2, i);
-	var _scriptArg = ds_grid_get(cm_grid, 3, i);
+	var __script_arg = ds_grid_get(cm_grid, 3, i);
 		
 	if !_folder
 	{
 		var _level = level;
 					
-		var _list = oPlayer.contextInstList;
+		var _list = oPlayer.context_inst_list;
 		
-		var _listSize = ds_list_size(_list);
+		var _list_size = ds_list_size(_list);
 							
 		// Check if not already in list
-		for(var o = 0; o < _listSize; o++)
+		for(var o = 0; o < _list_size; o++)
 		{
-			var _contextMenu = ds_list_find_value(_list, o);
-			if _contextMenu.level != _level + 1
+			var _context_menu = ds_list_find_value(_list, o);
+			if _context_menu.level != _level + 1
 				continue;
 				
-			close_context(_contextMenu);
+			close_context(_context_menu);
 		}
 		
 		exit;
 	}
 	
-	if _scriptArg != -1
-		script_execute_ext(_script, _scriptArg);
+	if __script_arg != -1
+		script_execute_ext(_script, __script_arg);
 	else
 		script_execute(_script);
 }
@@ -119,7 +106,7 @@ function cm_execute(i)
 {
 	if !click_left_pressed
 		exit;
-	
+			
 	var _script = ds_grid_get(cm_grid, 1, i);	
 	var _script_arg = ds_grid_get(cm_grid, 3, i);
 	
@@ -144,7 +131,7 @@ function cm_highlight()
 	
 	// Draw outline
 	draw_rectangle(mp_gui_x, height_level, _x2, _y2, true);
-	draw_rectangle(mp_gui_x - 1, height_level, _x2 + 1, _y2, true);
+	draw_rectangle(mp_gui_x, height_level, _x2, _y2, true);
 }
 
 function cm_update_position()
@@ -168,7 +155,7 @@ function cm_update_position()
 
 function cm_close_distance()
 {
-	var _main = ds_list_find_value(oPlayer.contextInstList, 0);
+	var _main = ds_list_find_value(oPlayer.context_inst_list, 0);
 	var _inst = -1;
 	var _x1 = mp_gui_x - outside_padding;
 	var _x2 = mp_gui_x + width + outside_padding;
@@ -188,6 +175,28 @@ function cm_close_distance()
 	close_context(_inst);
 }
 
+function cm_get_hover_all()
+{
+	// Returns -1 if noone are hovering
+	// Else returns the level at which it is hovering
+	
+	var _hovering = -1
+	
+	// find number
+	var _size = instance_number(oContextMenu);
+
+	for(var i = 0; i < _size; i++)
+	{
+		// Get ID
+		var _inst = instance_find(oContextMenu, i);
+		
+		if _inst.hovering
+			return _inst.level
+	}
+	
+	return _hovering
+}
+
 function cm_close()
 {
 	if click_left_pressed || (click_right_pressed && click_shift)
@@ -195,24 +204,12 @@ function cm_close()
  	else
 		return false;
 	
-	// Check if not hovering over other menus
-	var _list = oPlayer.contextInstList
-	var _size = ds_list_size(_list)
+	var _hovering_level = cm_get_hover_all()
 	
-	for(var i = 0; i < _size; i++)
-	{
-		var _contextMenu = ds_list_find_value(_list, i);
-
-		if !_contextMenu.hovering
-			continue;
-			
-		hovering = true;
-	}
-	
-	if hovering
+	if _hovering_level >= level
 		return false;
 	
-	close_context(-1);
+	close_context(id);
 	
 	return true;
 }

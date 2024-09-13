@@ -2,7 +2,7 @@
   "$GMObject":"",
   "%Name":"oOVLDummyStronk",
   "eventList":[
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"oOVLDummyStronk",
@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sOVLInf",
-    "path":"sprites/sOVLInf/sOVLInf.yy",
+    "name":"sSymbolInfantry",
+    "path":"sprites/sSymbolInfantry/sSymbolInfantry.yy",
   },
   "spriteMaskId":null,
   "visible":true,

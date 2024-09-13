@@ -2,7 +2,7 @@
 
 #region ID of Units
 
-object_name	= "noone";
+object_name	= "Alpha";
 
 amount	= 0;			// Amount of units per squad
 range	= 0;			// How far apart each unit can be

@@ -2,7 +2,7 @@
   "$GMObject":"",
   "%Name":"oInfantryAI",
   "eventList":[
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"oInfantryAI",
@@ -33,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"sZoneInfantry",
-    "path":"sprites/sZoneInfantry/sZoneInfantry.yy",
+    "name":"sInf_USA_basic_0_0",
+    "path":"sprites/sInf_USA_basic_0_0/sInf_USA_basic_0_0.yy",
   },
   "spriteMaskId":null,
   "visible":true,

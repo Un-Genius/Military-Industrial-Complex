@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"gui_create_slider",
   "isCompatibility":false,
   "isDnD":false,

@@ -42,6 +42,17 @@ bullet_reload_timer = 0;
 
 #region Dont Touch		Variables
 
+// Define the outline color
+outline_color = undefined; // Set this to a color, or undefined to disable the outline
+outline_size = 1; // Optional: you can adjust the outline size here
+
+outline_init();
+
+enum UNIT_STATES {
+	WALKING,
+	SHOOTING
+}
+
 path = path_add();
 path_set_kind(path, false);
 path_set_precision(path, 8);
@@ -57,6 +68,10 @@ squadObjectID = noone;
 team		= oFaction.team;		// Which team its on
 numColor	= oFaction.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
 hash_color	= oFaction.hash_color;	// "red" or "blue"
+
+sprite_name = sprite_get_name(sprite_index);
+sprite_name = string_copy(sprite_name, 0, string_length(sprite_name)-1); 
+
 #endregion
 
 #region State Machines Setup
@@ -65,10 +80,16 @@ a_sm = new StateMachine(); // Handles Action
 b_sm = new StateMachine(); // Handles Strategic Behaviour
 
 #region Movement States
-m_idle =	new State("m_idle") {}
+m_idle =	new State("m_idle") {
+	m_idle.create = function() {
+		image_index = 0;
+		image_speed = 0;
+	};
+}
 m_move =	new State("m_move") {
 	m_move.create = function() {
-
+		image_index = 0;
+		image_speed = 1;
 		speed = default_speed;
 		alarm[0] = 1;
 	};
@@ -80,6 +101,11 @@ m_move =	new State("m_move") {
 		
 		if path_finished()
 			m_sm.swap(m_idle);
+		
+		var _x = path_get_point_x(path, 0);
+		var _y = path_get_point_y(path, 0);
+		
+		image_angle = point_direction(x, y, _x, _y) - 90;
 		
 		// Vector a step
 		//x += lengthdir_x(speed, _pathDir);
@@ -100,6 +126,8 @@ m_move =	new State("m_move") {
 };
 m_haste =	new State("m_haste") {
 	m_haste.create = function() {
+		image_index = 0;
+		image_speed = 1.5;
 		speed = fast_speed;
 		alarm[0] = 1;
 	}
@@ -111,6 +139,8 @@ m_engage =	new State("m_engage") {
 		if !instance_exists(target_inst) {
 			m_sm.swap(m_idle); exit;
 		}
+		image_index = 0;
+		image_speed = 1;
 		speed = default_speed;
 		alarm[0] = 1;
 	};
@@ -146,7 +176,12 @@ m_follow =	new State("m_follow") {
 			m_sm.swap(m_idle); exit;
 		}
 		
-	    if (distance_to_point(goal_x, goal_y) < speed*5)
+		var _x = path_get_point_x(path, 0);
+		var _y = path_get_point_y(path, 0);
+		
+		image_angle = lerp(image_angle, point_direction(x, y, _x, _y) - 90, 0.2);
+		
+	    if (distance_to_point(goal_x, goal_y) < speed*20)
 			exit;
 		
 		if path_finished()
@@ -164,6 +199,9 @@ m_scout =	new State("m_scout") {}
 
 #region Action States
 a_idle =		new State("a_idle") {
+	a_idle.create = function() {
+		sprite_index = asset_get_index(sprite_name + string(UNIT_STATES.WALKING));
+	};
 	a_idle.update = function() {
 		if (enemy_in_range()) {
 			if(random(1) < 0.2)
@@ -175,8 +213,11 @@ a_idle =		new State("a_idle") {
 a_shoot =		new State("a_shoot") {
 	a_shoot.create = function() {
 		//target_inst = nearest_enemy();
+		sprite_index = asset_get_index(sprite_name + string(UNIT_STATES.SHOOTING));
 	}
 	a_shoot.update = function() {
+		image_speed = 1;
+		
 		target_inst = nearest_enemy();
 		
 		if target_inst == noone {

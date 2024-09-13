@@ -9,11 +9,11 @@
   "bitRate":128,
   "compression":0,
   "conversionMode":0,
-  "duration":199.07918,
+  "duration":269.2766,
   "name":"music2",
   "parent":{
-    "name":"Music",
-    "path":"folders/MonasteryFramework/02-Sounds/Music.yy",
+    "name":"02-Sounds",
+    "path":"folders/MonasteryFramework/02-Sounds.yy",
   },
   "preload":false,
   "resourceType":"GMSound",
@@ -21,5 +21,5 @@
   "sampleRate":44100,
   "soundFile":"music2.mp3",
   "type":0,
-  "volume":0.0,
+  "volume":0.2,
 }

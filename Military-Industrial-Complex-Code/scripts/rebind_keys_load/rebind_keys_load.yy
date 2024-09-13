@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"rebind_keys_load",
   "isCompatibility":false,
   "isDnD":false,

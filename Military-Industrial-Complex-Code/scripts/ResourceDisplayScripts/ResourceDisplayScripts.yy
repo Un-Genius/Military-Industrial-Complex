@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"ResourceDisplayScripts",
   "isCompatibility":false,
   "isDnD":false,

@@ -111,6 +111,7 @@ context_menu_open();
 mouse_box_close();
 create_zone();
 mouse_box();
+comms_functions();
 
 #region Double select
 

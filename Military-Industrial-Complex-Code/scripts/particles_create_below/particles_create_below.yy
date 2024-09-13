@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"particles_create_below",
   "isCompatibility":false,
   "isDnD":false,

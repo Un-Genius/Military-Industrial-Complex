@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"gui_modal",
   "isCompatibility":false,
   "isDnD":false,

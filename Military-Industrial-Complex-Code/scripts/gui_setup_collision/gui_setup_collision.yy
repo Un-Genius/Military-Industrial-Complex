@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"gui_setup_collision",
   "isCompatibility":false,
   "isDnD":false,

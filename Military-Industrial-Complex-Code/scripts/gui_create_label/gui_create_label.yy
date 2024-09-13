@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"gui_create_label",
   "isCompatibility":false,
   "isDnD":false,

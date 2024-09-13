@@ -10,9 +10,9 @@ if( sprite_index != -1 ){
 
 if( icon != -1 ){
     if( buttonPressed ){
-        draw_sprite_ext(icon, iconIndex, buttonX + (width-35), buttonY + (height/2), 1, 1, 0, image_blend, image_alpha);
+        draw_sprite_ext(icon, iconIndex, buttonX + (width-35), buttonY + (height/2), 0.5, 0.5, 0, image_blend, image_alpha);
     }else{
-        draw_sprite_ext(icon, iconIndex,buttonX + (width-35), buttonY + (height/2)-pressedOffset, 1, 1, 0, image_blend, image_alpha);
+        draw_sprite_ext(icon, iconIndex,buttonX + (width-35), buttonY + (height/2)-pressedOffset, 0.5, 0.5, 0, image_blend, image_alpha);
     }
 }
 

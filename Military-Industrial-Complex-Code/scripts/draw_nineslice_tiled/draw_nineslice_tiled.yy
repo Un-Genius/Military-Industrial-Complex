@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"draw_nineslice_tiled",
   "isCompatibility":false,
   "isDnD":false,

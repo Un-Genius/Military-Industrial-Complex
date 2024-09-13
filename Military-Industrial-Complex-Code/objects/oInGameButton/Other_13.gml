@@ -5,43 +5,47 @@ if site_type < 0
 
 switch(site_type)
 {
-	case oSiteProduceCM:
-		text = "Construction\nMaterial Pro"
-		icon = sZoneMoney
-		break
-	case oSiteProduceFood:
-		text = "Food Pro"
-		icon = sZoneMoney
-		break
 	case oSiteProduceInfantry:
-		text = "People Pro";
-		icon = sZoneBootCamp
+		text = "Infantry\nProduction";
 		break
-	case oSiteProduceRT:
-		text = "Research\nTokens Pro"
-		icon = sZoneMoney
+	case oSiteProducePurchasePower:
+		text = "Purchase Power\nProduction"
 		break
-	case oSiteProduceSupplies:
-		text = "Supplies Pro"
-		icon = sZoneMoney
+	case oSiteProduceEnergy:
+		text = "Electricity\nGenerator"
 		break
-	case oSiteProduceWeapons:
-		text = "Weapons Pro"
-		icon = sZoneMoney
+	case oSiteProduceOil:
+		text = "Oil Production"
 		break
+	case oSiteProduceHeavySupplies:
+		text = "Heavy\nProduction"
+		break
+	case oSiteProduceLightSupplies:
+		text = "Light\nProduction"
+		break
+	case oSiteProduceAdvancedSupplies:
+		text = "Advanced\nProduction";
+		break
+		
 	case oSiteHQ:
 		text = "HQ"
-		icon = sZoneHQ
 		break
-	case oSiteCapacityInfantry:
-		text = "People Cap"
-		icon = sZoneCamp
+		
+	case oSiteCapacityOil:
+		text = "Oil Capacity"
 		break
-	case oSiteCapacitySupplies:
-		text = "Supplies Cap"
-		icon = sZoneSupplies
+	case oSiteCapacityLightSupplies:
+		text = "Light\nCapacity"
+		break
+	case oSiteCapacityHeavySupplies:
+		text = "Heavy\nCapacity"
+		break
+	case oSiteCapacityAdvancedSupplies:
+		text = "Advanced\nCapacity"
 		break
 }
+
+icon = object_to_sprite(site_type);
 
 var _enum_value = obj_to_enum(site_type)
 cost = oFaction.obj_info[_enum_value];

@@ -1,6 +1,6 @@
 #region Debugging	Functions
 
-function dbg(_value) {
+function print(_value) {
 	show_debug_message(_value)
 }
 
@@ -19,7 +19,7 @@ function syntaxErrorRemover()
 
 	scr_context_select_all();
 
-	wipe_Deck(-1);
+	wipe_deck(-1);
 }
 
 #endregion
@@ -83,7 +83,7 @@ function create_building(_object) {
 
 #region Destroy Instance
 
-function wipe_Deck(_gridID) {
+function wipe_deck(_gridID) {
 
 	var _width	= ds_grid_width(_gridID);
 	var _height = ds_grid_height(_gridID);
@@ -97,7 +97,7 @@ function wipe_Deck(_gridID) {
 	}
 }
 
-function wipe_Hand(_gridID, _y) {
+function wipe_hand(_gridID, _y) {
 
 	var _width = ds_grid_width(_gridID);
 
@@ -114,7 +114,7 @@ function wipe_Hand(_gridID, _y) {
 	}
 }
 
-function wipe_Slot(_gridID, _x, _y) {
+function wipe_slot(_gridID, _x, _y) {
 
 	// Unselect instance
 	modify_Selected_Slot(_gridID, _x, _y, false);
@@ -129,7 +129,7 @@ function wipe_Slot(_gridID, _x, _y) {
 
 	// Check if in hand
 	if _x != -1 && _y != 0
-		wipe_Slot(_gridID, _x, 0);
+		wipe_slot(_gridID, _x, 0);
 
 #endregion
 
@@ -161,6 +161,27 @@ function wipe_Slot(_gridID, _x, _y) {
 	}
 
 #endregion
+}
+	
+function get_hand(_y) {
+	var _ds_grid = global.instGrid;
+	var _width	= ds_grid_width(_ds_grid);
+	var _array = []
+	for(var i = 0; i < _width; i++)
+	{
+		var _hand = ds_grid_get(_ds_grid, i, _y);
+		
+		if !instance_exists(_hand)
+			continue
+			
+		array_push(_array, _hand)
+	}
+	
+	return _array
+}
+	
+function hand_size(_y) {
+	return array_length(get_hand(_y));
 }
 
 #endregion
@@ -283,9 +304,9 @@ function update_state(_newState, _newMoveState) {
 #region Pathfinding
 
 function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
-	var hcells = room_width div grid_cell_width;
-	var vcells = room_height div grid_cell_height;
-	
+    var hcells = room_width div grid_cell_width;
+    var vcells = room_height div grid_cell_height;
+
     // Convert target coordinates to grid coordinates
     var gridX = floor(_pathGoalX / grid_cell_width);
     var gridY = floor(_pathGoalY / grid_cell_height);
@@ -294,29 +315,53 @@ function find_nearest_empty_space(_pathGoalX, _pathGoalY) {
     if (mp_grid_get_cell(global.grid, gridX, gridY) == 0)
         return [_pathGoalX, _pathGoalY];
 
-    // BFS search for nearest empty cell
-    var radius = 1;
-    while (true) {
-        for (var dx = -radius; dx <= radius; dx++) {
-            for (var dy = -radius; dy <= radius; dy++) {
-                var checkX = gridX + dx;
-                var checkY = gridY + dy;
+    // Initialize the BFS
+    var queue = ds_queue_create();
+    ds_queue_enqueue(queue, [gridX, gridY]);
 
-                // Boundary check
-                if (checkX < 0 || checkY < 0 || checkX >= hcells || checkY >= vcells) continue;
+    // Keep track of visited cells
+    var visited = ds_grid_create(hcells, vcells);
+    ds_grid_set_region(visited, 0, 0, hcells - 1, vcells - 1, 0);
+
+    // Directions for 8 neighboring cells (N, NE, E, SE, S, SW, W, NW)
+    var directions = [
+        [1, 0], [-1, 0], [0, 1], [0, -1], 
+        [1, 1], [-1, -1], [1, -1], [-1, 1]
+    ];
+
+    while (ds_queue_size(queue) != 0) {
+        var current = ds_queue_dequeue(queue);
+        var curX = current[0];
+        var curY = current[1];
+
+        // Check all 8 neighboring cells
+        for (var i = 0; i < array_length(directions); i++) {
+            var checkX = curX + directions[i][0];
+            var checkY = curY + directions[i][1];
+
+            // Boundary check and visited check
+            if (checkX >= 0 && checkY >= 0 && checkX < hcells && checkY < vcells && ds_grid_get(visited, checkX, checkY) == 0) {
+                // Mark cell as visited
+                ds_grid_set(visited, checkX, checkY, 1);
 
                 // Check if the cell is empty
                 if (mp_grid_get_cell(global.grid, checkX, checkY) == 0) {
-                    // Convert back to world coordinates
+                    ds_queue_destroy(queue);
+                    ds_grid_destroy(visited);
                     return [checkX * grid_cell_width, checkY * grid_cell_height];
                 }
+
+                // Enqueue the cell
+                ds_queue_enqueue(queue, [checkX, checkY]);
             }
         }
-        radius++;
     }
-	
-	dbg("Error with Pathfinding")
-	return [_pathGoalX, _pathGoalY]
+
+    ds_queue_destroy(queue);
+    ds_grid_destroy(visited);
+
+    print("Error with Pathfinding");
+    return [_pathGoalX, _pathGoalY];
 }
 
 function path_goal_find(startX, startY, _pathGoalX, _pathGoalY, _path) {
@@ -388,14 +433,15 @@ function path_goal_find(startX, startY, _pathGoalX, _pathGoalY, _path) {
 	}
 	else
 	{
-		dbg("Error pathfinding. Could not avoid obstacle.");
+		print("Error pathfinding. Could not avoid obstacle.");
 		var i = 0
 		while path_get_length(path) > 0
 			path_delete_point(path, 0)
-		return false
+		
+		return false;
 	}
 	
-	return true
+	return true;
 }
 
 function path_goal_multiplayer_update(_x, _y, _pathGoalX, _pathGoalY) {
@@ -495,19 +541,6 @@ function path_finished() {
 	var _path_finished	= _answer_array[2];
 
 	return _path_finished;
-}
-
-function veh_position(_veh) {
-	with(_veh)
-	{
-		// Find new position
-		var _newX = x - lengthdir_x(((sprite_width/2)*image_xscale) + 28, image_angle);
-		var _newY = y - lengthdir_y(((sprite_width/2)*image_xscale) + 28, image_angle);
-	}
-
-	// Set goal
-	goal_x = _newX;
-	goal_y = _newY;
 }
 
 #endregion
@@ -2047,141 +2080,152 @@ function saveStringToFile(_filename, _string) {
 
 #region Modify Context Menu
 
-function add_context(_string, _scriptID, _folder, _scriptArg=-1) {
+/// @function add_context
+/// @param {string} context_string - The context string to add to the context menu.
+/// @param {real} script_id - The ID of the script to execute when this context is selected.
+/// @param {string} folder_name - The name of the folder where the context belongs.
+/// @param {real} script_arg - The argument to pass to the script (optional, default is -1).
+function add_context(context_string, script_id, folder_name, script_arg = -1) {
+    var _context_menu_grid = cm_grid;
 
-	var _cm_grid = cm_grid;
+    // Ensure the context is not already in the list
+    if (context_string != "break") {
+        var existing_context_index = find_context(context_string);
 
-	// Make sure context is not in list
-	if _string != "break"
-	{
-		var _check = find_context(_string);
+        if (existing_context_index != -1) {
+            // Exit if the context already exists
+            exit;
+        }
+    }
 
-		if _check != -1
-			exit;
-	}
+    // Get the height of the grid (number of rows)
+    var grid_height = ds_grid_height(_context_menu_grid);
 
-	var _height = ds_grid_height(_cm_grid)
+    // Iterate through each row of the grid
+    for (var i = 0; i < grid_height; i++) {
+        var current_slot = ds_grid_get(_context_menu_grid, 0, i);
 
-	for(var i = 0; i < _height; i++)
-	{
-		var _findSlot = ds_grid_get(_cm_grid, 0, i);
+        // Check for an empty slot
+        if (current_slot == 0) {
+            // Add the context data to the grid
+            ds_grid_set(_context_menu_grid, 0, i, context_string);
+            ds_grid_set(_context_menu_grid, 1, i, script_id);
+            ds_grid_set(_context_menu_grid, 2, i, folder_name);
+            ds_grid_set(_context_menu_grid, 3, i, script_arg);
+            break;
+        } else {
+            // Resize the grid if no empty slot is found by the end of the current size
+            if (i + 1 == grid_height) {
+                // Increase the grid size
+                ds_grid_resize(_context_menu_grid, ds_grid_width(_context_menu_grid) + 1, i + 2);
 
-		if _findSlot == 0
-		{
-			ds_grid_set(_cm_grid, 0, i, _string);
-			ds_grid_set(_cm_grid, 1, i, _scriptID);
-			ds_grid_set(_cm_grid, 2, i, _folder);
-			ds_grid_set(_cm_grid, 3, i, _scriptArg);
-			break;
-		}
-		else
-		{
-			// Resize if too small
-			if i+1 == _height
-			{
-				// Resize grid
-				ds_grid_resize(_cm_grid, ds_grid_width(_cm_grid)+1, i+2);
-
-				// Add value
-				ds_grid_set(_cm_grid, 0, i+1, _string);
-				ds_grid_set(_cm_grid, 1, i+1, _scriptID);
-				ds_grid_set(_cm_grid, 2, i+1, _folder);
-				ds_grid_set(_cm_grid, 3, i+1, _scriptArg);
-			}
-		}
-	}
+                // Add the context data to the new slot
+                ds_grid_set(_context_menu_grid, 0, i + 1, context_string);
+                ds_grid_set(_context_menu_grid, 1, i + 1, script_id);
+                ds_grid_set(_context_menu_grid, 2, i + 1, folder_name);
+                ds_grid_set(_context_menu_grid, 3, i + 1, script_arg);
+            }
+        }
+    }
 }
 
-function close_context(_inst) {
 
-	with(oPlayer)
-	{
-		if _inst == -1
-		{
-			// find size
-			var _size = ds_list_size(contextInstList);
+/// @function close_context
+/// @param {instance} context_instance - The specific instance to close (optional, default is undefined).
+/// @param {real} min_level - The minimum level threshold to close instances (optional, default is 0).
+function close_context(context_instance = undefined, min_level = 0) {
+    with (oPlayer) {
+        if (is_undefined(context_instance)) {
+            // No specific instance provided, clear instances from the context list
+            
+            // Determine the size of the context instance list
+            var list_size = ds_list_size(context_inst_list);
 
-			// Clear entire list starting from the top
-			for(var i = _size - 1; i > -1; i--)
-			{
-				// Get ID
-				_inst = ds_list_find_value(contextInstList, i);
+            // Iterate from the end of the list to the beginning
+            for (var i = list_size - 1; i >= 0; i--) {
+                // Get the context instance ID from the list
+                var current_context_inst = ds_list_find_value(context_inst_list, i);
 
-				instance_destroy(_inst);
+                // If the instance does not exist, remove it from the list and continue
+                if (!instance_exists(current_context_inst)) {
+                    ds_list_delete(context_inst_list, i);
+                    continue;
+                }
 
-				ds_list_delete(contextInstList, i);
-			}
+                // If the instance level is below the minimum level threshold, skip it
+                if (min_level > current_context_inst.level) {
+                    continue;
+                }
 
-			// Close context menu
-			contextMenu = false;
-		}
-		else
-		{
-			// Delete single instance
-			instance_destroy(_inst)
+                // Destroy the instance and remove it from the list
+                instance_destroy(current_context_inst);
+                ds_list_delete(context_inst_list, i);
+            }
 
-			// Find ID in list
-			var _pos = ds_list_find_index(contextInstList, _inst);
+            // Close the context menu
+            contextMenu = false;
+        } else {
+            // A specific instance is provided; close only that instance
 
-			// Delete slot
-			ds_list_delete(contextInstList, _pos);
+            // Destroy the instance
+            instance_destroy(context_instance);
 
-			// Close context menu
-			contextMenu = false;
-		}
-	}
+            // Find the instance's position in the list
+            var instance_pos = ds_list_find_index(context_inst_list, context_instance);
+
+            // Remove the instance from the list
+            ds_list_delete(context_inst_list, instance_pos);
+
+            // Close the context menu
+            contextMenu = false;
+        }
+    }
 }
 
-function create_context(_x, _y) {
+/// @function create_context
+/// @param {real} x_position - The x-coordinate for the context menu.
+/// @param {real} y_position - The y-coordinate for the context menu.
+/// @returns {instance} The newly created context menu instance.
+function create_context(x_position, y_position) {
 
-	// Create context menu
-	var _inst = instance_create_layer(_x, _y, "GUI", oContextMenu);
+    // Create a new context menu instance at the specified coordinates in the "GUI" layer
+    var new_context_menu_instance = instance_create_layer(x_position, y_position, "GUI", oContextMenu);
 
-	with(oPlayer)
-	{
-		// Add to list
-		ds_list_add(contextInstList, _inst);
+    with (oPlayer) {
+        // Add the new instance to the player's context instance list
+        ds_list_add(context_inst_list, new_context_menu_instance);
+    }
 
-		var _size = ds_list_size(contextInstList)
-
-		if _size > 1
-		{
-			// Find current position
-			var _pos = ds_list_find_index(contextInstList, _inst);
-
-			// Find previous inst
-			var _prevInst = ds_list_find_value(contextInstList, _pos - 1);
-
-			// Find the right of the inst
-			var _start_x	= _prevInst.x;
-			var _width		= _prevInst.width;
-
-			_inst.x = _start_x + _width;
-			_inst.mp_gui_x = _start_x + _width;
-		}
-	}
-
-	return _inst;
+    // Return the created context menu instance
+    return new_context_menu_instance;
 }
 
-function find_context(_string) {
-	
-	var _cm_grid = instance_find(oContextMenu, 0).cm_grid;
 
-	var _y		= -1;
-	var _height	= ds_grid_height(_cm_grid);
+/// @function find_context
+/// @param {string} context_string - The context string to search for in the context menu.
+/// @returns {real} The index of the context string in the grid, or -1 if not found.
+function find_context(context_string) {
+    
+    // Retrieve the context menu grid from the first instance of oContextMenu
+    var context_menu_grid = instance_find(oContextMenu, 0).cm_grid;
 
-	for(var i = 0; i < _height; i++)
-	{
-		if ds_grid_get(_cm_grid, 0, i) == _string
-		{
-			_y = i;
-			break;
-		}
-	}
+    // Initialize variables to store the found index and grid height
+    var found_index = -1;
+    var grid_height = ds_grid_height(context_menu_grid);
 
-	return _y;
+    // Iterate through each row in the grid
+    for (var i = 0; i < grid_height; i++) {
+        // Check if the current grid entry matches the context string
+        if (ds_grid_get(context_menu_grid, 0, i) == context_string) {
+            found_index = i; // Set the index where the context is found
+            break; // Exit the loop since the context is found
+        }
+    }
+
+    // Return the index of the found context string, or -1 if not found
+    return found_index;
 }
+
 
 #endregion
 
@@ -2193,12 +2237,12 @@ function scr_context_folder_HQspawn() {
 
 	with(oPlayer)
 	{
-		var _size = ds_list_size(contextInstList)
+		var _size = ds_list_size(context_inst_list)
 
 		// Check if not already in list
 		for(var i = 0; i < _size; i++)
 		{
-			var _contextMenu = ds_list_find_value(contextInstList, i);
+			var _contextMenu = ds_list_find_value(context_inst_list, i);
 			if _contextMenu.level == _level
 				exit;
 		}
@@ -2230,12 +2274,12 @@ function scr_context_folder_behavior() {
 
 	with(oPlayer)
 	{
-		var _size = ds_list_size(contextInstList)
+		var _size = ds_list_size(context_inst_list)
 
 		// Check if not already in list
 		for(var i = 0; i < _size; i++)
 		{
-			var _contextMenu = ds_list_find_value(contextInstList, i);
+			var _contextMenu = ds_list_find_value(context_inst_list, i);
 			if _contextMenu.level == _level
 				exit;
 		}
@@ -2257,6 +2301,91 @@ function scr_context_folder_behavior() {
 		// Update size
 		event_user(0);
 	}
+}
+	
+function scr_context_folder_waypoint() {
+	// Set heirarchy
+	var _level = 1;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(context_inst_list)
+
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(context_inst_list, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mp_gui_x, mp_gui_y);
+
+	with(_inst)
+	{
+		// Set heirarchy
+		level = _level;
+
+		// Add buttons
+		add_context("Attack",	scr_context_waypoint,	 false, ["Attack"]);
+		add_context("Defend",	scr_context_waypoint,	 false, ["Defend"]);
+		add_context("Recon",	scr_context_waypoint,	 false, ["Recon"]);
+		add_context("Patrol",	scr_context_waypoint_folder,	 true,	["Patrol"]);
+		add_context("Retreat",	scr_context_waypoint,	 false, ["Retreat"]);
+
+		// Update size
+		event_user(0);
+	}
+}
+
+function scr_context_waypoint_folder(_waypoint) {
+	// Set heirarchy
+	var _level = 2;
+
+	with(oPlayer)
+	{
+		var _size = ds_list_size(context_inst_list)
+
+		// Check if not already in list
+		for(var i = 0; i < _size; i++)
+		{
+			var _contextMenu = ds_list_find_value(context_inst_list, i);
+			if _contextMenu.level == _level
+				exit;
+		}
+	}
+
+	// Create context menu
+	var _inst = create_context(mp_gui_x, mp_gui_y);
+
+	with(_inst)
+	{
+		// Set heirarchy
+		level = _level;
+
+		// Add buttons
+		add_context("New Group",	scr_context_waypoint,	 false, ["Patrol"]);
+
+		// Update size
+		event_user(0);
+	}
+}
+
+function scr_context_waypoint(_waypoint) {
+	var _inst = instance_find(oContextMenu, 0)
+	var _x = _inst.mp_gui_x;
+	var _y = _inst.mp_gui_y;
+	var _waypoint_inst = instance_create_layer(_x, _y, "UI", oWaypoint);
+	
+	with(_waypoint_inst)
+	{
+		type = _waypoint
+		event_user(0)
+	}
+	
+	close_context(undefined);
 }
 
 function scr_context_move(movement_type=noone) {
@@ -2322,8 +2451,8 @@ function scr_context_move(movement_type=noone) {
 			release = false;
 
 			// Set goal
-			goal_x	= _mouse_x + random_range(-15, 15);
-			goal_y	= _mouse_y + random_range(-15, 15);
+			goal_x	= _mouse_x + random_range(-30, 30);
+			goal_y	= _mouse_y + random_range(-30, 30);
 
 			b_sm.swap(b_idle)
 			m_sm.swap(_set_type);
@@ -2332,7 +2461,7 @@ function scr_context_move(movement_type=noone) {
 		}
 	}
 
-	close_context(-1);
+	close_context(undefined);
 }
 
 function scr_context_behavior(_behavior) {
@@ -2373,24 +2502,26 @@ function scr_context_behavior(_behavior) {
 		}
 	}
 
-	close_context(-1);
+	close_context(undefined);
 }
 
-function scr_context_destroy() {
+function scr_context_destroy(_inst=noone) {
 
-	with(oPlayer)
+	if _inst == noone
 	{
-		// Find goal
-		var _mouse_x = mouseRightPress_x;
-		var _mouse_y = mouseRightPress_y;
+		with(oPlayer)
+		{
+			// Find goal
+			var _mouse_x = mouseRightPress_x;
+			var _mouse_y = mouseRightPress_y;
+		}
+		
+		_inst = find_top_Inst(_mouse_x, _mouse_y, oParUnit);
 	}
+		
+	instance_destroy(_inst);
 
-	var _instFind = find_top_Inst(_mouse_x, _mouse_y, oParUnit);
-
-	// Destroy HAB
-	instance_destroy(_instFind);
-
-	close_context(-1);
+	close_context(undefined);
 }
 
 function scr_context_select_all() {
@@ -2422,7 +2553,7 @@ function scr_context_select_all() {
 		}
 	}
 
-	close_context(-1);
+	close_context(undefined);
 }
 
 function scr_context_select_onScreen() {
@@ -2465,11 +2596,7 @@ function scr_context_select_onScreen() {
 		}
 	}
 
-	close_context(-1);
-}
-
-function scr_instance_destroy(_objectIndex) {
-	instance_destroy(_objectIndex[0])
+	close_context(undefined);
 }
 
 function scr_context_spawn_object() {
@@ -2497,7 +2624,7 @@ function scr_context_spawn_object() {
 	repeat(_amount)
 		spawn_unit(_object, _x, _y);
 
-	close_context(-1);
+	close_context(undefined);
 }
 
 function scr_create_squad(_x, _y, _object, _amount) {
@@ -2513,7 +2640,7 @@ function scr_create_squad(_x, _y, _object, _amount) {
 	create_squad(_squad_list)
 	ds_list_destroy(_squad_list)
 
-	close_context(-1);
+	close_context(undefined);
 }
 
 #endregion
@@ -2926,6 +3053,691 @@ function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch
 		// Lower sound
 		audio_sound_gain(_sound, _outVolume, 0);
 	}
+}
+	
+///@func audio_channels_label(channelsConstant)
+///@arg {Constant.AudioType} channelsConstant
+///@return {String}
+///@desc Return the string label of the given audio channel constant.
+function audio_channels_label(channelsConstant) {
+	switch (channelsConstant) {
+
+		case audio_mono: return "Mono";
+		case audio_stereo: return "Stereo";
+		case audio_3D: return "3D (5.1)";
+	}
+	return "Unknown";
+}
+
+///@func audio_channels_count(channelsConstant)
+///@arg {Constant.AudioType} channelsConstant
+///@return {Real}
+///@desc Return the number of channels in the given audio channel constant.
+function audio_channels_count(channelsConstant) {
+	switch (channelsConstant) {
+
+		case audio_mono: return 1;
+		case audio_stereo: return 2;
+		case audio_3D: return 6;
+	}
+	return 0;
+}
+
+///@func buffer_type_label(bufferTypeConstant)
+///@arg {Constant.BufferDataType} bufferTypeConstant
+///@return {String}
+///@desc Return the string label of the given buffer type constant.
+function buffer_type_label(bufferTypeConstant) {
+	switch (bufferTypeConstant) {
+		case buffer_u8: return "Unsigned 8-bit integer";
+		case buffer_s8: return "Signed 8-bit integer";
+		case buffer_u16: return "Unsigned 16-bit integer";
+		case buffer_s16: return "Signed 16-bit integer";
+		case buffer_u32: return "Unsigned 32-bit integer";
+		case buffer_s32: return "Signed 32-bit integer";
+		case buffer_u64: return "Unsigned 64-bit integer";
+		case buffer_f16: return "16-bit float";
+		case buffer_f32: return "32-bit float";
+		case buffer_f64: return "64-bit float";
+		case buffer_bool: return "Boolean";
+		case buffer_string: return "Null-terminated string";
+		case buffer_text: return "Unterminated string";
+	}
+	return "Unknown";
+}
+
+///@func buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat)
+///@arg {Id.Buffer} buffer
+///@arg {String} filename
+///@arg {Constant.AudioType} channels
+///@arg {Real} sampleRate
+///@arg {Constant.BufferDataType} dataFormat
+///@desc Save the given fast audio buffer to a WAV file
+function buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat) {
+	var size = buffer_get_size(buffer);
+	var nChannels = audio_channels_count(channels);
+	var formatSize = buffer_sizeof(dataFormat);
+	
+	var waveBuffer = buffer_create(size+44, buffer_fixed, 1);
+	// Chunk ID
+	buffer_write(waveBuffer, buffer_text, "RIFF");
+	// Chunk Size
+	buffer_write(waveBuffer, buffer_u32, size+36);
+	// Chunk Format
+	buffer_write(waveBuffer, buffer_text, "WAVE");
+	// Subchunk ID
+	buffer_write(waveBuffer, buffer_text, "fmt ");
+	// Subchunk Size
+	buffer_write(waveBuffer, buffer_u32, 16);
+	// Audio Format
+	buffer_write(waveBuffer, buffer_u16, 1);
+	// Number of Channels
+	buffer_write(waveBuffer, buffer_u16, nChannels);
+	// Sample Rate
+	buffer_write(waveBuffer, buffer_u32, sampleRate);
+	// Byte Rate
+	buffer_write(waveBuffer, buffer_u32, sampleRate*nChannels*formatSize);
+	// Block Alignment
+	buffer_write(waveBuffer, buffer_u16, nChannels*formatSize);
+	// Bits Per Sample
+	buffer_write(waveBuffer, buffer_u16, formatSize*8);
+	// Subchunk ID
+	buffer_write(waveBuffer, buffer_text, "data");
+	// Subchunk Size
+	buffer_write(waveBuffer, buffer_u32, size);
+	// Body
+	buffer_copy(buffer, 0, size, waveBuffer, 44);
+	// Save
+	buffer_save(waveBuffer, filename);
+	
+	// Cleanup
+	buffer_delete(waveBuffer);
+}
+
+#endregion
+
+#region ChatGPT
+
+#macro APIFILE "no_touchy_api"
+#macro APIKEY decrypt_api_key()
+
+global.chatGPT = "gpt-4o" // "gpt-4o-mini"
+
+/// @function send_openai_gpt
+/// @param {string} _system_message - The system message to send to OpenAI.
+/// @param {string} _user_message - The user message to send to OpenAI.
+/// @param {array} _tools - The tools to include in the OpenAI request.
+function send_openai_gpt(_system_message, _user_message, _tools) {
+    // Prepare the request headers
+    var headers = [
+        ["Authorization", "Bearer " + APIKEY],
+        ["Content-Type", "application/json"]
+    ];
+    
+    var _data = {
+        "model": global.chatGPT,
+        "messages": [
+            {"role": "system", "content": _system_message},
+            {"role": "user", "content": _user_message}
+        ],
+        "tools": _tools,
+        "max_tokens": int64(500),  // How much it can cost
+        "temperature": 0.6, // How random it can be
+        "n": int64(1)              // How many outputs
+    };
+    
+    var api_endpoint = "https://api.openai.com/v1/chat/completions";
+    
+    xhr_post(api_endpoint, json_stringify(_data), {
+        headers: headers,
+        done: function(res) {
+            if (res.isSuccessful()) {
+                handle_openai_gpt(res.data);
+            } else {
+                show_debug_message("ERROR: Request failed. Status: " + string(res.httpStatus));
+            }
+        },
+        fail: function(res) {
+            show_debug_message("ERROR: Failed to send request. Status: " + string(res.httpStatus));
+        }
+    });
+    
+    show_debug_message("Request Sent");
+}
+	
+/// @function handle_openai_gpt
+/// @param {struct} _response_data - The data returned from the OpenAI API.
+function handle_openai_gpt(_response_data) {
+    try {
+        var _choices = struct_get(_response_data, "choices");
+        
+        if (array_length(_choices) > 1) {
+            show_debug_message("ERROR HANDLING MESSAGE. STATUS: Not setup to handle more than 1 message in a single call.");
+            return false;
+        }
+        
+        var _message = struct_get(_choices[0], "message");
+        var _tools_array = struct_get(_message, "tool_calls");
+        
+        var _arguments_array = [];
+        
+        // Gather arguments
+        for (var j = 0; j < array_length(_tools_array); ++j) {
+            var _function_info = _tools_array[j];
+            var _function = struct_get(_function_info, "function");
+            var _arguments = struct_get(_function, "arguments");
+            _arguments_array[j] = json_parse(_arguments);
+        }
+                
+        show_debug_message("CONTENT: " + string(_arguments_array));
+        
+        var _usage = struct_get(_response_data, "usage");
+        var _total_tokens = struct_get(_usage, "total_tokens");
+        show_debug_message("COST: " + string(_total_tokens));
+        
+        // Execute script
+        for (var j = 0; j < array_length(_tools_array); ++j) {
+			
+            execute_action(_arguments_array[j]);
+        }
+    }
+    catch (_e) {
+        show_debug_message("ERROR WITH RECEIVED MESSAGE. STATUS: " + string(_e));
+    }
+}
+
+/// @function send_openai_whisper
+/// @param {string} file_path - The path to the audio file to be transcribed.
+function send_openai_whisper(file_path) {
+    // Set up the OpenAI Whisper API endpoint
+    var api_endpoint = "https://api.openai.com/v1/audio/transcriptions";
+
+    // Create a MultipartDataBuilder with the audio file and necessary parameters
+    var multipart_data = new MultipartDataBuilder({
+        model: "whisper-1",  // Whisper model ID
+        file: new FilePart(file_path),  // Attach the audio file
+        prompt: "Alpha, Beta, Charlie, HQ, Patrol Marker, Enemy, Unit, Player, Attack, Defend, Recon Marker"  // Set a prompt for better transcription
+    });
+
+    // Get the multipart body and headers for the request
+    var request_body = multipart_data.getBuffer();
+    var request_headers = multipart_data.getHeaderMap();
+    
+    // Add the authorization header using the API key macro
+    request_headers[? "Authorization"] = "Bearer " + APIKEY;
+
+    // Send the request using xhr_post
+    xhr_post(api_endpoint, request_body, {
+        headers: request_headers,
+        done: function(response) {
+            var json_response = response.data;  // Parse the response data
+            print("Transcription successful: " + json_response.text);  // Print success message
+            transcription_text = json_response.text;  // Store the transcription text in a global or instance variable
+        },
+        fail: function(response) {
+            print("Transcription failed. Error: " + response.data);  // Print error message on failure
+            transcription_text = "";  // Clear the transcription text on failure
+        }
+    });
+}
+
+/// @function save_and_transcribe
+/// This function saves the recorded audio buffer to a WAV file and sends it for transcription using OpenAI's Whisper API.
+/// @returns {buffer} The converted audio buffer.
+function save_and_transcribe() {
+	var convertedRecordBuffer = buffer_create(buffer_tell(record_buffer), buffer_fast, 1);
+	buffer_copy(record_buffer, 0, buffer_tell(record_buffer), convertedRecordBuffer, 0);
+	record_sound = audio_create_buffer_sound(
+		convertedRecordBuffer,
+		record_specs[? "data_format"],
+		record_specs[? "sample_rate"],
+		0,
+		buffer_tell(record_buffer),
+		record_specs[? "channels"]
+	);
+
+	var _file_path = working_directory + "temp_audio_recording.wav";
+	
+	if (!ds_map_empty(record_specs))
+		buffer_save_wav(convertedRecordBuffer, _file_path, record_specs[? "channels"], record_specs[? "sample_rate"], record_specs[? "data_format"]);
+
+	if (file_exists(_file_path)) {
+		send_openai_whisper(_file_path);
+	} else {
+	    show_debug_message("Failed to save the file: " + _file_path);
+	}
+	return convertedRecordBuffer;
+}
+
+/// @function encrypt_api_key
+/// @param {string} api_key - The API key to encrypt.
+/// This function encrypts the provided API key using a simple XOR operation and saves it to a file.
+function encrypt_api_key(api_key) {
+    // Determine the length of the API key
+    var key_length = string_length(api_key);
+    
+    // Create a buffer with a fixed size to store the encrypted API key
+    var encrypted_buffer = buffer_create(key_length, buffer_fixed, 1);
+
+    // Loop through each character in the API key, encrypt it, and write it to the buffer
+    for (var i = 1; i <= key_length; i++) {
+        var char_byte = ord(string_char_at(api_key, i));  // Convert character to its byte value
+        var encrypted_byte = char_byte ^ 123;  // XOR with a simple number (123) for obfuscation
+        buffer_write(encrypted_buffer, buffer_u8, encrypted_byte);  // Write the encrypted byte to the buffer
+    }
+
+    // Save the encrypted buffer to a file defined by the APIFILE constant
+    buffer_save(encrypted_buffer, APIFILE);
+
+    // Free the buffer to avoid memory leaks
+    buffer_delete(encrypted_buffer);
+}
+
+/// @function decrypt_api_key
+/// @returns {string} The decrypted API key.
+/// This function decrypts an API key stored in a file by reversing a simple XOR operation.
+function decrypt_api_key() {
+    // Load the encrypted buffer from the file
+    var encrypted_buffer = buffer_load(APIFILE);
+    
+    // Check if the buffer was loaded successfully
+    if (encrypted_buffer == -1) {
+        show_debug_message("Error: Failed to load the encrypted API key from file.");
+        return "";
+    }
+    
+    var decrypted_key = "";  // Initialize an empty string for the decrypted key
+    var buffer_size = buffer_get_size(encrypted_buffer);  // Get the size of the loaded buffer
+    buffer_seek(encrypted_buffer, buffer_seek_start, 0);  // Reset buffer position to the start
+
+    // Loop through each byte in the buffer, decrypt it, and construct the decrypted key
+    for (var i = 0; i < buffer_size; i++) {
+        var encrypted_byte = buffer_read(encrypted_buffer, buffer_u8);  // Read an encrypted byte
+        var decrypted_byte = encrypted_byte ^ 123;  // Reverse the XOR operation used during encryption
+        decrypted_key += chr(decrypted_byte);  // Convert the byte back to a character and append it to the decrypted key
+    }
+    
+    // Free the buffer to avoid memory leaks
+    buffer_delete(encrypted_buffer);
+    
+    // Return the decrypted API key
+    return decrypted_key;
+}
+
+/// @function execute_action
+/// @param {struct} arguments - The structured arguments to define the action and targets.
+/// @returns {boolean} - True if the action is executed successfully; false otherwise.
+function execute_action(arguments) {
+    var argument_names = struct_get_names(arguments);  // Get all argument names
+
+    // Initialize variables to default values
+    var who = undefined;
+    var who_identifier = undefined;
+    var who_amount = undefined;
+    var who_proximity = undefined;
+    var who_proximity_identifier = undefined;
+    var action = undefined;
+    var behavior = undefined;
+    var where = undefined;
+    var where_identifier = undefined;
+    var condition = undefined;
+
+    // Extract parameters from the arguments struct
+    for (var i = 0; i < array_length(argument_names); i++) {
+        var name = argument_names[i];
+        var value = struct_get(arguments, name);
+
+        // Set the appropriate variable based on the argument name
+        switch (name) {
+            case "who": who = value; break;
+            case "who_identifier": who_identifier = value; break;
+            case "who_amount": who_amount = value; break;
+            case "who_proximity": who_proximity = value; break;
+            case "who_proximity_identifier": who_proximity_identifier = value; break;
+            case "action": action = value; break;
+            case "behavior": behavior = value; break;
+            case "where": where = value; break;
+            case "where_identifier": where_identifier = value; break;
+            case "condition": condition = value; break;
+        }
+    }
+    
+    // Validate required parameters
+    if (is_undefined(who) || is_undefined(where) || is_undefined(action)) {
+        return false;  // Missing essential parameters
+    }
+
+    // Find target instances based on the 'who' parameters
+    var instances_selected = find_who(who, who_identifier, who_amount, who_proximity, who_proximity_identifier);
+    if (array_length(instances_selected) == 0) {
+        return false;  // No valid target found
+    }
+
+    // Find target location or instance based on the 'where' parameters
+    var target_instance = find_where(where, where_identifier);
+    if (target_instance == noone) {
+        return false;  // No valid location found
+    }
+
+    // Perform actions on the selected instances
+    for (var i = 0; i < array_length(instances_selected); i++) {
+        var instance = instances_selected[i];
+
+        // Set behavior if specified
+        if (!is_undefined(behavior)) {
+            set_behavior(instance, behavior);
+        }
+		
+		set_movement(instance, action, target_instance);
+
+        // Execute the action based on the extracted parameters
+        if (action == "move") {
+            //set_movement(instance, action, target_instance.x, target_instance.y);
+        } else if (action == "engage") {
+            // Additional actions like "engage" can be defined here
+        }
+
+        // Additional logic based on conditions or other parameters can be added here
+    }
+
+    return true;  // Action executed successfully
+}
+
+/// @function find_who
+/// @param {string} who_type - The type of object to find ("infantry" or "squad").
+/// @param {string} who_identifier - The specific identifier for filtering (optional).
+/// @param {string|real} who_amount - The amount of objects to find (can be a percentage or fixed number).
+/// @param {real} who_proximity - The proximity value for sorting (optional).
+/// @param {string} who_proximity_identifier - The identifier for proximity sorting (optional).
+/// @returns {array} An array of instances that match the criteria.
+function find_who(who_type, who_identifier, who_amount, who_proximity, who_proximity_identifier) {
+    var selected_instances = [];
+    
+    // Determine object type: units (oInfantry) or squads (oSquad)
+    var object_type = oInfantry;
+    if (who_type == "squad") {
+        object_type = oSquad;
+    }
+    
+    // Filter instances based on identifier if provided
+	selected_instances = instance_find_identifier(object_type, who_identifier);
+
+    // Sort or filter based on proximity if specified
+    if (!is_undefined(who_proximity) && !is_undefined(who_proximity_identifier)) {
+        var sort_function = find_sort_function(who_proximity, who_proximity_identifier);
+        if (sort_function != undefined) {
+            selected_instances = array_sort(selected_instances, sort_function);  // Sort instances based on proximity
+        }
+    }
+
+    // Limit the amount of selected instances if specified (can be a percentage or a fixed number)
+    if (!is_undefined(who_amount)) {
+        var selected_count = 0;
+        if (string_pos("%", string(who_amount)) > 0) {  // Handle percentage (e.g., "75%")
+            var percentage = real(string_delete(who_amount, string_length(who_amount), 1));
+            selected_count = ceil(array_length(selected_instances) * (percentage / 100));
+        } else {  // Handle absolute number
+            selected_count = min(real(who_amount), array_length(selected_instances));
+        }
+
+        // Create a new array to hold the selected instances based on the specified limit
+        var limited_instances = array_create(selected_count);
+        array_copy(limited_instances, 0, selected_instances, 0, selected_count);
+        selected_instances = limited_instances;  // Replace the original array with the limited array
+    }
+
+    return selected_instances;  // Return the array of selected instances
+}
+
+/// @function find_sort_function
+/// @param {string} who_proximity - The proximity type (e.g., "nearest", "furthest").
+/// @param {string} who_proximity_identifier - The identifier for sorting proximity (e.g., "player_nearest").
+/// @returns {function|undefined} A sorting function based on the proximity type or undefined if not applicable.
+function find_sort_function(who_proximity, who_proximity_identifier) {
+    var sort_function = undefined;  // Initialize sort function to undefined
+    
+    // Determine the sorting function based on the proximity identifier
+    switch (who_proximity_identifier) {
+        case "player_nearest":
+            sort_function = function(a, b) {
+                var player = instance_nearest(a.x, a.y, oPlayer);  // Find the nearest player instance
+                return point_distance(a.x, a.y, player.x, player.y) - point_distance(b.x, b.y, player.x, player.y);
+            };
+            break;
+
+        case "player_furthest":
+            sort_function = function(a, b) {
+                var player = instance_nearest(a.x, a.y, oPlayer);  // Find the nearest player instance
+                return point_distance(b.x, b.y, player.x, player.y) - point_distance(a.x, a.y, player.x, player.y);
+            };
+            break;
+
+        case "unit_nearest":
+            sort_function = function(a, b) {
+                var unit = instance_nearest(a.x, a.y, oInfantry);  // Find the nearest unit instance
+                return point_distance(a.x, a.y, unit.x, unit.y) - point_distance(b.x, b.y, unit.x, unit.y);
+            };
+            break;
+
+        case "unit_furthest":
+            sort_function = function(a, b) {
+                var unit = instance_nearest(a.x, a.y, oInfantry);  // Find the nearest unit instance
+                return point_distance(b.x, b.y, unit.x, unit.y) - point_distance(a.x, a.y, unit.x, unit.y);
+            };
+            break;
+
+        // Add other cases here (e.g., "building_nearest", "marker_nearest", etc.)
+
+        default:
+            sort_function = undefined;  // No sorting function if not applicable
+            break;
+    }
+    
+    return sort_function;  // Return the appropriate sorting function or undefined
+}
+
+/// @function find_where
+/// @param {string} where_type - The type of location or object to find (e.g., "marker", "building").
+/// @param {string} where_identifier - The specific identifier for locating the object.
+/// @returns {instance|noone} The instance of the found location or object, or `noone` if not found.
+function find_where(where_type, where_identifier) {
+    var target_instance = noone;  // Initialize target instance to noone
+
+    // Determine the target instance based on the location type
+    switch (where_type) {
+        case "marker":
+            target_instance = find_location_marker(where_identifier);  // Find a location marker by identifier
+            break;
+            
+        case "building":
+            target_instance = location_find_indentifier(oParBuilding, where_identifier);  // Find a specific building instance
+            break;
+            
+        case "player":
+            target_instance = instance_find(oPlayer, 0);  // Find a specific player instance
+            break;
+            
+        case "unit":
+            target_instance = location_find_indentifier(oInfantry, where_identifier);  // Find a specific unit instance
+            break;
+            
+        case "squad":
+            target_instance = location_find_indentifier(oSquad, where_identifier);  // Find a specific squad instance
+            break;
+
+        // Add other cases as needed (e.g., objectives, waypoints)
+
+        default:
+            target_instance = noone;  // No valid target found
+            break;
+    }
+    
+    return target_instance;  // Return the found instance or noone if not found
+}
+
+/// @function find_location_marker
+/// @param {string} marker_identifier - The specific identifier for the marker (e.g., "attack_marker").
+/// @returns {instance|noone} The instance of the found marker, or `noone` if not found.
+function find_location_marker(marker_identifier) {
+    var target_instance = noone;  // Initialize target instance to noone
+    
+    // Determine the marker instance based on the identifier
+    switch (marker_identifier) {
+        case "attack_marker":
+            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oAttackMarker
+            break;
+        case "defend_marker":
+            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oDefendMarker
+            break;
+        case "recon_marker":
+            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oReconMarker
+            break;
+        case "patrol_marker":
+            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oPatrolMarker
+            break;
+        case "retreat_marker":
+            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oRetreatMarker
+            break;
+
+        // Add more cases as needed for other markers
+
+        default:
+            target_instance = noone;  // No valid marker found
+            break;
+    }
+    
+    return target_instance;  // Return the found instance or noone if not found
+}
+
+/// @function instance_find_identifier
+/// @param {string} identifier - The specific identifier to find (e.g., a unique name or ID).
+/// @param {object} object_type - The object type to search through (e.g., oPlayer, oInfantry).
+/// @returns {instance|noone} The instance that matches the identifier, or `noone` if not found.
+function instance_find_identifier(object_type, identifier="") {
+    var _inst_array = [];
+	
+	if identifier = "" {
+        // If no identifier is provided, select all instances of the specified type
+        for (var i = 0; i < instance_number(object_type); i++) {
+            var instance = instance_find(object_type, i);
+            array_push(_inst_array, instance);
+        }
+		return _inst_array
+	}
+	
+    for (var i = 0; i < instance_number(object_type); i++) {
+        var instance = instance_find(object_type, i);
+        if (string_lower(instance.identifier) == string_lower(identifier)) {  // Assuming each instance has an `identifier` property
+			
+			if instance.object_index == oSquad
+			{
+				var _unit_array = select_squad_instances(instance, false);
+				
+				for(var o = 0; o < array_length(_unit_array); o++)
+					array_push(_inst_array, _unit_array[o]);
+			} else {
+				array_push(_inst_array, instance);
+			}
+        }
+    }
+
+    return _inst_array;
+}
+	
+function location_find_indentifier(object_type, identifier) {	
+    for (var i = 0; i < instance_number(object_type); i++) {
+        var instance = instance_find(object_type, i);
+		
+        if (string_lower(instance.identifier) != string_lower(identifier))
+			continue
+		
+		return instance
+    }
+
+    return noone;
+}
+
+/// @function set_behavior
+/// @param {instance} instance - The instance whose behavior is to be set.
+/// @param {string} behavior_type - The type of behavior to set (e.g., "aggressive", "defensive", "passive").
+/// This function sets the behavior of a given instance by swapping its behavior state.
+function set_behavior(instance, behavior_type) {
+    with (instance) {
+        var behavior_state = b_idle;  // Default to idle behavior
+        
+        // Determine the behavior state based on the provided behavior type
+        switch (behavior_type) {
+            case "aggressive":
+                behavior_state = b_aggressive;
+                break;
+            case "defensive":
+                behavior_state = b_defensive;
+                break;
+            case "passive":
+                behavior_state = b_passive;
+                break;
+        }
+        
+        // Swap the current idle state machine and set the behavior state machine
+        m_sm.swap(m_idle);  // Assume `m_sm` manages idle states
+        b_sm.swap(behavior_state);  // Assume `b_sm` manages behavior states
+    }
+}
+
+/// @function set_movement
+/// @param {instance} instance - The instance whose movement is to be set.
+/// @param {string} movement_type - The type of movement to set (e.g., "scout", "retreat", "capture").
+/// @param {real} x - The target x-coordinate for the movement.
+/// @param {real} y - The target y-coordinate for the movement.
+/// This function sets the movement of a given instance by swapping its movement state and setting a randomized goal.
+function set_movement(instance, movement_type, target_instance) {
+    with (instance) {
+        var movement_state = m_idle;  // Default to idle movement state
+        
+        // Determine the movement state based on the provided movement type
+        switch (movement_type) {
+            case "scout":
+                movement_state = m_scout;
+                break;
+            case "retreat":
+                movement_state = m_retreat;
+                break;
+            case "capture":
+                movement_state = m_capture;
+                break;
+            case "patrol":
+                movement_state = m_patrol;
+                break;
+            case "roam":
+                movement_state = m_roam;
+                break;
+            case "protect":
+                movement_state = m_protect;
+                break;
+            case "follow":
+                movement_state = m_follow;
+                break;
+            case "engage":
+                movement_state = m_engage;
+                break;
+            case "haste":
+                movement_state = m_haste;
+                break;
+            case "move":
+                movement_state = m_move;
+                break;
+        }
+
+        // Set goal coordinates with a random variation to avoid overlapping positions
+        goal_x = target_instance.x + random_range(-30, 30);
+        goal_y = target_instance.y + random_range(-30, 30);
+		
+		target_inst = target_instance;
+
+        // Swap to idle behavior state and set the movement state
+        b_sm.swap(b_idle);  // Assume `b_sm` manages behavior states
+        m_sm.swap(movement_state);  // Assume `m_sm` manages movement states
+    }
 }
 
 #endregion
