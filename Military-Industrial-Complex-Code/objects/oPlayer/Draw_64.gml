@@ -22,4 +22,9 @@ if _key_shft
 if _key_space
 {
 	draw_sprite_ext(spr_talking, 0, device_mouse_x_to_gui(0)+16, device_mouse_y_to_gui(0)-16, 0.5,0.5,0,image_blend, 1);
+	
+	draw_set_font_ext(ftContextMenu, c_white, fa_left, fa_center, 0.8)
+		draw_text(device_mouse_x_to_gui(0)+16, device_mouse_y_to_gui(0), oCommunication.transcription_text)
+	
+	//draw_text_ext_transformed(device_mouse_x_to_gui(0)+16, device_mouse_y_to_gui(0), oCommunication.transcription_text, 15, 250, 1, 1, 0);
 }

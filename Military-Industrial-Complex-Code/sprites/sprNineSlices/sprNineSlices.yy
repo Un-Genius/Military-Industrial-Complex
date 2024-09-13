@@ -29,7 +29,7 @@
   "origin":0,
   "parent":{
     "name":"GUI",
-    "path":"folders/MonasteryFramework/01-Sprites/GUI.yy",
+    "path":"folders/MonasteryFramework/02-Sounds/01-Sprites/GUI.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

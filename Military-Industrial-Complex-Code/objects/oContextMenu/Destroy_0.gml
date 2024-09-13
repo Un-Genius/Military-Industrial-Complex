@@ -12,6 +12,6 @@ for(var i = _size - 1; i > -1; i--)
 	if _inst.level > level {
 		instance_destroy(_inst);
 
-		ds_list_delete(oPlayer.contextInstList, i);
+		ds_list_delete(oPlayer.context_inst_list, i);
 	}
 }

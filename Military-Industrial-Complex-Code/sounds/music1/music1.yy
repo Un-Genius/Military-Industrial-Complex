@@ -9,7 +9,7 @@
   "bitRate":128,
   "compression":0,
   "conversionMode":0,
-  "duration":0.0,
+  "duration":193.0135,
   "name":"music1",
   "parent":{
     "name":"02-Sounds",
@@ -19,7 +19,7 @@
   "resourceType":"GMSound",
   "resourceVersion":"2.0",
   "sampleRate":44100,
-  "soundFile":"music1",
+  "soundFile":"music1.wav",
   "type":0,
-  "volume":0.0,
+  "volume":0.31,
 }

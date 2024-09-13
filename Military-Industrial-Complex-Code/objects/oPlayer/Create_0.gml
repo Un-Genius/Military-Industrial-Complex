@@ -5,14 +5,16 @@ numColor = c_white;
 hash_color = findColor(numColor);
 
 // Create and clear list
-contextInstList = ds_list_create();
-ds_list_clear(contextInstList);
+context_inst_list = ds_list_create();
+ds_list_clear(context_inst_list);
 
 squadObjectList = ds_list_create();
 
 contextMenu = false;
 
 maxTroopsInf = 0;
+
+image_speed = 0
 
 // Duds
 goal_x = 0;

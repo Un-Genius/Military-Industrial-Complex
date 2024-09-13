@@ -124,7 +124,7 @@ function select_instance()
 
 	// Unselect
 	if !_key_ctrl && !_selectx2
-		wipe_Hand(global.instGrid, 0);
+		wipe_hand(global.instGrid, 0);
 
 	if instance_selected != noone && instance_selected.object_index == oSquad
 	{
@@ -138,7 +138,7 @@ function select_instance()
 		var _x = find_Inst(global.instGrid, 0, instance_selected);
 
 		if _x != -1
-			wipe_Slot(global.instGrid, _x, 0);
+			wipe_slot(global.instGrid, _x, 0);
 	}
 
 	// Add inst to hand
@@ -181,7 +181,7 @@ function context_menu_open()
 		return;
 
 	// Reset context
-	close_context(-1);
+	close_context(undefined);
 
 	// Set and get data
 	contextMenu = true;
@@ -510,7 +510,7 @@ function mouse_box()
 	var _collision_amount = collision_rectangle_list(mouseLeftPress_x, mouseLeftPress_y, mouse_x, mouse_y, _collision_object, false, true, _collision_list, false);
 
 	if !_key_ctrl
-		wipe_Hand(global.instGrid, 0);
+		wipe_hand(global.instGrid, 0);
 
 	for(var i = 0; i < _collision_amount; i++)
 	{
@@ -530,17 +530,27 @@ function mouse_box()
 	}
 }
 
-function select_squad_instances(squad_instance) {
+function select_squad_instances(squad_instance, _add_to_global_grid=true) {
 	var _length = ds_list_size(squad_instance.squad);
+	var _array = []
+	
+	if squad_instance.object_index != oSquad
+		return _array
+	
 	for(var o = 0; o < _length; o++)
 	{
 		var _inst_squad = ds_list_find_value(squad_instance.squad, o);
 		with(_inst_squad)
 		{
-			add_Inst(global.instGrid, 0, id);
+			if _add_to_global_grid
+				add_Inst(global.instGrid, 0, id);
+				
+			array_push(_array, id);
 			selected = true;
 		}
 	}
+	
+	return _array
 }
 	
 function get_hot_key() {
@@ -564,18 +574,13 @@ function store_hand() {
 		exit;
 	
 	var _ds_grid = global.instGrid;
-	wipe_Hand(_ds_grid, _hot_key)
+	wipe_hand(_ds_grid, _hot_key)
+	var _hand_array = get_hand(0)
 	
-	var _width	= ds_grid_width(_ds_grid);
-	for(var i = 0; i < _width; i++)
-	{
-		var _hand = ds_grid_get(_ds_grid, i, 0);
-		
-		if !instance_exists(_hand)
-			continue
-		
-		add_Inst(_ds_grid, _hot_key, _hand)
-	}
+	var _width	= array_length(_hand_array);
+	for(var i = 0; i < _width; i++)	
+		add_Inst(_ds_grid, _hot_key, _hand_array[i]);
+
 }
 
 function retrieve_hand() {
@@ -593,7 +598,7 @@ function retrieve_hand() {
 	var _ds_grid = global.instGrid;
 	var _width	= ds_grid_width(_ds_grid);
 	
-	wipe_Hand(_ds_grid, 0)
+	wipe_hand(_ds_grid, 0)
 	
 	for(var i = 0; i < _width; i++)
 	{
@@ -625,11 +630,14 @@ function comms_functions() {
 	for(var i = 0; i < ds_list_size(comms_list); i++)
 		ds_list_find_value(comms_list, i).outline_color = c_ltgray;
 	
-	// Find the nearest one
-	var comms_target = ds_list_find_value(comms_list, 0)
+	if hand_size(0) == 0
+	{
+		// Find the nearest one
+		var comms_target = ds_list_find_value(comms_list, 0)
 	
-	// Update nearest object to be highlighted in yellow
-	comms_target.outline_color = c_yellow;
+		// Update nearest object to be highlighted in yellow
+		comms_target.outline_color = c_yellow;
+	}
 	
 	return true
 }

@@ -26,7 +26,7 @@
   "origin":0,
   "parent":{
     "name":"Makeshift",
-    "path":"folders/MonasteryFramework/01-Sprites/Framework/GUI/Makeshift.yy",
+    "path":"folders/MonasteryFramework/02-Sounds/01-Sprites/Framework/GUI/Makeshift.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

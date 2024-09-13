@@ -45,7 +45,7 @@
   "origin":0,
   "parent":{
     "name":"ParticlesLab",
-    "path":"folders/MonasteryFramework/01-Sprites/ParticlesLab.yy",
+    "path":"folders/MonasteryFramework/02-Sounds/01-Sprites/ParticlesLab.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

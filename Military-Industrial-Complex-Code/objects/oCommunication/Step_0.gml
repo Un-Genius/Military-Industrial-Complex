@@ -57,12 +57,12 @@ var _communication_tool = [{
         "where": {
           "type": "string",
           "enum": ["squad", "unit", "building", "player", "marker", "objective", "undefined"],
-          "description": "Identifies the type of destination or target location the entity should go to or act upon. Example: 'Move to attack marker' would have 'where: marker'."
+          "description": "Identifies the type of destination or target location the entity should go to or act upon. Example: 'Move to attack marker' would have 'where: marker' or the command 'Follow me' results in the location being the 'player'. 'Squad alpha should move to squad beta' should result in 'Squad' as the location."
         },
         "where_identifier": {
           "type": "string",
           "enum": _identifier_enum,
-          "description": "Specifies the exact identifier of the target location or destination. Example: 'Move to within base' would have 'where: building' and 'where_identifier: within_base'."
+          "description": "Specifies the exact identifier of the target location or destination. Example: 'Move to within base' would have 'where: building' and 'where_identifier: within_base'. 'Squad alpha should move to squad beta' should result in 'beta' as the location identifier."
         },
         "condition": {
           "type": "string",
@@ -75,172 +75,99 @@ var _communication_tool = [{
     }
   }
 }]
-	
-var _old_communication_tool = [{
-	"type": "function",
-	"function": {
-	    "name": "execute_action",
-	    "description": "This must be called everytime and is used to extract essential information for the game to command troops. This tool call acts as a single line of information for one command. This should be called if there are multiple commands in a sentence. For example 'Squad alpha and you guys should proceed to attack marker' should be two seperate tool calls.",
-	    "parameters": {
-	        "type": "object",
-	        "properties": {
-	            "who": {
-	                "type": "string",
-					"enum": ["squad", "unit", "undefined"],
-	                "description": "Identifies whether the player is referencing a unit or a squad.",
-	            },
-				"who_identifier": {
-	                "type": "string",
-					//"enum": _identifier_enum,
-	                "description": "Identifies the exact name of the unit or squad. Squads may be in the form of 'Alpha', 'Beta', etc. And units may be 'Bob', 'Joe.' For example, 'Squad Omega should defend the base' is 'omega'",
-	            },
-	            "who_amount": {
-	                "type": "string",
-	                "description": "The number of units or squads the player mentions. Must be either an int or a percentage. For example, 'Send most of the units at base to the objective' is '75%'.",
-	            },
-				"who_proximity": {
-	                "type": "string",
-					"enum": ["squad", "unit", "building", "player", "marker", "objective"],
-	                "description": "Optional for when the player is trying to reference a squad or unit in proximity to an object. For example, 'All squads near patrol group 1 must retreat' is of type 'marker'",
-	            },
-	            "who_proximity_identifier": {
-	                "type": "string",
-					"enum": _identifier_enum,
-	                "description": "Optional for when the player is referencing a specific object. For example, 'All squads near recon marker must retreat' is referencing 'recon_marker'",
-	            },
-				"action": {
-	                "type": "string",
-					"enum": ["idle", "move", "haste", "follow", "patrol", "engage"],
-	                "description": "Identifies which action the unit should take to fulfill the users command. For example, 'You should attack the objective' is 'engage'",
-	            },
-	            "behavior": {
-	                "type": "string",
-					"enum": ["aggressive", "defensive", "passive"],
-	                "description": "Optionally identifies what behavior the unit should have. 'Stick behind and protect the base' is 'defensive'",
-	            },
-				"where": {
-	                "type": "string",
-					"enum": ["squad", "unit", "building", "player", "marker", "objective", "undefined"],
-	                "description": "Identifies where or who the unit/squad should go. For example, 'Retreat to base' is 'building'",
-	            },
-	            "where_identifier": {
-	                "type": "string",
-					"enum": _identifier_enum,
-	                "description": "Optionally identifies the exact name of where to go. Example, 'Retreat to base' is 'within_base'",
-	            },
-				"condition": {
-	                "type": "string",
-					"enum": ["ifAttacked", "ifDestinationReached", "ifHealthLow", "ifTimer2Minutes"],
-	                "description": "Optionally identifies preset conditions. For example, 'Attack once you reach the destination' is 'ifDestinationReached'",
-	            },
-	        },
-	        "required": ["who", "action", "where"],
-	        "additionalProperties": false,
-	    },
-	}
-}]
 
 if keyboard_check_released(vk_enter)
 	var _chatgpt_request = send_openai_gpt(_instructions, _input, _communication_tool)
 
-
-
-
-
-
-
-
-
 // Start recording
-if (keyboard_check_pressed(vk_space) && !isRecording) {
+if (keyboard_check_pressed(vk_space) && !is_recording) {
 	for (var i = audio_get_recorder_count() - 1; i >= 0; --i) {
-		if (i != recordingDevice)
+		if (i != recording_device)
 			continue;
 			
-		isRecording = true;
-		ds_map_destroy(recordSpecs);
-		if (!is_undefined(recordSound))
-			audio_free_buffer_sound(recordSound);
-		buffer_delete(recordBuffer);
-		recordSpecs = audio_get_recorder_info(i);
-		recordBuffer = buffer_create(recordSpecs[? "sample_rate"] * buffer_sizeof(recordSpecs[? "data_format"]), buffer_grow, 1);
-		recordingChannel = audio_start_recording(i);
-		recordingDevice = i;
-		transcriptionTimer = current_time; // Initialize the timer
+		is_recording = true;
+		ds_map_destroy(record_specs);
+		if (!is_undefined(record_sound))
+			audio_free_buffer_sound(record_sound);
+		buffer_delete(record_buffer);
+		record_specs = audio_get_recorder_info(i);
+		record_buffer = buffer_create(record_specs[? "sample_rate"] * buffer_sizeof(record_specs[? "data_format"]), buffer_grow, 1);
+		recording_channel = audio_start_recording(i);
+		recording_device = i;
+		transcription_timer = current_time; // Initialize the timer
 		break;
 	}
 }
 
 // Stop recording
-if (keyboard_check_released(vk_space) && isRecording) {
-	isRecording = false;
-	audio_stop_recording(recordingChannel);
-	var _newBuffer = save_and_transcribe();
-	buffer_delete(recordBuffer);
-	recordBuffer = _newBuffer
-	recordingChannel = -1;
-	audio_play_sound(recordSound, 0, false);
+if (keyboard_check_released(vk_space) && is_recording) {
+	is_recording = false;
+	audio_stop_recording(recording_channel);
+	var _new_buffer = save_and_transcribe();
+	buffer_delete(record_buffer);
+	record_buffer = _new_buffer
+	recording_channel = -1;
+	//audio_play_sound(record_sound, 0, false);
+	if transcription_text != ""
+		send_openai_gpt(_instructions, transcription_text, _communication_tool)
 }
 
 
 // Check if transcription is needed every step
-if (isRecording) {
-	if (current_time - transcriptionTimer >= 2000) { // 2000ms = 2 seconds
+if (is_recording) {
+	if (current_time - transcription_timer >= 2000) { // 2000ms = 2 seconds
 		save_and_transcribe();
-		transcriptionTimer = current_time; // Reset the timer
+		transcription_timer = current_time; // Reset the timer
 	}
-}
-
-
-
+} else transcription_text = "";
 
 
 
 
 /*
 // Start recording
-if keyboard_check_pressed(vk_space) && !isRecording {
+if keyboard_check_pressed(vk_space) && !is_recording {
 	for (var i = audio_get_recorder_count()-1; i >= 0; --i) {
-		if i != recordingDevice
+		if i != recording_device
 			continue;
 			
-		isRecording = true;
-		ds_map_destroy(recordSpecs);
-		if !is_undefined(recordSound)
-			audio_free_buffer_sound(recordSound);
-		buffer_delete(recordBuffer);
-		recordSpecs = audio_get_recorder_info(i);
-		recordBuffer = buffer_create(recordSpecs[? "sample_rate"]*buffer_sizeof(recordSpecs[? "data_format"]), buffer_grow, 1);
-		recordingChannel = audio_start_recording(i);
-		recordingDevice = i;
+		is_recording = true;
+		ds_map_destroy(record_specs);
+		if !is_undefined(record_sound)
+			audio_free_buffer_sound(record_sound);
+		buffer_delete(record_buffer);
+		record_specs = audio_get_recorder_info(i);
+		record_buffer = buffer_create(record_specs[? "sample_rate"]*buffer_sizeof(record_specs[? "data_format"]), buffer_grow, 1);
+		recording_channel = audio_start_recording(i);
+		recording_device = i;
 		break;
 	}
 }
 
 // Stop recording
-if keyboard_check_released(vk_space) && isRecording {
-	isRecording = false;
-	audio_stop_recording(recordingChannel);
-	var convertedRecordBuffer = buffer_create(buffer_tell(recordBuffer), buffer_fast, 1);
-	buffer_copy(recordBuffer, 0, buffer_tell(recordBuffer), convertedRecordBuffer, 0);
-	recordSound = audio_create_buffer_sound(
+if keyboard_check_released(vk_space) && is_recording {
+	is_recording = false;
+	audio_stop_recording(recording_channel);
+	var convertedRecordBuffer = buffer_create(buffer_tell(record_buffer), buffer_fast, 1);
+	buffer_copy(record_buffer, 0, buffer_tell(record_buffer), convertedRecordBuffer, 0);
+	record_sound = audio_create_buffer_sound(
 		convertedRecordBuffer,
-		recordSpecs[? "data_format"],
-		recordSpecs[? "sample_rate"],
+		record_specs[? "data_format"],
+		record_specs[? "sample_rate"],
 		0,
-		buffer_tell(recordBuffer),
-		recordSpecs[? "channels"]
+		buffer_tell(record_buffer),
+		record_specs[? "channels"]
 	);
-	buffer_delete(recordBuffer);
-	recordBuffer = convertedRecordBuffer;
-	recordingChannel = -1;
+	buffer_delete(record_buffer);
+	record_buffer = convertedRecordBuffer;
+	recording_channel = -1;
  
 	var _file_path = working_directory + "temp_audio_recording.wav";
 	
-	audio_play_sound(recordSound, 0, false);
+	audio_play_sound(record_sound, 0, false);
   
-	if (!ds_map_empty(recordSpecs))
-		buffer_save_wav(recordBuffer, _file_path, recordSpecs[? "channels"], recordSpecs[? "sample_rate"], recordSpecs[? "data_format"]);
+	if (!ds_map_empty(record_specs))
+		buffer_save_wav(record_buffer, _file_path, record_specs[? "channels"], record_specs[? "sample_rate"], record_specs[? "data_format"]);
  
 	if (file_exists(_file_path)) {
 	    show_debug_message("File saved successfully: " + _file_path);

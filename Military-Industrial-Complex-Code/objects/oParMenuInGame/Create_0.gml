@@ -22,7 +22,7 @@ soundClick = sndClick;
 
 button_instances = ds_list_create();
 
-///CREATE BUTTONS & PANEL
+/*//CREATE BUTTONS & PANEL
 var _ww = global.RES_W;
 var _hh = global.RES_H;
 

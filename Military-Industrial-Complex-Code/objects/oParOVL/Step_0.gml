@@ -38,7 +38,7 @@ if _mousePress == mouse_type.box
 		{
 			var _x = find_Inst(global.instGrid, 0, id);
 			if _x != -1
-				wipe_Slot(global.instGrid, _x, 0);
+				wipe_slot(global.instGrid, _x, 0);
 		}
 
 		#endregion

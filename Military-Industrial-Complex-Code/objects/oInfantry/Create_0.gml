@@ -176,7 +176,12 @@ m_follow =	new State("m_follow") {
 			m_sm.swap(m_idle); exit;
 		}
 		
-	    if (distance_to_point(goal_x, goal_y) < speed*5)
+		var _x = path_get_point_x(path, 0);
+		var _y = path_get_point_y(path, 0);
+		
+		image_angle = lerp(image_angle, point_direction(x, y, _x, _y) - 90, 0.2);
+		
+	    if (distance_to_point(goal_x, goal_y) < speed*20)
 			exit;
 		
 		if path_finished()

@@ -31,31 +31,31 @@ function cm_break(i, _string)
 
 function cm_folder(i)
 {
-	var height_level = mp_gui_y + slot_height;
-	draw_text(mp_gui_x + padding, height_level, _string);
+	var _height_level = mp_gui_y + slot_height;
+	draw_text(mp_gui_x + padding, _height_level, _string);
 	cm_triangle();
 }
 
 function cm_triangle()
 {		
 	// Define the base position and size variables
-	var base_x = mp_gui_x;
-	var base_y = height_level+2;
-	var triangle_width = width-(padding);
-	var triangle_height = height-5;
+	var _base_x = mp_gui_x;
+	var _base_y = height_level+2;
+	var _triangle_width = width-(padding);
+	var _triangle_height = height-5;
 
 	// Calculate the coordinates for the three points of the triangle
-	var point1_x = base_x + triangle_width-7//((triangle_width/15)*13.5);
-	var point1_y = base_y + 4;
+	var _point1_x = _base_x + _triangle_width-7//((_triangle_width/15)*13.5);
+	var _point1_y = _base_y + 4;
 
-	var point2_x = base_x + triangle_width-7//((triangle_width/15)*13.5);
-	var point2_y = base_y + triangle_height - 4;
+	var _point2_x = _base_x + _triangle_width-7//((_triangle_width/15)*13.5);
+	var _point2_y = _base_y + _triangle_height - 4;
 
-	var point3_x = base_x + triangle_width;
-	var point3_y = base_y + (triangle_height / 2);
+	var _point3_x = _base_x + _triangle_width;
+	var _point3_y = _base_y + (_triangle_height / 2);
 
 	// Now use the variables to draw the triangle
-	draw_triangle(point1_x, point1_y, point2_x, point2_y, point3_x, point3_y, false);
+	draw_triangle(_point1_x, _point1_y, _point2_x, _point2_y, _point3_x, _point3_y, false);
 }
 
 function cm_file_expand(i)
@@ -73,31 +73,31 @@ function cm_file_expand(i)
 		
 	var _script = ds_grid_get(cm_grid, 1, i);	
 	var _folder = ds_grid_get(cm_grid, 2, i);
-	var _scriptArg = ds_grid_get(cm_grid, 3, i);
+	var __script_arg = ds_grid_get(cm_grid, 3, i);
 		
 	if !_folder
 	{
 		var _level = level;
 					
-		var _list = oPlayer.contextInstList;
+		var _list = oPlayer.context_inst_list;
 		
-		var _listSize = ds_list_size(_list);
+		var _list_size = ds_list_size(_list);
 							
 		// Check if not already in list
-		for(var o = 0; o < _listSize; o++)
+		for(var o = 0; o < _list_size; o++)
 		{
-			var _contextMenu = ds_list_find_value(_list, o);
-			if _contextMenu.level != _level + 1
+			var _context_menu = ds_list_find_value(_list, o);
+			if _context_menu.level != _level + 1
 				continue;
 				
-			close_context(_contextMenu);
+			close_context(_context_menu);
 		}
 		
 		exit;
 	}
 	
-	if _scriptArg != -1
-		script_execute_ext(_script, _scriptArg);
+	if __script_arg != -1
+		script_execute_ext(_script, __script_arg);
 	else
 		script_execute(_script);
 }
@@ -155,7 +155,7 @@ function cm_update_position()
 
 function cm_close_distance()
 {
-	var _main = ds_list_find_value(oPlayer.contextInstList, 0);
+	var _main = ds_list_find_value(oPlayer.context_inst_list, 0);
 	var _inst = -1;
 	var _x1 = mp_gui_x - outside_padding;
 	var _x2 = mp_gui_x + width + outside_padding;
