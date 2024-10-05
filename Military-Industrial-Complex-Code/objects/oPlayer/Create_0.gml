@@ -1,5 +1,5 @@
 // Move speed
-movementSpeed = 1;
+movementSpeed = 2;
 
 numColor = c_white;
 hash_color = findColor(numColor);

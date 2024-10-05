@@ -75,10 +75,12 @@ var _hsp = _key_right - _key_left;
 var _vsp = _key_down	- _key_up;
 
 // Faster when moving for longer
+/*
 if _vsp != 0 || _hsp != 0
 	movementSpeed = clamp(movementSpeed + 0.08, 3, 20);
 else
 	movementSpeed = clamp(movementSpeed - 1, 3, 20);
+*/
 
 // Sprite aims towards mouse
 image_angle = point_direction(x, y, mouse_x, mouse_y) - 90;

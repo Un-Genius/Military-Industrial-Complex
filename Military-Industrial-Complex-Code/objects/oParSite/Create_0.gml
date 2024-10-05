@@ -1,3 +1,39 @@
+#region Inherit Shadows
+// Inherit the parent event
+event_inherited();
+
+// Create a sprite polygon for this instance
+polygon = polygon_from_instance(id);
+
+// This is a static shadow caster (it never changes its polygon)
+flags |= eShadowCasterFlags.Static;
+
+ignored = false;
+/*
+Light_Type = "Area Light";
+Light_Color = $FFFFFFFF;
+Light_Range = 768;
+Light_Intensity = 1.3;
+Light_Shadow_Length = 32000;
+Light_Angle = 0;
+Light_Direction = 0;
+Light_Width = 256;
+LUT_Intensity = noone;
+
+light = light_create_area(x, y, Light_Shadow_Length, Light_Color, Light_Range, Light_Intensity, Light_Width, Light_Direction);
+//sprite_index = spr_light_area;
+//image_angle = Light_Direction;
+
+// Set LUTs
+//if(LUT_Intensity != noone) {
+//	light[| eLight.LutIntensity] = sprite_get_texture(LUT_Intensity, 0);
+//}
+
+// Add the light to the world
+light_add_to_world(light);
+*/
+#endregion
+
 // Update pathfinding
 path_grid_update();
 

@@ -65,9 +65,9 @@ target_inst = noone;
 
 squadObjectID = noone;
 
-team		= oFaction.team;		// Which team its on
-numColor	= oFaction.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
-hash_color	= oFaction.hash_color;	// "red" or "blue"
+team_info = oFaction.team_info
+//numColor	= oFaction.numColor;	// number relating to "red" or "blue" using an enum: color.red = 0
+//hash_color	= oFaction.hash_color;	// "red" or "blue"
 
 sprite_name = sprite_get_name(sprite_index);
 sprite_name = string_copy(sprite_name, 0, string_length(sprite_name)-1); 

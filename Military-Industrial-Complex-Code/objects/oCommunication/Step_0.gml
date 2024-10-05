@@ -12,7 +12,80 @@ var _identifier_enum = [
 	"player", "enemy", "friendly"
 ]
 
+var _identifier_enum = [
+    "player_nearest", "player_furthest", "unit_nearest", "unit_furthest",
+    "attack_marker", "defend_marker", "recon_marker", "patrol_marker", "retreat_marker",
+    "building_hq", "within_base",
+    "alpha", "beta", "charlie",
+    "1", "2", "3",
+    "player", "enemy", "friendly"
+];
+
 var _communication_tool = [{
+  "type": "function",
+  "function": {
+    "name": "execute_action",
+    "description": "This function must be called every time a command is parsed to extract essential information for the game to command troops. Commands should be broken down into discrete actions, with each command resulting in a separate tool call. For example, the sentence 'Squad alpha and you guys should proceed to attack marker' should be parsed as two separate commands: one for 'Squad alpha' and one for 'you guys'. This ensures each action is handled independently, allowing for clearer command execution.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "who": {
+          "type": "string",
+          "enum": ["squad", "unit", "player", "building", "undefined"],
+          "description": "Identifies the type of entity referenced in the command. It could be a squad (e.g., 'Alpha'), a specific unit (e.g., 'Sniper 1'), a player, a building (e.g., 'HQ'), or 'undefined' if not specified. Example: 'Squad Alpha should attack' would use 'squad'."
+        },
+        "who_identifier": {
+          "type": "string",
+          "enum": _identifier_enum,
+          "description": "Specifies the exact name or identifier of the entity mentioned in the command. It can be a squad name like 'alpha', a marker like 'attack_marker', or a specific unit name. Example: 'Sniper 1 move to recon marker' would use 'sniper_1'."
+        },
+        "who_amount": {
+          "type": "string",
+          "description": "Specifies the quantity or percentage of entities referenced. This field captures the number or percentage mentioned in the command. Example: 'Send 3 units' would be '3', and 'Send half of the squads to defend' would be '50%'. For non-numeric quantities like 'a few', 'several', 'many', or 'most': 'a few' can be interpreted as 10%, 'several' 25%, 'many' as 50% units, and 'most' as 80% of the available units."
+        },
+        "who_proximity": {
+          "type": "string",
+          "enum": ["squad", "unit", "building", "player", "marker", "objective"],
+          "description": "Specifies the type of object that the entity is near or in proximity to. Example: 'All units near the HQ must fall back' would set 'who_proximity' to 'building'."
+        },
+        "who_proximity_identifier": {
+          "type": "string",
+          "enum": _identifier_enum,
+          "description": "Provides the exact identifier of the object near which the entity is located. Example: 'Squads near patrol marker 1' would use 'who_proximity: marker' and 'who_proximity_identifier: patrol_marker_1'."
+        },
+        "action": {
+          "type": "string",
+          "enum": ["idle", "move", "haste", "follow", "patrol", "engage"],
+          "description": "Specifies the action the entity should take. Examples: 'idle' for no action, 'move' to proceed to a location, 'haste' to move quickly, 'follow' to follow another unit or squad, 'patrol' to patrol an area, 'engage' to attack or engage an enemy."
+        },
+        "behavior": {
+          "type": "string",
+          "enum": ["aggressive", "defensive", "passive", "objective"],
+          "description": "Optionally specifies the behavior mode of the entity, providing tactical context to the action. 'aggressive' prioritizes offense, 'defensive' focuses on holding ground, and 'passive' avoids combat. Any reference with flag or objective should set the behavior to 'objective'."
+        },
+        "where": {
+          "type": "string",
+          "enum": ["squad", "unit", "building", "player", "marker", "objective", "undefined"],
+          "description": "Identifies the type of destination or target location the entity should go to or act upon. Example: 'Move to attack marker' would have 'where: marker' or the command 'Follow me' results in the location being the 'player'. 'Squad alpha should move to squad beta' should result in 'Squad' as the location. For ambiguous references like 'over there' or 'that place' responde 'undefined'."
+        },
+        "where_identifier": {
+          "type": "string",
+          "enum": _identifier_enum,
+          "description": "Specifies the exact identifier of the target location or destination. Example: 'Move to within base' would have 'where: building' and 'where_identifier: within_base'. 'Squad alpha should move to squad beta' should result in 'beta' as the location identifier."
+        },
+        "condition": {
+          "type": "string",
+          "enum": ["ifAttacked", "ifDestinationReached", "ifHealthLow", "ifTimer2Minutes"],
+          "description": "Specifies conditions that need to be met for the action to be executed or continue. 'ifAttacked' triggers if attacked, 'ifDestinationReached' upon reaching a destination, 'ifHealthLow' if health is low, and 'ifTimer2Minutes' after a set time."
+        }
+      },
+      "required": ["who", "action", "where"],
+      "additionalProperties": false
+    }
+  }
+}]
+
+var _communication_tool_old = [{
   "type": "function",
   "function": {
     "name": "execute_action",
@@ -51,8 +124,8 @@ var _communication_tool = [{
         },
         "behavior": {
           "type": "string",
-          "enum": ["aggressive", "defensive", "passive"],
-          "description": "Optionally specifies the behavior mode of the entity, providing tactical context to the action. 'aggressive' prioritizes offense, 'defensive' focuses on holding ground, and 'passive' avoids combat."
+          "enum": ["aggressive", "defensive", "passive", "objective"],
+          "description": "Optionally specifies the behavior mode of the entity, providing tactical context to the action. 'aggressive' prioritizes offense, 'defensive' focuses on holding ground, and 'passive' avoids combat. Any reference with flag or objective should set the behavior to 'objective'."
         },
         "where": {
           "type": "string",

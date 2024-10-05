@@ -31,6 +31,7 @@ instance_create(-1000, -1000, oFaction);
 instance_create(-1000, -1000, oPathfinder);
 instance_create(-1000, -1000, oBuildingTool);
 instance_create(-1000, -1000, oMap);
+instance_create(-1000, -1000, obj_lighting_init);
 
 #endregion
 

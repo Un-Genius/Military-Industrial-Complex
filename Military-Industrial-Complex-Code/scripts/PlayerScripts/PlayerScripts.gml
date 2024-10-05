@@ -614,7 +614,14 @@ function retrieve_hand() {
 function comms_functions() {
 	if ds_list_size(comms_list) > 0
 		for(var i = 0; i < ds_list_size(comms_list); i++)
-			ds_list_find_value(comms_list, i).outline_color = undefined;
+		{
+			var _inst = ds_list_find_value(comms_list, i);
+			
+			if !instance_exists(_inst)
+				continue;
+			
+			_inst.outline_color = undefined;
+		}
 		ds_list_clear(comms_list)
 	
 	if !comms_active

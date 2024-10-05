@@ -1,8 +1,6 @@
-team = 0;
-
-numColor = ds_grid_get(global.savedSettings, 1, setting.color);
-
-// "Red", "Orange", "Yellow", "Green", "Light Blue", "Blue", "Purple", "Pink"
+#region
+//numColor = ds_grid_get(global.savedSettings, 1, setting.color);
+//hash_color = findColor(numColor);
 
 noColor	= noone;
 red		= $8989FF;
@@ -13,8 +11,16 @@ ltBlue	= $EFFF96;
 blue	= $FFBB91;
 purple	= $FF8C9B;
 pink	= $F6A8FF;
+colors	= [noColor, red, orange, yellow, green, ltBlue, blue, purple, pink];
 
-hash_color = findColor(numColor);
+var _team = 1;
+
+team_info = {
+	team: _team,
+	color: colors[_team]
+};
+
+#endregion
 
 enum GUN_TYPE
 {

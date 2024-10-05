@@ -42,7 +42,7 @@ function State(name="null") constructor {
 }
 
 function enemy_in_range() {
-	var _list = enemy_list(weapon_range, team);
+	var _list = enemy_list(weapon_range, team_info.team);
 	var _enemy_in_range = ds_list_size(_list) > 0
 	
 	ds_list_destroy(_list);
@@ -54,7 +54,7 @@ function enemy_in_range() {
 }
 	
 function enemy_in_view() {
-	var _list = enemy_list(view_distance, team);
+	var _list = enemy_list(view_distance, team_info.team);
 	var _enemy_in_range = ds_list_size(_list) > 0
 	
 	ds_list_destroy(_list);
@@ -94,7 +94,7 @@ function is_idle() {
 }
 
 function nearest_enemy() {
-	var _list = enemy_list(view_distance, team);
+	var _list = enemy_list(view_distance, team_info.team);
 	var _enemy_in_range = ds_list_size(_list) > 0
 	
 	if !_enemy_in_range
@@ -121,7 +121,7 @@ function enemy_list(_distance, _team) {
 	for(var i = 0; i < enemies_in_range; i++)
 	{
 		var _inst = ds_list_find_value(_list, i)
-		if _inst.team == _team
+		if _inst.team_info.team == _team
 		{
 			ds_list_delete(_list, i);
 			enemies_in_range--;

@@ -12,7 +12,7 @@ else
 }
 
 
-spawn_unit(oPlayer, _map_x, _map_y);
+spawn_unit(oPlayer, _map_x, _map_y+64);
 spawn_unit(oSiteHQ, _map_x, _map_y);
 
 instance_create(0, 0, oResourceDisplay)
