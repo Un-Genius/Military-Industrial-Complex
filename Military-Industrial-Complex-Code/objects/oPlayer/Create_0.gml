@@ -16,6 +16,8 @@ maxTroopsInf = 0;
 
 image_speed = 0
 
+team_info = oFaction.team_info;
+
 // Duds
 goal_x = 0;
 goal_y = 0;

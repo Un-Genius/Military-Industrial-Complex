@@ -203,6 +203,7 @@
     {"id":{"name":"oContextMenu","path":"objects/oContextMenu/oContextMenu.yy",},},
     {"id":{"name":"oDummy","path":"objects/oDummy/oDummy.yy",},},
     {"id":{"name":"oDummyStronk","path":"objects/oDummyStronk/oDummyStronk.yy",},},
+    {"id":{"name":"oEnemyAI","path":"objects/oEnemyAI/oEnemyAI.yy",},},
     {"id":{"name":"oFaction","path":"objects/oFaction/oFaction.yy",},},
     {"id":{"name":"oFlag","path":"objects/oFlag/oFlag.yy",},},
     {"id":{"name":"oGrassArea","path":"objects/oGrassArea/oGrassArea.yy",},},

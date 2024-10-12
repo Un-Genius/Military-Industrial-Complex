@@ -126,6 +126,7 @@
     {"name":"oCollision","order":1,"path":"objects/oCollision/oCollision.yy",},
     {"name":"oCommunication","order":10,"path":"objects/oCommunication/oCommunication.yy",},
     {"name":"oDummyStronk","order":2,"path":"objects/oDummyStronk/oDummyStronk.yy",},
+    {"name":"oEnemyAI","order":10,"path":"objects/oEnemyAI/oEnemyAI.yy",},
     {"name":"oFaction","order":1,"path":"objects/oFaction/oFaction.yy",},
     {"name":"oFlag","order":3,"path":"objects/oFlag/oFlag.yy",},
     {"name":"oGrassArea","order":2,"path":"objects/oGrassArea/oGrassArea.yy",},

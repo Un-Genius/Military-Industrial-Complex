@@ -2329,11 +2329,11 @@ function scr_context_folder_waypoint() {
 		level = _level;
 
 		// Add buttons
-		add_context("Attack",	scr_context_waypoint,	 false, ["Attack"]);
-		add_context("Defend",	scr_context_waypoint,	 false, ["Defend"]);
-		add_context("Recon",	scr_context_waypoint,	 false, ["Recon"]);
-		add_context("Patrol",	scr_context_waypoint_folder,	 true,	["Patrol"]);
-		add_context("Retreat",	scr_context_waypoint,	 false, ["Retreat"]);
+		add_context("Attack",	scr_context_waypoint,	 false, ["attack_marker"]);
+		add_context("Defend",	scr_context_waypoint,	 false, ["defend_marker"]);
+		add_context("Recon",	scr_context_waypoint,	 false, ["recon_marker"]);
+		add_context("Patrol",	scr_context_waypoint_folder,	 true,	["patrol_marker"]);
+		add_context("Retreat",	scr_context_waypoint,	 false, ["retreat_marker"]);
 
 		// Update size
 		event_user(0);
@@ -2381,7 +2381,7 @@ function scr_context_waypoint(_waypoint) {
 	
 	with(_waypoint_inst)
 	{
-		type = _waypoint
+		marker_type = _waypoint
 		event_user(0)
 	}
 	
@@ -2637,10 +2637,12 @@ function scr_create_squad(_x, _y, _object, _amount) {
 		ds_list_add(_squad_list, _inst);
 	}
 	
-	create_squad(_squad_list)
+	var _squad_inst = create_squad(_squad_list)
 	ds_list_destroy(_squad_list)
 
 	close_context(undefined);
+	
+	return _squad_inst;
 }
 
 #endregion
@@ -3161,6 +3163,7 @@ function buffer_save_wav(buffer, filename, channels, sampleRate, dataFormat) {
 #macro APIFILE "no_touchy_api"
 #macro APIKEY decrypt_api_key()
 
+// gpt-4o, gpt-4o-mini
 global.chatGPT = "gpt-4o" // "gpt-4o-mini"
 
 /// @function send_openai_gpt
@@ -3413,31 +3416,40 @@ function execute_action(arguments) {
         return false;  // No valid target found
     }
 
-    // Find target location or instance based on the 'where' parameters
-    var target_instance = find_where(where, where_identifier);
-    if (target_instance == noone) {
-        return false;  // No valid location found
-    }
-
     // Perform actions on the selected instances
     for (var i = 0; i < array_length(instances_selected); i++) {
         var instance = instances_selected[i];
-
-        // Set behavior if specified
-        if (!is_undefined(behavior)) {
-            set_behavior(instance, behavior);
-        }
 		
-		set_movement(instance, action, target_instance);
+		// Find target location or instance based on the 'where' parameters
+		var target_instance = find_where(where, where_identifier, instance);
+		if (target_instance == noone) {
+		    continue;  // No valid location found
+		}
+		
+		var _inst_array = [instance];
+				
+		if instance.object_index == oSquad
+			_inst_array = select_squad_instances(instance, false);
+				
+		for(var o = 0; o < array_length(_inst_array); o++) {
+			var _inst = _inst_array[o];
+			
+	        // Set behavior if specified
+	        if (!is_undefined(behavior)) {
+	            set_behavior(instance, behavior);
+	        }
+				
+			set_movement(_inst, action, target_instance);
 
-        // Execute the action based on the extracted parameters
-        if (action == "move") {
-            //set_movement(instance, action, target_instance.x, target_instance.y);
-        } else if (action == "engage") {
-            // Additional actions like "engage" can be defined here
-        }
+	        // Execute the action based on the extracted parameters
+	        if (action == "move") {
+	            //set_movement(instance, action, target_instance.x, target_instance.y);
+	        } else if (action == "engage") {
+	            // Additional actions like "engage" can be defined here
+	        }
 
-        // Additional logic based on conditions or other parameters can be added here
+	        // Additional logic based on conditions or other parameters can be added here
+		}
     }
 
     return true;  // Action executed successfully
@@ -3540,7 +3552,7 @@ function find_sort_function(who_proximity, who_proximity_identifier) {
 /// @param {string} where_type - The type of location or object to find (e.g., "marker", "building").
 /// @param {string} where_identifier - The specific identifier for locating the object.
 /// @returns {instance|noone} The instance of the found location or object, or `noone` if not found.
-function find_where(where_type, where_identifier) {
+function find_where(where_type, where_identifier, instance) {
     var target_instance = noone;  // Initialize target instance to noone
 
     // Determine the target instance based on the location type
@@ -3564,6 +3576,10 @@ function find_where(where_type, where_identifier) {
         case "squad":
             target_instance = location_find_indentifier(oSquad, where_identifier);  // Find a specific squad instance
             break;
+			
+		case "objective":
+			target_instance = objective_find(instance, where_identifier)
+			break;
 
         // Add other cases as needed (e.g., objectives, waypoints)
 
@@ -3579,34 +3595,15 @@ function find_where(where_type, where_identifier) {
 /// @param {string} marker_identifier - The specific identifier for the marker (e.g., "attack_marker").
 /// @returns {instance|noone} The instance of the found marker, or `noone` if not found.
 function find_location_marker(marker_identifier) {
-    var target_instance = noone;  // Initialize target instance to noone
+	var _marker_amount = instance_number(oWaypoint);
+	
+	for(var i = 0; i < _marker_amount; i++) {
+		var _inst = instance_find(oWaypoint, i);
+		if _inst.marker_type = marker_identifier
+			return _inst
+	}
     
-    // Determine the marker instance based on the identifier
-    switch (marker_identifier) {
-        case "attack_marker":
-            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oAttackMarker
-            break;
-        case "defend_marker":
-            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oDefendMarker
-            break;
-        case "recon_marker":
-            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oReconMarker
-            break;
-        case "patrol_marker":
-            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oPatrolMarker
-            break;
-        case "retreat_marker":
-            target_instance = instance_find(oWaypoint, 0);  // Find the first instance of oRetreatMarker
-            break;
-
-        // Add more cases as needed for other markers
-
-        default:
-            target_instance = noone;  // No valid marker found
-            break;
-    }
-    
-    return target_instance;  // Return the found instance or noone if not found
+    return noone;  // Return the found instance or noone if not found
 }
 
 /// @function instance_find_identifier
@@ -3628,16 +3625,7 @@ function instance_find_identifier(object_type, identifier="") {
     for (var i = 0; i < instance_number(object_type); i++) {
         var instance = instance_find(object_type, i);
         if (string_lower(instance.identifier) == string_lower(identifier)) {  // Assuming each instance has an `identifier` property
-			
-			if instance.object_index == oSquad
-			{
-				var _unit_array = select_squad_instances(instance, false);
-				
-				for(var o = 0; o < array_length(_unit_array); o++)
-					array_push(_inst_array, _unit_array[o]);
-			} else {
-				array_push(_inst_array, instance);
-			}
+			array_push(_inst_array, instance);
         }
     }
 
@@ -3654,6 +3642,110 @@ function location_find_indentifier(object_type, identifier) {
 		return instance
     }
 
+    return noone;
+}
+	
+function objective_find(instance, where_identifier) {
+	if instance_exists(instance) {
+		switch where_identifier {
+			case "player_nearest":
+				return objective_find_nearest(oPlayer);
+			case "squad_nearest":
+				return objective_find_nearest(instance);
+			case "random":
+				return objective_find_random(instance);
+			case "base":
+			case "building_hq":
+			case "within_base":
+				return objective_find_nearest(oSiteHQ);
+		}
+		
+		return objective_find_nearest(instance);
+	}
+	
+	return objective_find_random(oFaction);
+}
+	
+function objective_find_random(_target) {
+    // Get the total number of flag instances.
+    var _inst_amount = instance_number(oFlag);
+    
+    // Create a ds_list to hold valid flags.
+    var flag_list = ds_list_create();
+
+    // Loop through all flags and filter based on team.
+    for (var i = 0; i < _inst_amount; i++) {
+        var _objective_inst = instance_find(oFlag, i);
+
+        // Add flags that belong to another team (i.e., uncaptured or enemy's).
+        if (_objective_inst.flag_info.team != _target.team_info.team) {
+            ds_list_add(flag_list, _objective_inst);
+        }
+    }
+
+    // If there are any valid flags, pick one randomly.
+    if (ds_list_size(flag_list) > 0) {
+        var random_index = irandom(ds_list_size(flag_list) - 1); // Get a random index
+        var _random_objective = flag_list[| random_index];       // Get the random flag instance
+        ds_list_destroy(flag_list);                              // Clean up the list
+        return _random_objective;                                // Return the randomly selected flag
+    }
+
+    // Clean up the list if no valid flags were found.
+    ds_list_destroy(flag_list);
+
+    // Return noone if no valid flags are found.
+    return noone;
+}
+
+function objective_find_nearest(_target) {
+    // Try to find the nearest flag that belongs to another team.
+    var _objective_inst = instance_nearest(_target.x, _target.y, oFlag);
+    
+    // Check if the nearest flag is on a different team.
+    if (_objective_inst != noone && _objective_inst.flag_info.team != _target.team_info.team) {
+        return _objective_inst;
+    }
+
+    // If the nearest flag is not suitable, create a grid to hold flags and distances.
+    var _inst_amount = instance_number(oFlag);
+    
+    // Create a ds_grid to hold flag instances and their distances (2 columns: instance, distance)
+    var flag_grid = ds_grid_create(2, _inst_amount);
+
+    // Variable to track the number of valid flags
+    var valid_flags_count = 0;
+
+    // Loop through all flags and filter based on team.
+    for (var i = 0; i < _inst_amount; i++) {
+        _objective_inst = instance_find(oFlag, i);
+
+        // Add flags that belong to another team (i.e., uncaptured or enemy's).
+        if (_objective_inst.flag_info.team != _target.team_info.team) {
+            var distance = point_distance(x, y, _objective_inst.x, _objective_inst.y);
+            
+            // Store the instance and its distance in the grid
+            ds_grid_set(flag_grid, 0, valid_flags_count, _objective_inst); // Store the instance
+            ds_grid_set(flag_grid, 1, valid_flags_count, distance);       // Store the distance
+            
+            valid_flags_count++;
+        }
+    }
+
+    // Sort the grid by the distance column (column 1)
+    ds_grid_sort(flag_grid, 1, true); // Sort by distance (ascending)
+
+    // If there is at least one valid flag, return the nearest one.
+    if (valid_flags_count > 0) {
+        _objective_inst = ds_grid_get(flag_grid, 0, _inst_amount-valid_flags_count); // Get the nearest flag instance
+        ds_grid_destroy(flag_grid); // Clean up the grid
+        return _objective_inst;
+    }
+
+    // Clean up the grid if no valid flags were found
+    ds_grid_destroy(flag_grid);
+
+    // Return noone if no valid flags are found
     return noone;
 }
 
@@ -3690,7 +3782,7 @@ function set_behavior(instance, behavior_type) {
 /// @param {real} x - The target x-coordinate for the movement.
 /// @param {real} y - The target y-coordinate for the movement.
 /// This function sets the movement of a given instance by swapping its movement state and setting a randomized goal.
-function set_movement(instance, movement_type, target_instance) {
+function set_movement(instance, movement_type, target_instance) {	
     with (instance) {
         var movement_state = m_idle;  // Default to idle movement state
         
@@ -3737,6 +3829,8 @@ function set_movement(instance, movement_type, target_instance) {
         // Swap to idle behavior state and set the movement state
         b_sm.swap(b_idle);  // Assume `b_sm` manages behavior states
         m_sm.swap(movement_state);  // Assume `m_sm` manages movement states
+		
+		return true
     }
 }
 

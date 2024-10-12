@@ -447,6 +447,8 @@ function create_squad(_newSquadList)
 
 	with _squadObjInst
 		event_user(0);
+	
+	return _squadObjInst
 }
 
 function create_zone()
@@ -636,15 +638,6 @@ function comms_functions() {
 	// Update objects to be highlighted in white
 	for(var i = 0; i < ds_list_size(comms_list); i++)
 		ds_list_find_value(comms_list, i).outline_color = c_ltgray;
-	
-	if hand_size(0) == 0
-	{
-		// Find the nearest one
-		var comms_target = ds_list_find_value(comms_list, 0)
-	
-		// Update nearest object to be highlighted in yellow
-		comms_target.outline_color = c_yellow;
-	}
 	
 	return true
 }

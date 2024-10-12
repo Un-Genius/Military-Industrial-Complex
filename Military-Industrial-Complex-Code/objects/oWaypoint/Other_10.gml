@@ -1,23 +1,23 @@
 /// @description Waypoint Type
 
-switch(type) {
-	case "Recon":
+switch(marker_type) {
+	case "recon_marker":
 		sprite_index = sWaypointRecon;
 		break;
 		
-	case "Patrol":
+	case "patrol_marker":
 		sprite_index = sWaypointPatrol;
 		break;
 		
-	case "Attack":
+	case "attack_marker":
 		sprite_index = sWaypointAttack;
 		break;
 		
-	case "Defend":
+	case "defend_marker":
 		sprite_index = sWaypointDefend;
 		break;
 			
-	case "Retreat":
+	case "retreat_marker":
 		sprite_index = sWaypointRetreat;
 		break;
 }

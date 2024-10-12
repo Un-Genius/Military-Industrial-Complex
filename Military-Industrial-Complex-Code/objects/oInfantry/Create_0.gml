@@ -62,6 +62,7 @@ goal_y = y;
 selected	= false;
 
 target_inst = noone;
+target_objective = noone;
 
 squadObjectID = noone;
 
@@ -319,6 +320,45 @@ b_defensive =	new State("b_defensive") {
 			case "m_follow":
 				m_sm.swap(m_protect);
 				break;
+		}
+	}
+}
+b_objective =	new State("b_objective") {
+	b_objective.update = function() {
+		if a_sm.state_name != "a_shoot"
+		{
+			if enemy_in_range()
+				a_sm.swap(a_shoot);
+			
+			if enemy_in_view()
+			{
+				if m_sm.state_name != "m_engage"
+				{
+					target_inst = nearest_enemy();
+					m_sm.swap(m_engage);
+				}
+			}
+		}
+	
+		if is_idle(a_sm) {
+			if is_low_hp()
+				a_sm.swap(a_heal);
+			
+			if is_idle(m_sm) {
+				var _target_inst = squadObjectID.target_objective;
+				if (_target_inst != noone &&
+				   _target_inst.flag_info.team != team_info.team) {
+					target_inst = _target_inst;
+				} else {
+					target_inst = objective_find_nearest(self);
+					squadObjectID.target_objective = target_inst;
+				}
+				   
+		        goal_x = target_inst.x + random_range(-30, 30);
+		        goal_y = target_inst.y + random_range(-30, 30);			
+				
+				m_sm.swap(m_move);
+			}
 		}
 	}
 }

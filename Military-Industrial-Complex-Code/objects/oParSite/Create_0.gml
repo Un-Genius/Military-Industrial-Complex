@@ -37,6 +37,8 @@ light_add_to_world(light);
 // Update pathfinding
 path_grid_update();
 
+team_info = oFaction.team_info;
+
 site_data = oFaction.obj_info[obj_to_enum(id.object_index)];
 add_resource(global.resources_max, site_data.capacity);
 

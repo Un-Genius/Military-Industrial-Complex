@@ -4,22 +4,13 @@ var _input = "Squad alpha should proceed to the attack marker and you guys shoul
 var _instructions = ""
 
 var _identifier_enum = [
-	"player_nearest", "player_furthest", "unit_nearest", "unit_furthest",
+	"player_nearest", "player_furthest", "squad_nearest", "squad_furthest",
 	"attack_marker", "defend_marker", "recon_marker", "patrol_marker", "retreat_marker",
 	"building_hq", "within_base",
 	"alpha", "beta", "charlie",
 	"1", "2", "3",
 	"player", "enemy", "friendly"
 ]
-
-var _identifier_enum = [
-    "player_nearest", "player_furthest", "unit_nearest", "unit_furthest",
-    "attack_marker", "defend_marker", "recon_marker", "patrol_marker", "retreat_marker",
-    "building_hq", "within_base",
-    "alpha", "beta", "charlie",
-    "1", "2", "3",
-    "player", "enemy", "friendly"
-];
 
 var _communication_tool = [{
   "type": "function",
@@ -31,53 +22,48 @@ var _communication_tool = [{
       "properties": {
         "who": {
           "type": "string",
-          "enum": ["squad", "unit", "player", "building", "undefined"],
-          "description": "Identifies the type of entity referenced in the command. It could be a squad (e.g., 'Alpha'), a specific unit (e.g., 'Sniper 1'), a player, a building (e.g., 'HQ'), or 'undefined' if not specified. Example: 'Squad Alpha should attack' would use 'squad'."
+          "enum": ["squad", "player", "building"],
+          "description": "Identifies the type of entity referenced in the command. It could be a squad (e.g., 'Alpha'), a player, a building (e.g., 'HQ'). Example: 'Squad Alpha should attack' -> 'squad'"
         },
         "who_identifier": {
           "type": "string",
           "enum": _identifier_enum,
-          "description": "Specifies the exact name or identifier of the entity mentioned in the command. It can be a squad name like 'alpha', a marker like 'attack_marker', or a specific unit name. Example: 'Sniper 1 move to recon marker' would use 'sniper_1'."
+          "description": "Specifies the exact name or identifier of the entity mentioned in the command. It can be a squad name like 'alpha', or a marker like 'attack_marker'. Example: 'Omega squad move to recon marker' -> 'omega'"
         },
         "who_amount": {
           "type": "string",
-          "description": "Specifies the quantity or percentage of entities referenced. This field captures the number or percentage mentioned in the command. Example: 'Send 3 units' would be '3', and 'Send half of the squads to defend' would be '50%'. For non-numeric quantities like 'a few', 'several', 'many', or 'most': 'a few' can be interpreted as 10%, 'several' 25%, 'many' as 50% units, and 'most' as 80% of the available units."
+          "description": "Specifies the quantity or percentage of entities referenced. This field captures the number or percentage mentioned in the command. Example: 'Send 3 squads' would be '3', and 'Send half of the squads to defend' would be '50%'. For non-numeric quantities like 'a few', 'several', 'many', or 'most': 'a few' can be interpreted as 10%, 'several' 25%, 'many' as 50% units, and 'most' as 80% of the available units."
         },
         "who_proximity": {
           "type": "string",
-          "enum": ["squad", "unit", "building", "player", "marker", "objective"],
-          "description": "Specifies the type of object that the entity is near or in proximity to. Example: 'All units near the HQ must fall back' would set 'who_proximity' to 'building'."
+          "enum": ["squad", "building", "player", "marker", "objective"],
+          "description": "Specifies the type of object that the entity is near or in proximity to. Examples: 'All squads near the HQ must fall back'-> 'building', '2 of you near the attack marker move to the objective' -> 'marker'"
         },
         "who_proximity_identifier": {
           "type": "string",
           "enum": _identifier_enum,
-          "description": "Provides the exact identifier of the object near which the entity is located. Example: 'Squads near patrol marker 1' would use 'who_proximity: marker' and 'who_proximity_identifier: patrol_marker_1'."
+          "description": "Provides the exact identifier of the object near which the entity is located. Examples: 'Squads near patrol marker 1' -> 'patrol_marker', 'All units near squad Charlie...' -> 'charlie'"
         },
         "action": {
           "type": "string",
           "enum": ["idle", "move", "haste", "follow", "patrol", "engage"],
-          "description": "Specifies the action the entity should take. Examples: 'idle' for no action, 'move' to proceed to a location, 'haste' to move quickly, 'follow' to follow another unit or squad, 'patrol' to patrol an area, 'engage' to attack or engage an enemy."
+          "description": "Specifies the action the entity should take. List behavior if no other action is specified. Examples: 'idle' for no action, 'move' to proceed to a location, 'haste' to move quickly but unable to shoot, 'follow' to follow another unit or squad, 'patrol' to patrol an area, 'engage' to attack an enemy."
         },
         "behavior": {
           "type": "string",
-          "enum": ["aggressive", "defensive", "passive", "objective"],
-          "description": "Optionally specifies the behavior mode of the entity, providing tactical context to the action. 'aggressive' prioritizes offense, 'defensive' focuses on holding ground, and 'passive' avoids combat. Any reference with flag or objective should set the behavior to 'objective'."
+          "enum": ["aggressive", "defensive", "passive"],
+          "description": "Specifies the behavior mode of the entity, providing tactical context to the action. 'aggressive' prioritizes offense, 'defensive' focuses on holding ground, and 'passive' avoids combat."
         },
         "where": {
           "type": "string",
-          "enum": ["squad", "unit", "building", "player", "marker", "objective", "undefined"],
-          "description": "Identifies the type of destination or target location the entity should go to or act upon. Example: 'Move to attack marker' would have 'where: marker' or the command 'Follow me' results in the location being the 'player'. 'Squad alpha should move to squad beta' should result in 'Squad' as the location. For ambiguous references like 'over there' or 'that place' responde 'undefined'."
+          "enum": ["squad", "building", "player", "marker", "objective"],
+          "description": "Identifies the type of destination or target location the entity should go to or act upon. Examples: 'Move to attack marker' -> 'marker', 'Follow me' -> 'player', 'Squad alpha should move to squad beta' -> 'Squad', 'Go to the nearest flag' -> 'objective'"
         },
         "where_identifier": {
           "type": "string",
           "enum": _identifier_enum,
-          "description": "Specifies the exact identifier of the target location or destination. Example: 'Move to within base' would have 'where: building' and 'where_identifier: within_base'. 'Squad alpha should move to squad beta' should result in 'beta' as the location identifier."
+          "description": "Specifies the exact identifier of the target location or destination. Examples: 'Move to within base', -> 'within_base', 'Squad alpha should move to squad beta' -> 'beta', 'Move to the nearest objective' -> 'unit_nearest', 'Move to the nearest objective from base' -> 'building_hq'"
         },
-        "condition": {
-          "type": "string",
-          "enum": ["ifAttacked", "ifDestinationReached", "ifHealthLow", "ifTimer2Minutes"],
-          "description": "Specifies conditions that need to be met for the action to be executed or continue. 'ifAttacked' triggers if attacked, 'ifDestinationReached' upon reaching a destination, 'ifHealthLow' if health is low, and 'ifTimer2Minutes' after a set time."
-        }
       },
       "required": ["who", "action", "where"],
       "additionalProperties": false
@@ -188,7 +174,7 @@ if (keyboard_check_released(vk_space) && is_recording) {
 
 // Check if transcription is needed every step
 if (is_recording) {
-	if (current_time - transcription_timer >= 2000) { // 2000ms = 2 seconds
+	if (current_time - transcription_timer >= 1200) { // 2000ms = 2 seconds
 		save_and_transcribe();
 		transcription_timer = current_time; // Reset the timer
 	}
