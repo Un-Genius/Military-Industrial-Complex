@@ -191,7 +191,7 @@ function context_menu_open()
 	mouseRightPress_y		= mouse_y;
 
 	// Spawn Units through a unit
-	instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oParUnit);
+	instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oObject);
 	
 	if instRightSelected == noone
 		instRightSelected = find_top_Inst(mouseRightPress_x, mouseRightPress_y, oWaypoint);

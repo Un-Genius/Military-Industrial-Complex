@@ -19,33 +19,16 @@ var centerY = _viewY + (_viewH/2);
 var _dist = point_distance(_x, _y, centerX, centerY);
 			
 // Set volume
-var _volume = 0.3;
+var _volume = 0.8;
 		
 // Choose sound
-var _snd = noone;
+var _snd = snd_impact_person0;
 
-#endregion
-
-#region Set volume and audio for hit
-if oPlayer.zoom-0.5 < 0.4
-{
-	if _dist <= 1000
-	{
-		_volume = clamp((2000 - _dist) / 800, 0, 0.8);
-		_snd = snd_impact_person0;
-	}
-	else
-	{
-		if _dist > 1000
-		{
-			_volume = clamp((2000 - _dist) / 800, 0, 0.8);
-			_snd = snd_impact_person0//choose(snd_explosion_far1, snd_explosion_far2, snd_explosion_far3);
-		}
-	}
-}
 #endregion
 
 var _dmg = damage;
+var _hit = false;
+
 with(other)
 {
 	var partEmit = part_emitter_create(global.P_System);
@@ -57,15 +40,17 @@ with(other)
 	part_emitter_destroy(global.P_System, partEmit);	
 	
 	hp -= _dmg;
+	_hit = true;
 	
 	if hp <= 0
 	{
-		b_sm.swap(b_idle);
 		instance_destroy();
 	}
 }
+
+hit = _hit;
 		
 if _snd != noone
-	audio_play_sound(_snd, 0, false, _volume, 0, random_range(0.4, 1));
+	audio_play_sound_on(emitter_id, _snd, false, 1, _volume, 0, random_range(0.4, 1));
 	
 instance_destroy(_id);

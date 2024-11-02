@@ -84,10 +84,14 @@ else
 
 // Sprite aims towards mouse
 image_angle = point_direction(x, y, mouse_x, mouse_y) - 90;
+direction = image_angle;
 
 // Set in motion
 x += _hsp * movementSpeed;
 y += _vsp * movementSpeed;
+
+audio_listener_position(x, y, 0);
+audio_listener_orientation(0, 0, 1, lengthdir_x(_hsp * movementSpeed, direction), lengthdir_y(_vsp * movementSpeed, direction), 0);
 
 clamp_to_room();
 

@@ -28,7 +28,7 @@ weapon_burst_fire_rate = 6;
 weapon_burst_cooldown = 80;
 
 bullet_fire_rate_delay = 100;
-bullet_size = 0.25;
+bullet_size = 0.5;
 bullet_speed = 7;
 
 is_ready_to_shoot = true;
@@ -41,6 +41,24 @@ bullet_reload_timer = 0;
 #endregion
 
 #region Dont Touch		Variables
+
+#region Sound Effects
+// Play walking sound
+audio_emitter_id = audio_emitter_create();
+moving_sound_id = audio_play_sound_on(audio_emitter_id, snd_smallArmsWalk0, true, 1);
+
+// Randomize position
+audio_sound_set_track_position(moving_sound_id, random_range(0, 5));
+
+// Set volume
+audio_emitter_gain(audio_emitter_id, 1)
+		
+// Randomize pitch
+audio_emitter_pitch(audio_emitter_id, random_range(0.8, 1.2));
+
+// Pause
+audio_pause_sound(moving_sound_id);
+#endregion
 
 // Define the outline color
 outline_color = undefined; // Set this to a color, or undefined to disable the outline
@@ -205,8 +223,8 @@ a_idle =		new State("a_idle") {
 	};
 	a_idle.update = function() {
 		if (enemy_in_range()) {
-			if(random(1) < 0.2)
-				randAudio("snd_smallArmsSpotted", 3, 0.15, 0.05, 0.8, 1.2, x, y);
+			if(random(1) < 0.05)
+				randAudio("snd_smallArmsSpotted", 3, 0.15, 0.05, 0.8, 1.2, x, y, audio_emitter_id);
 		    a_sm.swap(a_shoot);
 		}
 	};
@@ -349,15 +367,26 @@ b_objective =	new State("b_objective") {
 				if (_target_inst != noone &&
 				   _target_inst.flag_info.team != team_info.team) {
 					target_inst = _target_inst;
+					
+					if distance_to_object(target_inst) < target_inst.capture_range
+						exit;
+					
+			        goal_x = target_inst.x + random_range(-30, 30);
+			        goal_y = target_inst.y + random_range(-30, 30);			
+				
+					m_sm.swap(m_move);
 				} else {
 					target_inst = objective_find_nearest(self);
+					
+					if distance_to_object(target_inst) < target_inst.capture_range
+						exit;
+						
 					squadObjectID.target_objective = target_inst;
-				}
-				   
-		        goal_x = target_inst.x + random_range(-30, 30);
-		        goal_y = target_inst.y + random_range(-30, 30);			
+			        goal_x = target_inst.x + random_range(-30, 30);
+			        goal_y = target_inst.y + random_range(-30, 30);			
 				
-				m_sm.swap(m_move);
+					m_sm.swap(m_move);
+				}
 			}
 		}
 	}
@@ -369,23 +398,6 @@ m_sm.swap(m_idle);
 a_sm.swap(a_idle);
 b_sm.swap(b_passive);
 
-#endregion
-
-#region Sound Effects
-// Play walking sound
-movingSound = audio_play_sound(snd_smallArmsWalk0, 110, true);
-
-// Randomize position
-audio_sound_set_track_position(movingSound, random_range(0, 5));
-
-// Set volume
-audio_sound_gain(movingSound, 0.05, 0);
-		
-// Randomize pitch
-audio_sound_pitch(movingSound, random_range(0.8, 1.2));
-
-// Pause
-audio_pause_sound(movingSound);
 #endregion
 
 #region Spawn in the Open

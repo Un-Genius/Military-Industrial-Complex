@@ -131,31 +131,6 @@ function enemy_list(_distance, _team) {
 
     return _list;
 }
-	
-function shoot_bulletOLD() {
-	/*
-	if(target_inst != noone) {
-		
-		var _acc = weapon_accuracy;
-		var _dir = weapon_angle + random_range(-_acc, _acc);
-		var _x = x + lengthdir_x(16, _dir);
-		var _y = y + lengthdir_y(16, _dir);
-		var _speed = weapon_speed;
-		var _dmg = weapon_damage;
-		var _team = team;
-		
-	    var _bullet = instance_create_layer(_x, _y, "Instances", oBullet_old);
-		with _bullet
-		{
-		    direction = _dir;
-			image_angle = _dir;
-		    speed = _speed;
-		    damage = _dmg;
-			team = _team;
-		}
-	}
-		*/
-}
 
 function shoot_direction()
 {
@@ -207,7 +182,7 @@ function handle_magazine_completion() {
         shots_fired_in_burst = 0;
         is_ready_to_shoot = false;
         bullet_reload_timer = bullet_reload_time;
-        randAudio("snd_smallArmsReload_start", 0, 1, 0.4, 0.8, 1.2, x, y);
+        randAudio("snd_smallArmsReload_start", 0, 0.3, 0.4, 0.8, 1.2, x, y, audio_emitter_id);
     }
 }
 
@@ -218,7 +193,7 @@ function handle_reload() {
     }
 
     is_ready_to_shoot = true;
-    randAudio("snd_smallArmsReload_finish", 0, 1, 0.4, 0.8, 1.2, x, y);
+    randAudio("snd_smallArmsReload_finish", 0, 0.3, 0.4, 0.8, 1.2, x, y, audio_emitter_id);
 }
 
 function shootOLD()
@@ -269,7 +244,7 @@ function shootOLD()
 				burst_count = 0;
 			    can_shoot = false;
 			    bullet_reload_timer = bullet_reload_time;
-				randAudio("snd_smallArmsReload_start", 0, 1, 0.4, 0.8, 1.2, x, y);
+				randAudio("snd_smallArmsReload_start", 0, 1, 0.4, 0.8, 1.2, x, y, audio_emitter_id);
 			}
 		}
 	}
@@ -282,7 +257,7 @@ function shootOLD()
 		else
 		{
 			can_shoot = true;
-			randAudio("snd_smallArmsReload_finish", 0, 1, 0.4, 0.8, 1.2, x, y);
+			randAudio("snd_smallArmsReload_finish", 0, 1, 0.4, 0.8, 1.2, x, y, audio_emitter_id);
 		}
 	}
 	*/

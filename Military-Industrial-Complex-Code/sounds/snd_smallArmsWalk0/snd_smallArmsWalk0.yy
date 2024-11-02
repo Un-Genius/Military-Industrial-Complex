@@ -9,7 +9,7 @@
   "bitRate":128,
   "compression":0,
   "conversionMode":0,
-  "duration":18.581,
+  "duration":18.576,
   "name":"snd_smallArmsWalk0",
   "parent":{
     "name":"Small Arms Walk",

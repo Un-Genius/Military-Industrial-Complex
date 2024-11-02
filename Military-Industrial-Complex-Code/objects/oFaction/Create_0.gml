@@ -17,7 +17,8 @@ var _team = 1;
 
 team_info = {
 	team: _team,
-	color: colors[_team]
+	color: colors[_team],
+	max_units: 4
 };
 
 #endregion
@@ -408,7 +409,6 @@ enum_to_obj_map = [
     oPlayer,
     oInfantry,
     oInfantryAI,
-    oWorker,
     oSiteHQ,
     oSiteProduceOil,
     oSiteProduceInfantry,
@@ -428,7 +428,6 @@ obj_to_enum_map = ds_map_create();
 ds_map_add(obj_to_enum_map, oPlayer, OBJ_NAME.UNIT_PLAYER);
 ds_map_add(obj_to_enum_map, oInfantry, OBJ_NAME.UNIT_INF);
 ds_map_add(obj_to_enum_map, oInfantryAI, OBJ_NAME.UNIT_ENEMY_INF);
-ds_map_add(obj_to_enum_map, oWorker, OBJ_NAME.UNIT_WORKER);
 ds_map_add(obj_to_enum_map, oSiteHQ, OBJ_NAME.SITE_HQ);
 ds_map_add(obj_to_enum_map, oSiteProduceOil, OBJ_NAME.SITE_PRO_OIL);
 ds_map_add(obj_to_enum_map, oSiteProduceInfantry, OBJ_NAME.SITE_PRO_INFANTRY);
@@ -475,7 +474,6 @@ obj_to_sprite_map = ds_map_create();
 //ds_map_add(obj_to_sprite_map, oPlayer, sPlayer);
 ds_map_add(obj_to_sprite_map, oInfantry, sZoneInfantry);
 ds_map_add(obj_to_sprite_map, oInfantryAI, sInf_USA_basic_0_0);
-ds_map_add(obj_to_sprite_map, oWorker, sInf_USA_basic_0_0);
 ds_map_add(obj_to_sprite_map, oSiteHQ, sHQ);
 ds_map_add(obj_to_sprite_map, oSiteProduceOil, sFactory);
 ds_map_add(obj_to_sprite_map, oSiteProduceInfantry, sHAB);

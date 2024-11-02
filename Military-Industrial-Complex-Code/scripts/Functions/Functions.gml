@@ -509,12 +509,11 @@ function path_grid_update() {
 	mp_grid_add_instances(global.grid, oParWall, false);
 
 	// Add stationary buildings & weapons
-	for(var i = 0; i < instance_number(oParUnit); i++)
+	for(var i = 0; i < instance_number(oParSite); i++)
 	{
-		var _instance = instance_find(oParUnit, i);
+		var _instance = instance_find(oParSite, i);
 
-		if _instance.movementSpeed == 0
-			mp_grid_add_instances(global.grid, _instance, false);
+		mp_grid_add_instances(global.grid, _instance, false);
 	}
 
 	/*
@@ -1183,7 +1182,7 @@ function packet_handle_client(from) {
 			var _numColor	= buffer_read(_buffer, buffer_u16);
 
 			// Create a bullet
-			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet_old);
+			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet);
 
 			with(_bullet)
 			{
@@ -1711,7 +1710,7 @@ function packet_handle_server(from) {
 			packet_send_except(_packet, from);
 
 			// Create a bullet
-			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet_old);
+			var _bullet = instance_create_layer(_x, _y, "Bullets", oBullet);
 
 			with(_bullet)
 			{
@@ -3015,7 +3014,7 @@ function reset_menu() {
 
 #region Audio
 
-function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch, _x, _y) {
+function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch, _x, _y, _emitter_id) {
 	/*
 	_asset		= What audio to play
 	_maxAssets	= How many of those assets do you have?
@@ -3036,13 +3035,13 @@ function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch
 		_audio = asset_get_index(_asset);
 
 	// Play sound
-	var _sound = audio_play_sound(_audio, 100, false);
+	var _sound = audio_play_sound_on(_emitter_id, _audio, false, 1);
 	audio_sound_gain(_sound, _volume, 0);
 
 	// Randomize pitch
 	audio_sound_pitch(_sound, random_range(_minPitch, _maxPitch));
 
-	// Get current camera position
+	/*/ Get current camera position
 	var _camX = camera_get_view_x(view_camera[0]);
 	var _camY = camera_get_view_y(view_camera[0]);
 	var _camW = camera_get_view_width(view_camera[0]);
@@ -3054,7 +3053,7 @@ function randAudio(_asset, _maxAssets, _volume, _outVolume, _minPitch, _maxPitch
 	{
 		// Lower sound
 		audio_sound_gain(_sound, _outVolume, 0);
-	}
+	}*/
 }
 	
 ///@func audio_channels_label(channelsConstant)
@@ -3278,7 +3277,7 @@ function send_openai_whisper(file_path) {
             transcription_text = json_response.text;  // Store the transcription text in a global or instance variable
         },
         fail: function(response) {
-            print("Transcription failed. Error: " + response.data);  // Print error message on failure
+            print("Transcription failed. Error: " + response);  // Print error message on failure
             transcription_text = "";  // Clear the transcription text on failure
         }
     });

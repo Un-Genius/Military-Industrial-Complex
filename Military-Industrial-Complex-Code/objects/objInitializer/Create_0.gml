@@ -2,6 +2,7 @@
 
 ///LOAD SOUND ALWAYS ON
 audio_group_load(AlwaysOn);
+audio_falloff_set_model(audio_falloff_exponent_distance_clamped);
 
 #region INI FILE
 ini_open("CONFIG.INI");

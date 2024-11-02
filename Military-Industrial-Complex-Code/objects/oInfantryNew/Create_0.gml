@@ -50,19 +50,19 @@ sm.swap(idleState);
 #endregion
 #region Sound Effects
 // Play walking sound
-movingSound = audio_play_sound(snd_smallArmsWalk0, 110, true);
+moving_sound_id = audio_play_sound(snd_smallArmsWalk0, 110, true);
 
 // Randomize position
-audio_sound_set_track_position(movingSound, random_range(0, 5));
+audio_sound_set_track_position(moving_sound_id, random_range(0, 5));
 
 // Set volume
-audio_sound_gain(movingSound, 0.05, 0);
+audio_sound_gain(moving_sound_id, 0.05, 0);
 		
 // Randomize pitch
-audio_sound_pitch(movingSound, random_range(0.8, 1.2));
+audio_sound_pitch(moving_sound_id, random_range(0.8, 1.2));
 
 // Pause
-audio_pause_sound(movingSound);
+audio_pause_sound(moving_sound_id);
 #endregion
 #region Spawn in the Open
 while instance_place(x, y, oHQ) || instance_place(x, y, oObject)

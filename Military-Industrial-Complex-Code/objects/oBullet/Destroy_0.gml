@@ -1,3 +1,8 @@
+if hit {
+	audio_emitter_free(emitter_id);
+	exit;
+}
+
 var _viewX = camera_get_view_x(view_camera[0]);
 var _viewY = camera_get_view_y(view_camera[0]);
 var _viewW = camera_get_view_width(view_camera[0]);
@@ -30,3 +35,8 @@ if oPlayer.zoom-0.5 < 0.4
 		}
 	}
 }
+
+if _snd != noone
+	audio_play_sound_on(emitter_id, _snd, false, 1, _volume, 0, random_range(0.4, 1));
+	
+audio_emitter_free(emitter_id);
